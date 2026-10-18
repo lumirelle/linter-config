@@ -4,6 +4,8 @@ The shared configuration is a hand-written function graph: each Module is an `(o
 
 Comparison with Upstream renders both sides under the same options and aligns them by `name`. `name` is therefore public API and cannot be renamed once published.
 
+Terms are defined in [GLOSSARY.md](../../GLOSSARY.md); the field-level shape, invariants and adapter algorithms are in the [Source schema](../design/source-schema.md), and where plugin dependencies live is [ADR 0002](0002-plugin-bundles.md).
+
 ## Considered Options
 
 - **Generated static config** (like the old `@lumirelle/oxlint-config`): cannot express option-derived rules and gives consumers no way to override parts while keeping defaults.

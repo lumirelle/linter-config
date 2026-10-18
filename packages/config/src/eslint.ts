@@ -23,6 +23,21 @@ export type * from './types'
  * Turning it on is opt-in: `stylistic: true`, or its object form for the module's `customize()`
  * options.
  *
+ * Two kinds of Module only reach ESLint. `jsonc`, `yaml`, `toml` and `markdown` need a parser or a
+ * processor, and a rule that needs a TypeScript program only runs where there is one: Oxlint has no
+ * parser hook and reads type information only in its own type-aware mode, so by default every
+ * type-aware rule is ESLint-only. This Emission emits all of them; the Oxlint Emission records the
+ * ones it cannot implement in the Coverage report as `eslint-only-domain` or `type-aware`.
+ *
+ * Plugins are never a direct dependency here: the ESLint plugin objects Source references by
+ * Plugin id come from the optional peer `@lumirelle/linter-plugins-eslint`, and the packages
+ * Upstream declares as optional peers (framework and language plugins, parsers, formatters) stay
+ * the consumer's to install. Enabling a Module whose packages are missing throws an error naming
+ * every package to install.
+ *
+ * Config object names are public API. Each one is `lumirelle/<upstream tail>` and stays stable once
+ * published, because `override` / `remove` and the Upstream comparison address objects by name.
+ *
  * The returned composer is thenable, so `eslint.config.js` can export it directly
  * without a top-level `await`, and it supports `append` / `override` / `remove` by
  * Config object name.

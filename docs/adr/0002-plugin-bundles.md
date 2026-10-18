@@ -6,6 +6,8 @@ The Bundles carry exactly the packages Upstream ships as regular `dependencies` 
 
 Source references plugins only by Plugin id. The ESLint adapter swaps ids for Bundle objects (or the consumer's own copy, for peer ids); the Oxlint adapter drops `plugins` and derives the built-in plugin list and `jsPlugins` from ids. A `jsPlugins` alias always equals the Plugin id, so supported rule keys are literally identical in both tools; aliases are checked against the reserved names.
 
+Terms are defined in [GLOSSARY.md](../../GLOSSARY.md); the registry that records each Plugin id's source is `packages/config/src/plugins.ts`, described in the [Source schema](../design/source-schema.md), and the composer shape this decision plugs into is [ADR 0001](0001-source-and-composers.md).
+
 ## Consequences
 
 - A missing package must produce an error naming the package to install, not an ESM resolution failure.

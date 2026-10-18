@@ -5,7 +5,7 @@ Lumirelle's shared linter configuration: one hand-maintained function graph that
 ## Language
 
 **Source**:
-The hand-maintained function graph in this repo, aligned with upstream modules; it takes options, produces Config objects, and is the only input to the adapters.
+The hand-maintained function graph in this repo, aligned with upstream modules; it takes options, produces Config objects, and is the only input to the adapters. See [ADR 0001](docs/adr/0001-source-and-composers.md) and the [Source schema](docs/design/source-schema.md).
 _Avoid_: config, ruleset, preset
 
 **Config object**:
@@ -29,21 +29,21 @@ An Adapter's output — ESLint flat config, or an Oxlint config object.
 _Avoid_: output config, compiled config
 
 **Plugin Bundle**:
-A package that only forwards third-party lint dependencies (plugins, parsers, processor glue) and contains no rule semantics.
+A package that only forwards third-party lint dependencies (plugins, parsers, processor glue) and contains no rule semantics. See [ADR 0002](docs/adr/0002-plugin-bundles.md).
 _Avoid_: plugin package, dependency bundle
 
 **Plugin id**:
-The canonical identifier used for rule prefixes and plugin references in Source, decoupled from npm package names.
+The canonical identifier used for rule prefixes and plugin references in Source, decoupled from npm package names; the [registry](packages/config/src/plugins.ts) is its authoritative list.
 _Avoid_: scope, namespace
 
 **Bridge**:
-A set of Config objects on the ESLint side that turns off rules already handled by Oxlint, generated with the same file scopes.
+A set of Config objects on the ESLint side that turns off rules already handled by Oxlint, generated with the same file scopes; its algorithm is in the [Source schema](docs/design/source-schema.md).
 _Avoid_: interop, disable list
 
 **Coverage report**:
-The per-Module list of rules a tool's Emission cannot implement; it changes when upstream changes.
+The per-Module list of rules a tool's Emission cannot implement; it changes when upstream changes. The Oxlint one is committed at [`packages/config/coverage.json`](packages/config/coverage.json).
 _Avoid_: unsupported list, gap report
 
 **Upstream**:
-`@antfu/eslint-config`, used as the comparison baseline.
+`@antfu/eslint-config`, used as the comparison baseline; the pinned tag and versions live in [`upstream/pin.json`](upstream/pin.json), and `mise run upstream:diff` renders the comparison.
 _Avoid_: base config, parent config

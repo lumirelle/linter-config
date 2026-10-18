@@ -41,6 +41,8 @@ export interface TestOptions {
  * The `test` Plugin id spans two packages — `@vitest/eslint-plugin` plus the `no-only-tests` rule
  * Upstream merges into it — and the Bundle forwards the merged object, so Source names one id.
  * `isInEditor` downgrades `no-only-tests` to a warning like the other autofixable rules.
+ *
+ * The plugin reads no `settings` and needs no parser, so the Module emits plain rules.
  */
 export function test(options: TestOptions = {}): ConfigObject[] {
   const { enabled = new Set<RuleKey>(), files = GLOB_TESTS, isInEditor = false, overrides = {} } = options

@@ -28,6 +28,8 @@ const HOUSE_RULES: ConfigObject['rules'] = {
  * Upstream's `allRecommended` option replaces {@link HOUSE_RULES} with its plugin's
  * `configs.recommended.rules` at runtime. Source imports no plugin package, so the house table is
  * the ported slice; the recommended preset is not carried yet.
+ *
+ * The plugin reads no `settings` and needs no parser, so the Module emits plain rules.
  */
 export function unicorn(options: { overrides?: ConfigObject['rules'] } = {}): ConfigObject[] {
   return [

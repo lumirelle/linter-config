@@ -13,8 +13,12 @@ export default antfu(
     },
   },
   {
-    // Test fixtures deliberately break house rules to prove that the emitted config reports them.
-    ignores: ['packages/config/test/fixtures/**'],
+    ignores: [
+      // Test fixtures deliberately break house rules to prove that the emitted config reports them.
+      'packages/config/test/fixtures/**',
+      // The Upstream submodule is a reading baseline, not part of this workspace.
+      'upstream/antfu-eslint-config/**',
+    ],
   },
   ...oxlint.buildFromOxlintConfigFile('.oxlintrc.json'),
 )

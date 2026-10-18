@@ -1,0 +1,36 @@
+[
+  {
+    "name": "antfu/gitignore",
+    "ignores": [".env"]
+  },
+  {
+    "name": "antfu/ignores",
+    "ignores": ["**/dist/**"]
+  },
+  {
+    "name": "antfu/javascript/setup",
+    "languageOptions": {
+      "ecmaVersion": "latest"
+    }
+  },
+  {
+    "name": "antfu/javascript/rules",
+    "plugins": {
+      "antfu": {}
+    },
+    "rules": {
+      "antfu/no-top-level-await": "error",
+      "eqeqeq": "error",
+      "no-console": ["warn", { "allow": ["warn"] }],
+      "@typescript-eslint/no-explicit-any": "error",
+      "@stylistic/semi": "error"
+    }
+  },
+  {
+    "name": "antfu/eslint-comments/rules",
+    "rules": {
+      "eslint-comments/no-unused-disable": "error",
+      "eslint-comments/no-unused-enable": "warn"
+    }
+  }
+]

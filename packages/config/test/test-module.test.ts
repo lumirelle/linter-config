@@ -42,9 +42,12 @@ describe('eslint() test module', () => {
   it('leaves out an entry for a rule no Module of this Source enables', async () => {
     const emitted = rulesOf(await eslintObject('lumirelle/test/rules'))
 
-    // `e18e/prefer-static-regex` is Upstream's, but the e18e Module is not ported yet; a rule
-    // nothing enables must not turn up as an `off` entry, or Oxlint would need a plugin for it.
+    // The e18e Module turns `e18e/prefer-static-regex` off for an application, so nothing enables
+    // it and the entry stays out; a rule nothing enables must not turn up as an `off` entry, or
+    // Oxlint would need a plugin for it. A library turns it on, and then the entry is kept.
     expect(emitted['e18e/prefer-static-regex']).toBeUndefined()
+    expect(rulesOf(await eslintObject('lumirelle/test/rules', { type: 'lib' }))['e18e/prefer-static-regex'])
+      .toBe('off')
     // `ts/explicit-function-return-type` exists only for libraries.
     expect(emitted['ts/explicit-function-return-type']).toBeUndefined()
     expect(rulesOf(await eslintObject('lumirelle/test/rules', { type: 'lib' }))['ts/explicit-function-return-type'])

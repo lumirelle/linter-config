@@ -12,6 +12,8 @@ import { eslint } from '../src/eslint'
 import { oxlint } from '../src/oxlint'
 
 const FIXTURES = fileURLToPath(new URL('./fixtures/javascript/', import.meta.url))
+/** A TypeScript fixture project: the same files plus the `tsconfig.json` a type-aware run reads. */
+const TS_FIXTURES = fileURLToPath(new URL('./fixtures/typescript/', import.meta.url))
 const REPO_ROOT = fileURLToPath(new URL('../../../', import.meta.url))
 const OXLINT_BIN = join(dirname(createRequire(import.meta.url).resolve('oxlint/package.json')), 'bin', 'oxlint')
 
@@ -48,14 +50,20 @@ type JsPluginEntry = string | { name: string, specifier: string }
  * A scratch project holding the emission as `oxlint.config.json` — the same object a consumer's
  * `oxlint.config.ts` exports by default, so writing it as JSON also proves the Emission carries no
  * functions — plus the fixture set and the packages its `jsPlugins` name.
+ *
+ * The fixture project's `tsconfig.json` is copied to the project root as well: a type-aware run
+ * reads the project around its working directory, exactly as a consumer's `oxlint` does.
  */
-function project(name: string, config: OxlintConfig): string {
+function project(name: string, config: OxlintConfig, fixtures: string = FIXTURES): string {
   const directory = mkdtempSync(join(scratch, `${name}-`))
   writeFileSync(join(directory, 'oxlint.config.json'), JSON.stringify(config))
   for (const entry of (config.overrides ?? []).flatMap(override => override.jsPlugins ?? [])) {
     linkPlugin(directory, entry)
   }
-  cpSync(FIXTURES, join(directory, 'fixtures'), { recursive: true })
+  cpSync(fixtures, join(directory, 'fixtures'), { recursive: true })
+  if (existsSync(join(fixtures, 'tsconfig.json'))) {
+    cpSync(join(fixtures, 'tsconfig.json'), join(directory, 'tsconfig.json'))
+  }
   return directory
 }
 
@@ -210,5 +218,42 @@ describe('oxlint() ignores through the real Oxlint', () => {
     cpSync(FIXTURES, join(unlinted, 'vendor'), { recursive: true })
 
     expect(lint(unlinted, ['vendor']).files).toBe(4)
+  })
+})
+
+describe('oxlint() over the TypeScript fixtures', () => {
+  it('reports the TypeScript rules the fixture breaks, through the built-in typescript scope', async () => {
+    const directory = project('ts-house', await house(), TS_FIXTURES)
+
+    expect(lint(directory)).toEqual({
+      files: 4,
+      diagnostics: [
+        { file: 'fixtures/violations.ts', ruleId: 'typescript/consistent-type-definitions', severity: 'error', line: 1, column: 8 },
+        { file: 'fixtures/violations.ts', ruleId: 'typescript/method-signature-style', severity: 'error', line: 7, column: 3 },
+        { file: 'fixtures/violations.ts', ruleId: 'typescript/ban-ts-comment', severity: 'error', line: 10, column: 3 },
+      ],
+    })
+  })
+
+  it('reports the type-aware violation once both sides turn type awareness on', async () => {
+    const directory = project(
+      'ts-type-aware',
+      await house({ typescript: { tsconfigPath: 'tsconfig.json' }, oxlint: { typeAware: true, typeCheck: true } }),
+      TS_FIXTURES,
+    )
+
+    const typeAware = lint(directory).diagnostics.filter(diagnostic => diagnostic.ruleId === 'typescript/no-floating-promises')
+
+    expect(typeAware).toEqual([
+      { file: 'fixtures/type-aware.ts', ruleId: 'typescript/no-floating-promises', severity: 'error', line: 6, column: 3 },
+    ])
+  })
+
+  it('leaves the erasable-syntax-only rules to ESLint', async () => {
+    const directory = project('ts-erasable', await house({ typescript: { erasableOnly: true } }), TS_FIXTURES)
+
+    const erasable = lint(directory).diagnostics.filter(diagnostic => diagnostic.ruleId.startsWith('erasable-syntax-only/'))
+
+    expect(erasable).toEqual([])
   })
 })

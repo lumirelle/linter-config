@@ -5,6 +5,7 @@ import { afterAll, describe, expect, it } from 'vitest'
 import { eslint } from '../src/eslint'
 import { oxlint } from '../src/oxlint'
 import { lint, project, scratchDirectory } from './helpers/oxlint-binary'
+import { toPosixPath } from './helpers/paths'
 
 /** One diagnostic, reduced to what both engines can be compared on. */
 interface Reported {
@@ -31,7 +32,7 @@ async function lintWithEslint(options: Parameters<typeof eslint>[0] = {}): Promi
   const results = await eslintApi.lintFiles(['.'])
   return results.flatMap(result =>
     result.messages.map((message: Linter.LintMessage) => ({
-      file: result.filePath.slice(FIXTURES.length),
+      file: toPosixPath(result.filePath.slice(FIXTURES.length)),
       ruleId: message.ruleId ?? '(fatal)',
       line: message.line ?? 0,
     })),

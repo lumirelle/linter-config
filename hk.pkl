@@ -4,7 +4,21 @@ import "package://github.com/jdx/hk/releases/download/v2.6.0/hk@2.6.0#/Builtins.
 
 local linters = new Mapping<String, Step> {
   // Code
-  ["oxlint"] = Builtins.ox_lint
+  ["oxlint"] = (Builtins.ox_lint) {
+    // Oxlint's allocator keeps one pool per worker thread. On a small CI runner the whole tree
+    // plus the js-plugin bridge is enough to exhaust a pool, which panics inside Oxlint
+    // (`oxc_allocator::pool::fixed_size`). One thread holds one pool and costs about 8%.
+    check = new CommandSpec {
+      command = new Command { argv = List("oxlint", "--deny-warnings", "--threads=1", "{{files}}") }
+      effect = "read"
+    }
+    fix = new CommandSpec {
+      command = new Command {
+        argv = List("oxlint", "--deny-warnings", "--fix", "--threads=1", "{{files}}")
+      }
+      effect = "write"
+    }
+  }
   ["eslint"] = (Builtins.eslint) {
     batch = false
     glob =

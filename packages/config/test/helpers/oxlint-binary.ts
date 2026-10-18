@@ -1,11 +1,12 @@
 import type { OxlintConfig } from 'oxlint'
 import { spawnSync } from 'node:child_process'
-import { cpSync, existsSync, mkdirSync, mkdtempSync, rmSync, symlinkSync, writeFileSync } from 'node:fs'
+import { cpSync, existsSync, mkdirSync, mkdtempSync, realpathSync, rmSync, symlinkSync, writeFileSync } from 'node:fs'
 import { createRequire } from 'node:module'
 import { tmpdir } from 'node:os'
 import { dirname, join } from 'node:path'
 import process from 'node:process'
 import { fileURLToPath } from 'node:url'
+import { toPosixPath } from './paths'
 
 const REPO_ROOT = fileURLToPath(new URL('../../../', import.meta.url))
 const OXLINT_BIN = join(dirname(createRequire(import.meta.url).resolve('oxlint/package.json')), 'bin', 'oxlint')
@@ -41,7 +42,9 @@ type JsPluginEntry = string | { name: string, specifier: string }
 
 /** A scratch directory that the caller removes once its run is done. */
 export function scratchDirectory(prefix = 'lumirelle-oxlint-'): { directory: string, remove: () => void } {
-  const directory = mkdtempSync(join(tmpdir(), prefix))
+  // `tmpdir()` is a symlink on macOS (`/var` -> `/private/var`); Oxlint matches its ignore
+  // patterns against the canonical path, so the scratch project uses it from the start.
+  const directory = realpathSync(mkdtempSync(join(tmpdir(), prefix)))
   return { directory, remove: () => rmSync(directory, { recursive: true, force: true }) }
 }
 
@@ -145,7 +148,7 @@ export function lint(directory: string, patterns: string[] = ['fixtures']): { di
       .map((diagnostic) => {
         const label = diagnostic.labels?.[0]?.span
         return {
-          file: diagnostic.filename.replace(LEADING_DOT_SLASH, ''),
+          file: toPosixPath(diagnostic.filename).replace(LEADING_DOT_SLASH, ''),
           ruleId: ruleIdOf(diagnostic.code),
           severity: diagnostic.severity,
           line: label?.line ?? 0,

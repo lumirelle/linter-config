@@ -3,6 +3,7 @@ import { fileURLToPath } from 'node:url'
 import { ESLint } from 'eslint'
 import { describe, expect, it } from 'vitest'
 import { eslint } from '../src/eslint'
+import { toPosixPath } from './helpers/paths'
 
 const FIXTURES = fileURLToPath(new URL('./fixtures/javascript/', import.meta.url))
 
@@ -15,7 +16,7 @@ async function lintFixtures(): Promise<Map<string, Linter.LintMessage[]>> {
   })
 
   const results = await eslintApi.lintFiles(['.'])
-  return new Map(results.map(result => [result.filePath.replace(FIXTURES, ''), result.messages]))
+  return new Map(results.map(result => [toPosixPath(result.filePath.replace(FIXTURES, '')), result.messages]))
 }
 
 function diagnostics(messages: Linter.LintMessage[]): unknown[] {

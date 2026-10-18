@@ -7,6 +7,7 @@ import { oxlint } from '../src/oxlint'
 import { coverageReport } from '../src/oxlint/report'
 import { source } from '../src/source'
 import { eslintObject, houseOptions } from './helpers/emission'
+import { toPosixPath } from './helpers/paths'
 
 const FIXTURES = fileURLToPath(new URL('./fixtures/data-markup/', import.meta.url))
 
@@ -19,7 +20,7 @@ async function lintFixtures(): Promise<Map<string, Linter.LintMessage[]>> {
   })
 
   const results = await eslintApi.lintFiles(['.'])
-  return new Map(results.map(result => [result.filePath.replace(FIXTURES, ''), result.messages]))
+  return new Map(results.map(result => [toPosixPath(result.filePath.replace(FIXTURES, '')), result.messages]))
 }
 
 /** Only what the fixtures assert on: which rule, and where. */

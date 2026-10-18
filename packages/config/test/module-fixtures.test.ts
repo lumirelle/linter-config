@@ -7,6 +7,7 @@ import { oxlint } from '../src/oxlint'
 import { coverageReport } from '../src/oxlint/report'
 import { PLUGIN_IDS, pluginDefinition } from '../src/plugins'
 import { lint, project, scratchDirectory } from './helpers/oxlint-binary'
+import { toPosixPath } from './helpers/paths'
 
 /** One diagnostic, as both engines can be compared on it: the file inside the fixture project. */
 interface Reported {
@@ -117,7 +118,7 @@ async function lintWithEslint(module: string): Promise<Reported[]> {
   const results = await eslintApi.lintFiles(['.'])
   return results.flatMap(result =>
     result.messages.map((message: Linter.LintMessage) => ({
-      file: result.filePath.slice(directory.length),
+      file: toPosixPath(result.filePath.slice(directory.length)),
       ruleId: message.ruleId ?? '(fatal)',
       line: message.line ?? 0,
     })),

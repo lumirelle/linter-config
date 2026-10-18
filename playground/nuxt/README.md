@@ -143,8 +143,9 @@ to keep: `oxlint.config.ts` is discovered without a `-c` flag.
 
 `nuxt`, `vue`, `vite` and `unocss` themselves are deliberately absent: this is a lint target, not an
 application, and the root dogfood configuration does not lint its source tree either. A real project
-also keeps a `uno.config.ts`, which `@unocss/eslint-plugin` reads at lint time to order class names;
-the snapshot ships neither it nor the runtime.
+also keeps a `uno.config.ts`; the example ships one — without presets, importing nothing — because
+`@unocss/eslint-plugin` refuses to order class names without a config file to read. The runtime is
+what stays absent. The `react` and `vue` examples ship the same file for the same reason.
 
 ## Tree
 
@@ -162,6 +163,7 @@ playground/nuxt/
 ├── oxlint.config.ts
 ├── package.json
 ├── tsconfig.json            # extends @lumirelle/tsconfig/vue; documentation, not built here
+├── uno.config.ts            # no presets: the file `@unocss/eslint-plugin` needs to run at all
 └── README.md
 ```
 

@@ -23,25 +23,15 @@ export const options = {
     'upstream/antfu-eslint-config/**',
     // An example simulates a consumer project, so its source tree is linted by that project's own
     // Config objects, never by this repository's root config. The patterns name the source
-    // directories the examples use, including a monorepo example's nested package sources, so a
-    // later example needs no edit here; the example's own lint configs, options module, manifest,
-    // tsconfig and README stay at its root and stay linted.
+    // directories the examples use, including a monorepo example's nested package sources; the
+    // example's own lint configs, options module, manifest, tsconfig, README and framework config
+    // files sit at its root, where this repository's root config does lint them.
     'playground/*/src/**',
     'playground/*/app/**',
-    'playground/*/pages/**',
-    'playground/*/components/**',
-    'playground/*/entrypoints/**',
     'playground/*/packages/*/src/**',
-    'playground/*/packages/*/test/**',
-    // Example build configs import the runtimes the examples deliberately do not install (Vue,
-    // React, Next, UnoCSS, Vite), and are documentation rather than lint targets.
-    'playground/*/vite.config.{js,ts}',
-    'playground/*/next.config.{js,ts}',
+    // The one framework config that does not survive this repository's own lint: `nuxt.config.ts`
+    // calls `defineNuxtConfig` from the Nuxt runtime the example deliberately does not install.
     'playground/*/nuxt.config.ts',
-    'playground/*/manifest.config.ts',
-    'playground/*/uno.config.ts',
-    'playground/*/wxt.config.ts',
-    'playground/*/tsdown.config.ts',
   ],
   overrides: {
     // Two type-aware rules do not describe this repository, and turning them off here — in Source,

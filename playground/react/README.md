@@ -105,7 +105,8 @@ needs them, but two rules read whether they are present, and a real project noti
 
 The one UnoCSS file the example does keep is `uno.config.ts`, without presets: `@unocss/eslint-plugin`
 refuses to order class names without a config file, and the file imports nothing, because the preset
-packages are the runtimes the example does not install.
+packages are the runtimes the example does not install. The [`vue`](../vue/README.md) and
+[`nuxt`](../nuxt/README.md) examples ship the same file for the same reason.
 
 A Vite project also has a `vite.config.ts` next to this file. The example leaves it out because it
 would import `vite` and the framework plugin, which are exactly the packages the example does not

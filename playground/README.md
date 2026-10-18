@@ -18,12 +18,14 @@ the same way a consumer's config files do.
 ## Running an example
 
 ```sh
-mise run play ts     # both Emissions for one example
-mise run play nuxt   # a Nuxt application
-mise run play vue    # a Vue single-page application
-mise run play react  # a React single-page application
-mise run play next   # a Next.js App Router project
-mise run play --all  # both Emissions for every example
+mise run play ts           # both Emissions for one example
+mise run play next         # a Next.js App Router project
+mise run play nuxt         # a Nuxt application
+mise run play react        # a React single-page application
+mise run play ts-monorepo  # a TypeScript monorepo
+mise run play vue          # a Vue single-page application
+mise run play webext       # a browser extension
+mise run play --all        # both Emissions for every example
 ```
 
 The task depends on `mise run build`, because each example's config files import the package's built

@@ -112,8 +112,11 @@ Bundles as well.
 
 `vue`, `vite` and `unocss` themselves are deliberately absent: this is a lint target, not an
 application, and the root dogfood configuration does not lint its source tree either. A real project
-also has a `vite.config.ts` and a `uno.config.ts` — the second one matters at lint time, because
-`@unocss/eslint-plugin` reads it to order class names. The snapshot ships neither.
+also has a `vite.config.ts` and a `uno.config.ts`. The example ships the second one — without
+presets, importing nothing — because `@unocss/eslint-plugin` refuses to order class names without a
+config file to read. `vite.config.ts` is the file it leaves out, because it would import `vite` and
+the Vue plugin, which are exactly the packages the example does not install. The `react` and `nuxt`
+examples ship the same `uno.config.ts` for the same reason.
 
 ## Tree
 
@@ -129,5 +132,6 @@ playground/vue/
 │   │   └── GreetingCard.vue     # a labelled region: what the accessibility rules inspect
 │   └── main.ts                  # `createApp(App).mount('#app')`
 ├── tsconfig.json                # extends @lumirelle/tsconfig/vue; documentation, not built here
+├── uno.config.ts                # no presets: the file `@unocss/eslint-plugin` needs to run at all
 └── README.md
 ```

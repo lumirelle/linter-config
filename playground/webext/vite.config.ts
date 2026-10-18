@@ -2,9 +2,9 @@
  * The extension's build config: the two browser entry points, bundled into the packable
  * `extension` directory the example's options ignore.
  *
- * A real project calls `defineConfig` from `vite` here. This example does not import it, because
- * examples install no build or runtime package; the root configuration ignores this file for the
- * same reason, and because an example's build config is documentation rather than a lint target.
+ * A real project calls `defineConfig` from `vite` here. This example imports nothing, because
+ * examples install no build or runtime package, and because the root configuration lints this file
+ * as one of the example's own root files rather than leaving it out as documentation.
  */
 export default {
   build: {

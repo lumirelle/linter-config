@@ -122,7 +122,7 @@ playground/webext/
 ├── options.ts
 ├── package.json
 ├── tsconfig.json          # extends @lumirelle/tsconfig/ts plus the DOM library; documentation, not built here
-├── vite.config.ts         # the two entry points and the `extension` output; ignored by the root config
+├── vite.config.ts         # the two entry points and the `extension` output; imports nothing
 └── src/
     ├── background.ts      # the service worker entry point
     ├── content-script.ts  # the content-script entry point

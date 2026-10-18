@@ -1,8 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { configNamed, configNames, loadExample, objectsOfModule } from './helpers/emission'
-
-/** The build output the example's options declare, whatever tool reads them. */
-const BUILD_OUTPUT = ['dist/**', 'extension/**', '.output/**']
+import { configNamed, configNames, expectNoModules, loadExample } from './helpers/emission'
 
 describe('the `webext` example', () => {
   it('emits an application Emission with no framework Config objects', async () => {
@@ -17,20 +14,18 @@ describe('the `webext` example', () => {
     // `test: true` reaches the Emission through the one options module both configs read.
     expect(names).toContain('lumirelle/test/rules')
 
-    for (const module of ['vue', 'react', 'nextjs', 'solid', 'svelte', 'astro', 'angular', 'unocss', 'jsx'] as const) {
-      expect(objectsOfModule(eslint, module)).toEqual([])
-    }
+    expectNoModules(eslint, ['vue', 'react', 'nextjs', 'solid', 'svelte', 'astro', 'angular', 'unocss', 'jsx'])
   })
 
   it('applies the declared build-output ignores to the global ignores Config object', async () => {
     const { options, eslint } = await loadExample('webext')
     const ignores = configNamed(eslint, 'lumirelle/ignores')
 
+    // The patterns come from the options module, which is the only place that names them.
+    expect(options.ignores).not.toEqual([])
     // An object with no `files` is the global one: ESLint applies its `ignores` to the whole
     // project, which is what makes the build output invisible to every Module of the Emission.
     expect(ignores.files).toBeUndefined()
-    expect(ignores.ignores).toEqual(expect.arrayContaining(BUILD_OUTPUT))
-    // The patterns reach that object through the options module, not through a config file.
-    expect(options.ignores).toEqual(expect.arrayContaining(BUILD_OUTPUT))
+    expect(ignores.ignores).toEqual(expect.arrayContaining(options.ignores ?? []))
   })
 })

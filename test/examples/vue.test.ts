@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { configNamed, configNames, loadExample, objectsOfModule } from './helpers/emission'
+import { configNamed, configNames, expectNoModules, expectOxlintReadsVue, loadExample, objectsOfModule } from './helpers/emission'
 
 describe('the `vue` example', () => {
   it('emits the Vue, UnoCSS and test Config objects a Vite single-page application asks for', async () => {
@@ -26,16 +26,12 @@ describe('the `vue` example', () => {
   it('does not emit the framework Modules the example leaves off', async () => {
     const { eslint } = await loadExample('vue')
 
-    for (const module of ['react', 'nextjs'] as const) {
-      expect(objectsOfModule(eslint, module)).toEqual([])
-    }
+    expectNoModules(eslint, ['react', 'nextjs'])
   })
 
   it('emits an Oxlint config that reads Vue files', async () => {
     const { oxlint } = await loadExample('vue')
 
-    // Loading the second Emission is half of the test: a missing peer, parser or processor throws
-    // here, not in a consumer's repository. Oxlint reads `.vue` natively, through its own scope.
-    expect(oxlint.plugins).toContain('vue')
+    expectOxlintReadsVue(oxlint)
   })
 })

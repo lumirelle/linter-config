@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { configNames, loadExample, objectsOfModule } from './helpers/emission'
+import { configNames, expectNoModules, loadExample } from './helpers/emission'
 
 describe('the `next` example', () => {
   it('emits the React Config objects its options module shares with the `react` example', async () => {
@@ -27,16 +27,12 @@ describe('the `next` example', () => {
 
     // `jsx` is off here on purpose: the React and Next Modules already declare the JSX parser flag
     // for their own files, so the difference between the two examples stays visible.
-    for (const module of ['jsx', 'unocss', 'vue'] as const) {
-      expect(objectsOfModule(eslint, module)).toEqual([])
-    }
+    expectNoModules(eslint, ['jsx', 'unocss', 'vue'])
   })
 
   it('loads the Oxlint Emission of the same options module', async () => {
     const { oxlint } = await loadExample('next')
 
-    // See the `react` example: loading both Emissions through the registry is what catches a
-    // Module that no longer composes on one side.
     expect(oxlint).toBeTypeOf('object')
   })
 })

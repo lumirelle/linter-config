@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { configNames, loadExample, objectsOfModule } from './helpers/emission'
+import { configNames, expectNoModules, loadExample } from './helpers/emission'
 
 describe('the `react` example', () => {
   it('emits the React Config objects a React single-page application asks for', async () => {
@@ -26,16 +26,14 @@ describe('the `react` example', () => {
   it('does not emit the Next or Vue Config objects', async () => {
     const { eslint } = await loadExample('react')
 
-    for (const module of ['nextjs', 'vue'] as const) {
-      expect(objectsOfModule(eslint, module)).toEqual([])
-    }
+    expectNoModules(eslint, ['nextjs', 'vue'])
   })
 
   it('loads the Oxlint Emission of the same options module', async () => {
     const { oxlint } = await loadExample('react')
 
-    // Loading the second Emission is the other half of the test: Oxlint has no parser, processor or
-    // plugin setup to resolve here, but a Module that stops composing fails on both sides.
+    // Oxlint has no parser, processor or plugin setup to resolve here, but a Module that stops
+    // composing fails on both sides.
     expect(oxlint).toBeTypeOf('object')
   })
 })

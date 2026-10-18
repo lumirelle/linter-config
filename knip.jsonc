@@ -82,7 +82,6 @@
         "options.ts",
         "src/**/*",
         "app/**/*",
-        "entrypoints/**/*",
         "packages/*/src/**/*"
       ]
     }

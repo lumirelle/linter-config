@@ -12,4 +12,9 @@ jobs:
   ci:
     uses: lumirelle/workflows/.github/workflows/ci.yml@v10
     with:
+      # ubuntu-slim cannot run this repository's Oxlint config: the js-plugin bridge reserves a
+      # 4 GiB fixed-size arena per worker, which panics inside `oxc_allocator` there. Use the
+      # full-size Ubuntu runner until that limit goes away.
+      primary-os: ubuntu-latest
+      os-matrix: '"ubuntu-latest", "macos-latest", "windows-latest"'
       cache-preset: 'mise-task,nub'

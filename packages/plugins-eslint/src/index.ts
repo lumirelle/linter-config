@@ -1,14 +1,19 @@
 import type { ESLint, Linter } from 'eslint'
+import e18e from '@e18e/eslint-plugin'
+import eslintComments from '@eslint-community/eslint-plugin-eslint-comments'
 import stylistic from '@stylistic/eslint-plugin'
 import tsPlugin from '@typescript-eslint/eslint-plugin'
 import tsParser from '@typescript-eslint/parser'
 import vitestPlugin from '@vitest/eslint-plugin'
 import antfu from 'eslint-plugin-antfu'
+import command from 'eslint-plugin-command'
 import importLite from 'eslint-plugin-import-lite'
 import jsdoc from 'eslint-plugin-jsdoc'
 import node from 'eslint-plugin-n'
+import perfectionist from 'eslint-plugin-perfectionist'
 // @ts-expect-error -- the package ships no type declarations.
 import noOnlyTests from 'eslint-plugin-no-only-tests'
+import regexp from 'eslint-plugin-regexp'
 import unicorn from 'eslint-plugin-unicorn'
 import unusedImports from 'eslint-plugin-unused-imports'
 
@@ -36,9 +41,14 @@ const testPlugin: ESLint.Plugin = {
  */
 export const eslintPlugins: Record<string, ESLint.Plugin> = {
   'antfu': antfu as ESLint.Plugin,
+  'command': command as unknown as ESLint.Plugin,
+  'e18e': e18e as unknown as ESLint.Plugin,
+  'eslint-comments': eslintComments as unknown as ESLint.Plugin,
   'import': importLite as ESLint.Plugin,
   'jsdoc': jsdoc as unknown as ESLint.Plugin,
   'node': node as unknown as ESLint.Plugin,
+  'perfectionist': perfectionist as unknown as ESLint.Plugin,
+  'regexp': regexp as unknown as ESLint.Plugin,
   'style': stylistic as unknown as ESLint.Plugin,
   'test': testPlugin,
   'ts': tsPlugin as unknown as ESLint.Plugin,

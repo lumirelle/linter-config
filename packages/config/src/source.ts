@@ -1,12 +1,18 @@
 import type { ConfigObject, Glob, Options, StylisticOptions } from './types'
 import { isInEditorEnv } from './editor'
 import { assertGlobVocabulary } from './globs'
+import { antislop } from './modules/antislop'
+import { command } from './modules/command'
 import { disables } from './modules/disables'
+import { e18e } from './modules/e18e'
+import { eslintComments } from './modules/eslint-comments'
 import { ignores } from './modules/ignores'
 import { imports } from './modules/imports'
 import { javascript } from './modules/javascript'
 import { jsdoc } from './modules/jsdoc'
 import { node } from './modules/node'
+import { perfectionist } from './modules/perfectionist'
+import { regexp } from './modules/regexp'
 import { stylistic } from './modules/stylistic'
 import { isTestEnabled, test, testOverrides } from './modules/test'
 import { typescript } from './modules/typescript'
@@ -35,12 +41,18 @@ export function source(options: Options = {}): ConfigObject[] {
   const composed: ConfigObject[] = [
     ...ignores(options),
     ...javascript({ isInEditor }),
+    ...eslintComments(),
+    ...command(),
+    ...options.perfectionist === false ? [] : perfectionist(),
     ...isTypeScriptEnabled(options.typescript) ? typescript(options) : [],
     ...options.node === false ? [] : node(),
     ...options.jsdoc === false ? [] : jsdoc({ stylistic: stylisticSlices }),
     ...options.imports === false ? [] : imports({ stylistic: stylisticSlices }),
+    ...options.e18e === false ? [] : e18e({ isInEditor, type: options.type }),
     ...options.unicorn === false ? [] : unicorn(),
+    ...options.antislop === true ? antislop() : [],
     ...isStylisticEnabled(options.stylistic) ? stylistic(stylisticOptions(options.stylistic)) : [],
+    ...options.regexp === false ? [] : regexp(),
   ]
 
   if (isTestEnabled(options.test)) {

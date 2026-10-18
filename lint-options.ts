@@ -21,6 +21,27 @@ export const options = {
     'packages/config/test/fixtures/**',
     // The Upstream submodule is a reading baseline, not part of this workspace.
     'upstream/antfu-eslint-config/**',
+    // An example simulates a consumer project, so its source tree is linted by that project's own
+    // Config objects, never by this repository's root config. The patterns name the source
+    // directories the examples use, including a monorepo example's nested package sources, so a
+    // later example needs no edit here; the example's own lint configs, options module, manifest,
+    // tsconfig and README stay at its root and stay linted.
+    'playground/*/src/**',
+    'playground/*/app/**',
+    'playground/*/pages/**',
+    'playground/*/components/**',
+    'playground/*/entrypoints/**',
+    'playground/*/packages/*/src/**',
+    'playground/*/packages/*/test/**',
+    // Example build configs import the runtimes the examples deliberately do not install (Vue,
+    // React, Next, UnoCSS, Vite), and are documentation rather than lint targets.
+    'playground/*/vite.config.{js,ts}',
+    'playground/*/next.config.{js,ts}',
+    'playground/*/nuxt.config.ts',
+    'playground/*/manifest.config.ts',
+    'playground/*/uno.config.ts',
+    'playground/*/wxt.config.ts',
+    'playground/*/tsdown.config.ts',
   ],
   overrides: {
     // Two type-aware rules do not describe this repository, and turning them off here — in Source,

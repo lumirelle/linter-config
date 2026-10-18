@@ -1,17 +1,4 @@
 {
-  "entry": ["scripts/*.ts"],
-  "ignore": [
-    // Upstream source for reading and comparison; not part of this workspace
-    "upstream/**"
-  ],
-  "ignoreFiles": [
-    // Snapshots
-    "test/__snapshots__/**",
-    // Linted by the fixture test, never imported
-    "packages/config/test/fixtures/**",
-    // Loaded by taze at runtime; knip has no plugin for it
-    "taze.config.js"
-  ],
   "ignoreDependencies": [
     // Quality
     "@arethetypeswrong/cli",
@@ -55,5 +42,37 @@
     "oxc-minify",
     "pinia",
     "uno.css"
-  ]
+  ],
+  "workspaces": {
+    // The root workspace is configured here because a `workspaces` block makes knip read every
+    // workspace, including the root one, from this mapping.
+    ".": {
+      "entry": ["scripts/*.ts", "playground/index.ts", "playground/examples.ts"],
+      "ignore": [
+        // Upstream source for reading and comparison; not part of this workspace
+        "upstream/**"
+      ],
+      "ignoreFiles": [
+        // Snapshots
+        "test/__snapshots__/**",
+        // Linted by the fixture test, never imported
+        "packages/config/test/fixtures/**",
+        // Loaded by taze at runtime; knip has no plugin for it
+        "taze.config.js"
+      ]
+    },
+    // An example is a consumer snapshot, not a library with a single index: its options module and
+    // the two config modules built from it are the whole program. Globbed, so a later example
+    // package needs no edit here; a declared peer is covered by the root `ignoreDependencies`
+    // above, which a workspace inherits.
+    "playground/*": {
+      "entry": [
+        "eslint.config.{js,ts}",
+        "options.ts",
+        "src/**/*",
+        "app/**/*",
+        "entrypoints/**/*"
+      ]
+    }
+  }
 }

@@ -4,4 +4,5 @@
 // #region Variables
 export declare const eslintParsers: Record<string, Linter.LanguageOptions['parser']>;
 export declare const eslintPlugins: Record<string, ESLint.Plugin>;
+export declare const eslintProcessors: Record<string, (options?: Record<string, unknown>) => Linter.Config['processor']>;
 // #endregion

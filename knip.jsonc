@@ -30,6 +30,7 @@
     "eslint-plugin-react-refresh",
     "eslint-plugin-solid",
     "eslint-plugin-svelte",
+    "eslint-plugin-vuejs-accessibility",
     "svelte-eslint-parser",
     // Referenced as an Oxlint jsPlugins specifier string, which knip cannot follow
     "@eslint-community/eslint-plugin-eslint-comments",

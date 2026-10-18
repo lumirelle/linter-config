@@ -33,7 +33,7 @@ export interface Options {
   vue?: boolean | {
     a11y?: boolean;
     vueVersion?: 2 | 3;
-    sfcBlocks?: boolean;
+    sfcBlocks?: boolean | Record<string, unknown>;
   };
   react?: boolean;
   svelte?: boolean;
@@ -94,6 +94,7 @@ export interface PluginDefinition {
 export interface ProcessorRef {
   plugin: PluginRef;
   name: string;
+  options?: Record<string, unknown>;
 }
 export interface StylisticOptions {
   braceStyle?: '1tbs' | 'stroustrup' | 'allman';

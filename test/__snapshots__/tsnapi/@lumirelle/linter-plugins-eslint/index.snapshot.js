@@ -4,4 +4,5 @@
 // #region Variables
 export var eslintParsers /* const */
 export var eslintPlugins /* const */
+export var eslintProcessors /* const */
 // #endregion

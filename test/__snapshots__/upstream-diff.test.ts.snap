@@ -1,0 +1,97 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`buildReport > renders a reviewable Markdown report 1`] = `
+"# Upstream diff
+
+- Upstream: \`@antfu/eslint-config\` **9.5.1** (submodule tag \`v9.5.1\`)
+- Source: \`@lumirelle/linter-config\` ESLint Emission
+- Command: \`mise run upstream:diff\`
+
+## How to read this report
+
+The report is informational: \`mise run upstream:diff\` exits 0 even when there are
+differences. Only \`mise run upstream:check\` fails, and only when the pinned submodule tag
+and the installed npm package disagree.
+
+Config objects are aligned by name (\`antfu/\` is renamed to \`lumirelle/\`), and rule keys
+are aligned by their normalized plugin prefix: every rename Upstream's
+\`defaultPluginRenaming\` applies, plus the two Source makes by itself (\`markdown\` to \`md\`,
+\`sonarjs\` to \`sonar\`).
+
+- \`added\`: Upstream has the rule and Source does not.
+- \`removed\`: Source has the rule and Upstream does not.
+- \`severity-changed\`: both have the rule, but at a different severity. Rule options are not compared.
+
+A Module marked **not yet implemented in Source** is ported work, not drift: Source does
+not emit that Module yet, so its upstream rules are listed under \`added\`.
+
+Upstream renders with every optional Module off except the ones Source implements, so the
+report needs no optional peer plugins and runs offline. Each point lists the effective
+options on both sides.
+
+## Summary
+
+| Option point | Modules | Not yet implemented | Added | Removed | Severity changed |
+| --- | --- | --- | --- | --- | --- |
+| \`defaults\` | 3 | 1 | 3 | 0 | 2 |
+
+## \`defaults\`
+
+Source options:
+
+\`\`\`json
+{
+  "stylistic": false
+}
+\`\`\`
+
+Upstream options:
+
+\`\`\`json
+{
+  "stylistic": false
+}
+\`\`\`
+
+### \`eslint-comments\` — module not yet implemented in Source
+
+Config objects: 1 · Added: 2 · Removed: 0 · Severity changed: 0
+
+#### \`lumirelle/eslint-comments/rules\`
+
+Source does not emit this Config object; every rule it sets is \`added\`.
+
+| Change | Rule | Source | Upstream |
+| --- | --- | --- | --- |
+| added | \`eslint-comments/no-unused-disable\` | — | error |
+| added | \`eslint-comments/no-unused-enable\` | — | warn |
+
+### \`ignores\` — implemented in Source
+
+Config objects: 2 · Added: 0 · Removed: 0 · Severity changed: 0
+
+#### \`lumirelle/gitignore\`
+
+Source does not emit this Config object; it has no rules.
+
+#### \`lumirelle/ignores\`
+
+No rule differences.
+
+### \`javascript\` — implemented in Source
+
+Config objects: 2 · Added: 1 · Removed: 0 · Severity changed: 2
+
+#### \`lumirelle/javascript/rules\`
+
+| Change | Rule | Source | Upstream |
+| --- | --- | --- | --- |
+| added | \`style/semi\` | — | error |
+| severity-changed | \`eqeqeq\` | off | error |
+| severity-changed | \`no-console\` | error | warn |
+
+#### \`lumirelle/javascript/setup\`
+
+No rule differences.
+"
+`;

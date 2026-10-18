@@ -3,9 +3,8 @@
   "compilerOptions": {
     "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.lib.tsbuildinfo",
     "types": ["node"],
-    "declaration": true,
-    "isolatedDeclarations": true
+    "declaration": true
   },
-  "include": ["src/**/*", "test/**/*"],
+  "include": ["src/**/*", "scripts/**/*", "test/**/*", "*.config.ts"],
   "exclude": ["test/fixtures/**/*"]
 }

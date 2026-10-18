@@ -1,16 +1,12 @@
 // @ts-check
-import { antfu } from '@antfu/eslint-config'
-import oxlint from 'eslint-plugin-oxlint'
+import { eslint } from '@lumirelle/linter-config/eslint'
+import { options } from './lint-options.ts'
 
-export default antfu(
-  {
-    type: 'lib',
-    toml: {
-      overrides: {
-        'toml/array-element-newline': ['error', 'consistent'],
-        'toml/array-bracket-spacing': ['error', 'never'],
-      },
-    },
-  },
-  ...oxlint.buildFromOxlintConfigFile('.oxlintrc.json'),
-)
+// The repository's own ESLint config, and the reference consumer of
+// `@lumirelle/linter-config/eslint`: the package owns every rule, so the only local decisions are
+// the ones a consumer genuinely has to make, and they live in `lint-options.ts` because
+// `oxlint.config.ts` has to pass the very same ones.
+//
+// The `oxlint` option makes the Bridge the last part of this Emission: every rule Oxlint reports
+// is turned off here, in the same file scopes.
+export default eslint(options)

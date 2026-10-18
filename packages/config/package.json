@@ -15,16 +15,20 @@
   "keywords": [],
   "sideEffects": false,
   "exports": {
-    ".": {
+    "./eslint": {
       "import": {
-        "types": "./dist/index.d.mts",
-        "default": "./dist/index.mjs"
+        "types": "./dist/eslint.d.mts",
+        "default": "./dist/eslint.mjs"
+      }
+    },
+    "./oxlint": {
+      "import": {
+        "types": "./dist/oxlint.d.mts",
+        "default": "./dist/oxlint.mjs"
       }
     },
     "./package.json": "./package.json"
   },
-  "module": "./dist/index.mjs",
-  "types": "./dist/index.d.mts",
   "files": [
     "dist"
   ],
@@ -35,9 +39,69 @@
   "publishConfig": {
     "access": "public"
   },
+  "peerDependencies": {
+    "@lumirelle/linter-plugins-eslint": "workspace:^",
+    "@lumirelle/linter-plugins-oxlint": "workspace:^",
+    "eslint": "^9.10.0 || ^10.0.0",
+    "oxlint": ">=1.85.0"
+  },
+  "peerDependenciesMeta": {
+    "@lumirelle/linter-plugins-eslint": {
+      "optional": true
+    },
+    "@lumirelle/linter-plugins-oxlint": {
+      "optional": true
+    },
+    "eslint": {
+      "optional": true
+    },
+    "oxlint": {
+      "optional": true
+    }
+  },
+  "dependencies": {
+    "@oxlint-flat-config/composer": "catalog:lint",
+    "eslint-config-flat-gitignore": "catalog:lint",
+    "eslint-flat-config-utils": "catalog:lint",
+    "eslint-merge-processors": "catalog:lint",
+    "globals": "catalog:lint",
+    "oxlint-flat-config": "catalog:lint"
+  },
   "devDependencies": {
+    "@angular-eslint/eslint-plugin": "catalog:peer",
+    "@angular-eslint/eslint-plugin-template": "catalog:peer",
+    "@angular-eslint/template-parser": "catalog:peer",
+    "@e18e/eslint-plugin": "catalog:bundle",
+    "@eslint-community/eslint-plugin-eslint-comments": "catalog:bundle",
+    "@eslint-react/eslint-plugin": "catalog:peer",
+    "@lumirelle/linter-plugins-eslint": "workspace:*",
+    "@lumirelle/linter-plugins-oxlint": "workspace:*",
     "@lumirelle/tsconfig": "catalog:types",
+    "@next/eslint-plugin-next": "catalog:peer",
+    "@stylistic/eslint-plugin": "catalog:bundle",
+    "@unocss/eslint-plugin": "catalog:peer",
+    "astro-eslint-parser": "catalog:peer",
+    "eslint": "catalog:check",
+    "eslint-plugin-astro": "catalog:peer",
+    "eslint-plugin-command": "catalog:bundle",
+    "eslint-plugin-erasable-syntax-only": "catalog:peer",
+    "eslint-plugin-format": "catalog:peer",
+    "eslint-plugin-jsx-a11y": "catalog:peer",
+    "eslint-plugin-perfectionist": "catalog:bundle",
+    "eslint-plugin-react-refresh": "catalog:peer",
+    "eslint-plugin-regexp": "catalog:bundle",
+    "eslint-plugin-slop": "catalog:peer",
+    "eslint-plugin-solid": "catalog:peer",
+    "eslint-plugin-sonarjs": "catalog:peer",
+    "eslint-plugin-svelte": "catalog:peer",
+    "eslint-plugin-vuejs-accessibility": "catalog:peer",
+    "fast-glob": "catalog:test",
+    "minimatch": "catalog:test",
+    "oxlint": "catalog:check",
+    "svelte": "catalog:peer",
+    "svelte-eslint-parser": "catalog:peer",
     "tsdown": "catalog:build",
-    "typescript": "catalog:types"
+    "typescript": "catalog:types",
+    "vitest": "catalog:test"
   }
 }

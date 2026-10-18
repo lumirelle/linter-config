@@ -1,10 +1,12 @@
 # Source Schema
 
-Status: accepted — implementation pending.
+Status: accepted — implemented. Source, both Adapters and the Bridge live in [`packages/config/src`](../../packages/config/src); this document stays the reference for their field-level shape, invariants and algorithms.
+
+Terms are defined in [GLOSSARY.md](../../GLOSSARY.md). The decisions behind this shape are [ADR 0001](../adr/0001-source-and-composers.md) (Source is a function graph; both artifacts go through a Composer), [ADR 0002](../adr/0002-plugin-bundles.md) (plugin dependencies live in two Bundles) and [ADR 0003](../adr/0003-generated-rule-tables.md) (plugin rule tables stay committed data).
 
 ## Goals
 
-- Every Module is an `(options) => ConfigObject[]`; module names map one-to-one to Upstream's `configs/*`.
+- Every Module is an `(options) => ConfigObject[]`; module names map one-to-one to Upstream's `configs/*`. The implemented module list and composition order are [`packages/config/src/source.ts`](../../packages/config/src/source.ts); each Module is one file under [`packages/config/src/modules`](../../packages/config/src/modules).
 - A Config object is plain ESLint-flat-config-shaped data; both Adapters consume only that.
 - Shared fields carry semantics both tools understand; tool-specific fields live under `tools`.
 
@@ -13,10 +15,12 @@ Status: accepted — implementation pending.
 ```ts
 /** Equals Upstream's post-rename rule prefix, e.g. ts / test / import / style */
 type PluginId
-  = | 'ts' | 'test' | 'import' | 'node' | 'unicorn' | 'jsdoc' | 'vue' | 'react'
-    | 'next' | 'jsx-a11y' | 'style' | 'perfectionist' | 'regexp' | 'e18e'
-    | 'antfu' | 'command' | 'eslint-comments' | 'unused-imports' | 'sonar'
-    | 'unocss' | 'solid' | '@angular-eslint' | 'jsonc' | 'yaml' | 'toml' | 'md'
+  = | 'ts' | 'test' | 'import' | 'node' | 'unicorn' | 'jsdoc' | 'vue' | 'vue-a11y'
+    | 'react' | 'react-refresh' | 'next' | 'jsx-a11y' | 'style' | 'perfectionist'
+    | 'regexp' | 'e18e' | 'antfu' | 'command' | 'eslint-comments' | 'unused-imports'
+    | 'sonar' | 'slop' | 'unocss' | 'solid' | 'svelte' | 'astro' | 'format'
+    | 'erasable-syntax-only' | 'angular' | 'angular-template' | 'jsonc' | 'yaml'
+    | 'toml' | 'md' | 'pnpm'
 // The full list is defined by the registry in src/plugins.ts; this type derives from it
 
 /** Which files a Config object handles; an Adapter uses it as its first filter */
@@ -47,6 +51,19 @@ interface PluginDefinition {
 
 type PluginRef = ReturnType<typeof pluginRef> // branded string, the Plugin id at runtime
 
+/**
+ * A processor, named as the Plugin id that registers it plus the name it registers under: Source
+ * cannot hold the processor object itself, so the ESLint Adapter resolves the pair.
+ */
+interface ProcessorRef {
+  plugin: PluginRef
+  name: string
+  /** Merge the processor with a pass-through, so the document is linted as well as its blocks. */
+  passThrough?: boolean
+  /** Options for a processor the Bundle builds on demand (Vue's SFC block glue selects blocks). */
+  options?: Record<string, unknown>
+}
+
 interface ConfigObject {
   /** Public API: 'lumirelle/<upstream tail>', immutable once published */
   name: string
@@ -63,9 +80,14 @@ interface ConfigObject {
   settings?: Record<string, unknown>
   tools?: {
     eslint?: {
+      /** ESLint-only: the language a parser declares (`jsonc/x`, `markdown/gfm`); Oxlint has none */
+      language?: string
+      /** ESLint-only: the Plugin id whose registered parser becomes `languageOptions.parser` */
+      parser?: PluginRef
       languageOptions?: Record<string, unknown>
       linterOptions?: Record<string, unknown>
-      processor?: unknown
+      /** ESLint-only: the processor that turns a component into lintable scripts */
+      processor?: ProcessorRef
     }
     /** false = this object is ESLint-only; the object form carries Oxlint-only fields */
     oxlint?: false | {
@@ -84,7 +106,9 @@ interface Options {
   solid?: boolean
   angular?: boolean
   nextjs?: boolean
-  test?: boolean
+  node?: boolean
+  /** The flag, or the Module's rule overrides; `overrides.test` reaches the same rules. */
+  test?: boolean | { overrides?: ConfigObject['rules'] }
   jsonc?: boolean
   yaml?: boolean
   toml?: boolean
@@ -93,7 +117,7 @@ interface Options {
   imports?: boolean
   unicorn?: boolean
   perfectionist?: boolean
-  pnpm?: boolean
+  pnpm?: boolean | PnpmOptions
   e18e?: boolean
   antislop?: boolean
   sonarjs?: boolean
@@ -108,16 +132,36 @@ interface Options {
   jsx?: boolean
   componentExts?: string[]
   ignores?: string[]
+  /**
+   * Whether the factory runs inside an editor integration, where autofixable rules report as
+   * warnings; detected from the environment when unset
+   */
+  isInEditor?: boolean
 
   // Project-specific extensions
-  /** Deep rule/scope merge per Module, equivalent to Upstream's overrides option */
-  overrides?: Partial<Record<ModuleId, Pick<ConfigObject, 'rules' | 'files' | 'ignores'>>>
+  /**
+   * Deep rule/scope merge, equivalent to Upstream's overrides option. A key is either a Module
+   * (every object of that Module) or one Config object name, e.g. `lumirelle/typescript/rules`
+   */
+  overrides?: Partial<Record<ModuleId | `lumirelle/${string}`, Pick<ConfigObject, 'rules' | 'files' | 'ignores'>>>
   /** ESLint-side bridge: turn off rules already handled by Oxlint */
   oxlint?: boolean | OxlintOptions
 }
+
+/** The Modules Source emits, in composition order; `src/source.ts` composes them in this order. */
+type ModuleId
+  = | 'ignores' | 'javascript' | 'typescript' | 'imports' | 'unicorn' | 'node'
+    | 'jsdoc' | 'test' | 'jsx' | 'vue' | 'nextjs' | 'react'
+    | 'solid' | 'unocss' | 'regexp' | 'perfectionist' | 'e18e' | 'antfu'
+    | 'command' | 'eslint-comments' | 'unused-imports' | 'antislop' | 'stylistic' | 'svelte'
+    | 'astro' | 'angular' | 'jsonc' | 'yaml' | 'toml' | 'markdown'
+    | 'formatters' | 'sort' | 'pnpm' | 'disables'
+
+// The Module option shapes (`FormattersOptions`, `PnpmOptions`, `StylisticOptions`,
+// `StylisticIndent`, `OxlintOptions`) are defined in `src/types.ts` next to `Options`.
 ```
 
-`pluginRef` is a branded string whose runtime value is the Plugin id:
+`pluginRef` is a branded string whose runtime value is the Plugin id; the authoritative registry, including whether each id comes from a Bundle or from the consumer, is [`packages/config/src/plugins.ts`](../../packages/config/src/plugins.ts):
 
 ```ts
 export function pluginRef(id: PluginId): PluginRef
@@ -135,11 +179,13 @@ export function pluginRef(id: PluginId): PluginRef
 8. The Bridge is computed from Source's Config objects, never by parsing Oxlint's output.
 9. A Module whose Plugin ids are `from: 'peer'` only runs when the consumer installed those packages; otherwise it fails with an error naming them.
 
-## Module coverage (initial)
+## Module coverage
+
+The Modules as implemented, with the Oxlint realization each Plugin id records. What an Emission cannot emit is not listed here but derived: the committed [`coverage.json`](../../packages/config/coverage.json) is the per-Module answer for the current Oxlint inventory.
 
 | Module | Domain | ESLint plugin source | Oxlint |
 | --- | --- | --- | --- |
-| `ignores` | — | — | `ignorePatterns` |
+| `ignores` | js | — | `ignorePatterns` |
 | `javascript` | js | core | built-in `eslint` |
 | `typescript` | js | bundle (`@typescript-eslint`) | built-in `typescript`, type-aware rules excluded |
 | `imports` | js | bundle (`eslint-plugin-import-lite`) | built-in `import` |
@@ -158,9 +204,9 @@ export function pluginRef(id: PluginId): PluginRef
 | `e18e` | js | bundle (`@e18e/eslint-plugin`) | `jsPlugins` (conformance-tested) |
 | `antfu` | js | bundle | `jsPlugins` |
 | `command` | js | bundle | `jsPlugins` |
-| `eslint-comments` | js | bundle | `jsPlugins` |
+| `eslint-comments` | js | bundle | ESLint only: blacklisted for Oxlint (`no-unlimited-disable` crashes the report shim) |
 | `unused-imports` | js | bundle | `jsPlugins` |
-| `antislop` | js | peer (`eslint-plugin-slop`, `eslint-plugin-sonarjs`) | `jsPlugins` for sonarjs; slop may be ESLint-only |
+| `antislop` | js | peer (`eslint-plugin-slop`, `eslint-plugin-sonarjs`) | `jsPlugins` for both, load-tested against Oxlint |
 | `stylistic` | js | bundle | `jsPlugins`, disabled by default |
 | `svelte` / `astro` / `angular` | svelte / astro / angular | peer | unsupported |
 | `jsonc` / `yaml` / `toml` | data | bundle | unsupported (no parser) |
@@ -176,7 +222,8 @@ export function pluginRef(id: PluginId): PluginRef
 
 1. `source(options)` -> `ConfigObject[]`
 2. Filter `domain ∈ {js, vue, svelte, astro, angular, data, markup}`
-3. Resolve each `plugins` entry through the registry: `bundle` -> Bundle object, `peer` -> consumer's copy
+3. Resolve each `plugins` entry through the registry: `bundle` -> Bundle object, `peer` -> consumer's copy;
+   resolve `tools.eslint.parser` the same way into `languageOptions.parser`
 4. `globals` -> `languageOptions.globals`
 5. Merge `tools.eslint`
 6. `new FlatConfigComposer(configs)`; when `options.oxlint` is set, append the Bridge
@@ -196,7 +243,7 @@ For every Config object, take the rules Oxlint can implement and emit `off` entr
 
 ## Decisions
 
-1. Source lives in `src/modules/<module>.ts`; `src/source.ts` only composes them. `src/globs.ts`, `src/plugins.ts` (registry), `src/adapters/{eslint,oxlint}.ts`, `src/oxlint/{inventory,rule-map,report}.ts`.
+1. Source lives in `src/modules/<module>.ts`; `src/source.ts` only composes them. `src/globs.ts`, `src/plugins.ts` (registry), `src/adapters/{eslint,oxlint}.ts`, `src/oxlint/{inventory,rule-map,report}.ts`, `src/bridge.ts`; the committed Oxlint Coverage report is [`packages/config/coverage.json`](../../packages/config/coverage.json).
 2. `jsPlugins` aliases always equal the Plugin id; a test forbids collisions with the reserved names.
 3. `domain` is required; Adapters filter on it instead of guessing from globs.
 4. v1 ports `formatters` / `sort` / `pnpm` but keeps them disabled by default; they have no Oxlint realization.

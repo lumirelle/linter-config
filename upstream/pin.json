@@ -1,0 +1,6 @@
+{
+  "package": "@antfu/eslint-config",
+  "version": "9.5.1",
+  "tag": "v9.5.1",
+  "submodule": "upstream/antfu-eslint-config"
+}

@@ -113,3 +113,15 @@ run = "nub publish --recursive --provenance"
 
 [tasks.publish-commit]
 run = "pkg-pr-new publish packages/*"
+
+[tasks."upstream:check"]
+description = 'Verify the Upstream submodule tag and the installed npm package match the pin.'
+run = 'nub scripts/upstream-check.ts'
+
+[tasks."upstream:diff"]
+description = 'Render Source and Upstream under the same options and write a reviewable report.'
+depends = "build"
+usage = '''
+arg "[rest]" var=#true help="Arguments for the diff CLI, e.g. --out path/to/report.md"
+'''
+run = 'nub scripts/upstream-diff.ts {{ usage.rest | join(sep=" ") if usage.rest else "" }}'

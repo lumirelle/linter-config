@@ -40,7 +40,7 @@ import { isPackageInstalled } from './packages'
 import { enabledRuleKeys } from './rules'
 
 /** Config object names are `lumirelle/<tail>`; anything else is a Module id. */
-const CONFIG_NAME_PREFIX = 'lumirelle/'
+export const CONFIG_NAME_PREFIX = 'lumirelle/'
 
 type Overrides = NonNullable<Options['overrides']>
 type Override = NonNullable<Overrides[keyof Overrides]>

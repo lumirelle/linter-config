@@ -3,8 +3,8 @@ import type { FlatConfigItem } from 'oxlint-flat-config'
 import type { RuleMapping } from '../oxlint/rule-map'
 import type { ConfigObject, Options, PluginId } from '../types'
 import { composer } from '@oxlint-flat-config/composer'
-import { isOxlintDomain } from '../oxlint/domains'
-import { oxlintRootOptions } from '../oxlint/options'
+import { isOxlintConfig } from '../oxlint/domains'
+import { isTypeAware, oxlintRootOptions } from '../oxlint/options'
 import { mapRules } from '../oxlint/rule-map'
 import { PLUGIN_IDS, pluginDefinition } from '../plugins'
 import { source } from '../source'
@@ -23,11 +23,11 @@ const OXLINT_JSPLUGINS_NAME = 'lumirelle/oxlint/jsPlugins'
  */
 export function composeOxlint(options: Options): Composer {
   const rootOptions = oxlintRootOptions(options.oxlint)
-  const typeAware = rootOptions?.typeAware === true
+  const typeAware = isTypeAware(options)
 
   const declared = new Set<PluginId>()
   const items: FlatConfigItem[] = source(options)
-    .filter(config => isOxlintDomain(config.domain) && config.tools?.oxlint !== false)
+    .filter(config => isOxlintConfig(config))
     .map((config) => {
       const mapping = mapRules(config.rules, { typeAware })
       for (const id of mapping.jsPlugins) {

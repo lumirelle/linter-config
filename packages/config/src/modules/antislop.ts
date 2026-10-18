@@ -1,5 +1,6 @@
 import type { ConfigObject } from '../types'
 import { GLOB_ALL_SRC, GLOB_GRAPHQL, GLOB_JSONC, GLOB_MARKDOWN_CODE, GLOB_SRC, GLOB_TOML } from '../globs'
+import { requirePeerPackages } from '../packages'
 import { pluginRef } from '../plugins'
 
 /**
@@ -15,6 +16,8 @@ import { pluginRef } from '../plugins'
  * @see https://github.com/SonarSource/SonarJS
  */
 export function antislop(): ConfigObject[] {
+  requirePeerPackages('antislop', ['slop', 'sonar'])
+
   return [
     {
       name: 'lumirelle/antislop/setup',

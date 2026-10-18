@@ -20,3 +20,11 @@ export function oxlintRootOptions(option: Options['oxlint']): OxlintOptions | un
   }
   return Object.keys(root).length > 0 ? root : undefined
 }
+
+/**
+ * Whether Oxlint runs in its type-aware mode, which decides whether a type-aware rule is part of
+ * the Oxlint Emission at all — and therefore whether the Bridge may turn it off in ESLint.
+ */
+export function isTypeAware(options: Options): boolean {
+  return oxlintRootOptions(options.oxlint)?.typeAware === true
+}

@@ -4,7 +4,7 @@ import { pluginRef } from '../plugins'
 import { rulesEnabledBy } from '../rules'
 
 /** The rules `@vitest/eslint-plugin` contributes, which is the `test` rule prefix. */
-const HOUSE_RULES: NonNullable<ConfigObject['rules']> = {
+const UPSTREAM_RULES: NonNullable<ConfigObject['rules']> = {
   'test/consistent-test-it': ['error', { fn: 'it', withinDescribe: 'it' }],
   'test/no-identical-title': 'error',
   'test/no-import-node-test': 'error',
@@ -62,7 +62,7 @@ export function test(options: TestOptions = {}): ConfigObject[] {
       domain: 'js',
       files,
       rules: {
-        ...HOUSE_RULES,
+        ...UPSTREAM_RULES,
         'test/no-only-tests': isInEditor ? 'warn' : 'error',
         ...rulesEnabledBy(DISABLED_RULES, enabled),
         ...overrides,

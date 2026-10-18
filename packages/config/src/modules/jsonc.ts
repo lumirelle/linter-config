@@ -3,7 +3,7 @@ import { GLOB_JSON, GLOB_JSON5, GLOB_JSONC } from '../globs'
 import { pluginRef } from '../plugins'
 
 /** Upstream's unconditional JSON correctness rules; none of them has an Oxlint counterpart. */
-const HOUSE_RULES: ConfigObject['rules'] = {
+const UPSTREAM_RULES: ConfigObject['rules'] = {
   'jsonc/no-bigint-literals': 'error',
   'jsonc/no-binary-expression': 'error',
   'jsonc/no-binary-numeric-literals': 'error',
@@ -77,7 +77,7 @@ export function jsonc(options: {
         eslint: { language: 'jsonc/x' },
       },
       rules: {
-        ...HOUSE_RULES,
+        ...UPSTREAM_RULES,
         ...stylistic ? STYLISTIC_RULES : {},
         ...overrides,
       },

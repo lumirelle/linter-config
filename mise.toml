@@ -29,7 +29,7 @@ KNIP_DISABLE_RAW_TRANSFER = 1
 deps = ["**/package.json", "nub.lock"]
 src = ["packages/**/src",]
 check = ["*.js", "*.mjs", "*.cjs", "*.jsx", "*.ts", "*.mts", "*.cts", "*.tsx", "*.vue", "*.json", "*.jsonc", "*.yaml", "*.yml", "*.toml", "*.md", "*.mdc", "*.mdx", "*.lua", "hk.pkl"]
-test = ["package/**/test", "packages/**/dist", "test/**", "scripts/**", "vitest.config.ts"]
+test = ["packages/**/test", "packages/**/dist", "test/**", "scripts/**", "vitest.config.ts"]
 
 [tasks.dev]
 description = "Run the development build with hot reloading."

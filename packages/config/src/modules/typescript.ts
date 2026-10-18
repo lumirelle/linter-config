@@ -1,6 +1,7 @@
 import type { ConfigObject, Options, RuleEntry, RuleKey } from '../types'
 import process from 'node:process'
 import { GLOB_ASTRO_TS, GLOB_MARKDOWN, GLOB_TS, GLOB_TSX } from '../globs'
+import { requirePeerPackages } from '../packages'
 import { pluginRef } from '../plugins'
 
 /**
@@ -180,6 +181,10 @@ export function typescript(options: Pick<Options, 'componentExts' | 'type' | 'ty
         rules: TYPE_AWARE_RULES,
       }]
     : []
+  if (erasableOnly) {
+    requirePeerPackages('typescript', ['erasable-syntax-only'])
+  }
+
   const erasableSyntaxOnly: ConfigObject[] = erasableOnly
     ? [{
         name: 'lumirelle/typescript/erasable-syntax-only',

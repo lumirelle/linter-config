@@ -40,3 +40,20 @@ export async function oxlintObjectWith(ruleKey: string, options: Options = {}): 
 export function rulesOf(config: { rules?: Record<string, unknown> }): Record<string, unknown> {
   return config.rules ?? {}
 }
+
+/**
+ * The `jsPlugins` entries an Oxlint Emission declares, whichever override carries them.
+ *
+ * The Emission declares them once, in one unscoped override, so no object that uses an alias
+ * carries a declaration of its own; read them from here rather than from the object under test.
+ */
+export function jsPluginDeclarations(config: OxlintConfig): Array<{ name: string, specifier: string }> {
+  return (config.overrides ?? []).flatMap(override => (override.jsPlugins ?? []).map(entry =>
+    typeof entry === 'string' ? { name: entry, specifier: entry } : entry,
+  ))
+}
+
+/** The same declarations, for an Emission built from `options`. */
+export async function jsPluginsOf(options: Options = {}): Promise<Array<{ name: string, specifier: string }>> {
+  return jsPluginDeclarations(await oxlint(houseOptions(options)))
+}

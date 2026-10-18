@@ -67,6 +67,7 @@
     "oxlint-flat-config": "catalog:lint"
   },
   "devDependencies": {
+    "@eslint-community/eslint-plugin-eslint-comments": "catalog:bundle",
     "@lumirelle/linter-plugins-eslint": "workspace:*",
     "@lumirelle/linter-plugins-oxlint": "workspace:*",
     "@lumirelle/tsconfig": "catalog:types",

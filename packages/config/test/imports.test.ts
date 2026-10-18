@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { coverageReport } from '../src/oxlint/report'
-import { eslintObject, oxlintObjectWith, rulesOf } from './helpers/emission'
+import { eslintObject, jsPluginsOf, oxlintObjectWith, rulesOf } from './helpers/emission'
 
 describe('eslint() imports module', () => {
   it('emits one global rules object declaring both house plugins', async () => {
@@ -49,7 +49,7 @@ describe('oxlint() imports module', () => {
     const override = await oxlintObjectWith('import/first')
 
     expect(rulesOf(override)['antfu/import-dedupe']).toBe('error')
-    expect(override.jsPlugins).toEqual([{ name: 'antfu', specifier: 'eslint-plugin-antfu' }])
+    expect(await jsPluginsOf()).toContainEqual({ name: 'antfu', specifier: 'eslint-plugin-antfu' })
   })
 
   it('records the one rule whose options Oxlint rejects, instead of sending a broken config', () => {

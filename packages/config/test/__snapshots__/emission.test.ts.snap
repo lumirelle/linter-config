@@ -6345,6 +6345,22 @@ exports[`oxlint() emission > emits the house config 1`] = `
       "files": [
         "**/*",
       ],
+      "jsPlugins": [
+        {
+          "name": "antfu",
+          "specifier": "eslint-plugin-antfu",
+        },
+        {
+          "name": "unused-imports",
+          "specifier": "eslint-plugin-unused-imports",
+        },
+      ],
+    },
+    {
+      "excludeFiles": [],
+      "files": [
+        "**/*",
+      ],
       "globals": {
         "AI": "writable",
         "AICreateMonitor": "writable",
@@ -7630,16 +7646,6 @@ exports[`oxlint() emission > emits the house config 1`] = `
       "files": [
         "**/*",
       ],
-      "jsPlugins": [
-        {
-          "name": "antfu",
-          "specifier": "eslint-plugin-antfu",
-        },
-        {
-          "name": "unused-imports",
-          "specifier": "eslint-plugin-unused-imports",
-        },
-      ],
       "rules": {
         "accessor-pairs": [
           "error",
@@ -8057,12 +8063,6 @@ exports[`oxlint() emission > emits the house config 1`] = `
       "files": [
         "**/*",
       ],
-      "jsPlugins": [
-        {
-          "name": "antfu",
-          "specifier": "eslint-plugin-antfu",
-        },
-      ],
       "rules": {
         "antfu/import-dedupe": "error",
         "antfu/no-import-dist": "error",
@@ -8171,12 +8171,6 @@ exports[`oxlint() emission > emits the house config 1`] = `
         "**/*.test.mts",
         "**/*.test.mtsx",
       ],
-      "jsPlugins": [
-        {
-          "name": "antfu",
-          "specifier": "eslint-plugin-antfu",
-        },
-      ],
       "rules": {
         "antfu/no-top-level-await": "off",
         "no-unused-expressions": "off",
@@ -8208,12 +8202,6 @@ exports[`oxlint() emission > emits the house config 1`] = `
         "**/scripts/**/*.ctsx",
         "**/scripts/**/*.mts",
         "**/scripts/**/*.mtsx",
-      ],
-      "jsPlugins": [
-        {
-          "name": "antfu",
-          "specifier": "eslint-plugin-antfu",
-        },
       ],
       "rules": {
         "antfu/no-top-level-await": "off",
@@ -8248,12 +8236,6 @@ exports[`oxlint() emission > emits the house config 1`] = `
         "**/cli.mts",
         "**/cli.mtsx",
       ],
-      "jsPlugins": [
-        {
-          "name": "antfu",
-          "specifier": "eslint-plugin-antfu",
-        },
-      ],
       "rules": {
         "antfu/no-top-level-await": "off",
         "no-console": "off",
@@ -8276,12 +8258,6 @@ exports[`oxlint() emission > emits the house config 1`] = `
         "**/bin.mts",
         "**/bin.mtsx",
       ],
-      "jsPlugins": [
-        {
-          "name": "antfu",
-          "specifier": "eslint-plugin-antfu",
-        },
-      ],
       "rules": {
         "antfu/no-import-dist": "off",
         "antfu/no-import-node-modules-by-path": "off",
@@ -8293,12 +8269,6 @@ exports[`oxlint() emission > emits the house config 1`] = `
         "**/*.d.ts",
         "**/*.d.cts",
         "**/*.d.mts",
-      ],
-      "jsPlugins": [
-        {
-          "name": "unused-imports",
-          "specifier": "eslint-plugin-unused-imports",
-        },
       ],
       "rules": {
         "unused-imports/no-unused-vars": "off",
@@ -8341,12 +8311,6 @@ exports[`oxlint() emission > emits the house config 1`] = `
         "**/*.config.*.ctsx",
         "**/*.config.*.mts",
         "**/*.config.*.mtsx",
-      ],
-      "jsPlugins": [
-        {
-          "name": "antfu",
-          "specifier": "eslint-plugin-antfu",
-        },
       ],
       "rules": {
         "antfu/no-top-level-await": "off",
@@ -8427,6 +8391,22 @@ exports[`oxlint() emission > emits the root options a type-aware consumer asks f
       "files": [
         "**/*",
       ],
+      "jsPlugins": [
+        {
+          "name": "antfu",
+          "specifier": "eslint-plugin-antfu",
+        },
+        {
+          "name": "unused-imports",
+          "specifier": "eslint-plugin-unused-imports",
+        },
+      ],
+    },
+    {
+      "excludeFiles": [],
+      "files": [
+        "**/*",
+      ],
       "globals": {
         "AI": "writable",
         "AICreateMonitor": "writable",
@@ -9712,16 +9692,6 @@ exports[`oxlint() emission > emits the root options a type-aware consumer asks f
       "files": [
         "**/*",
       ],
-      "jsPlugins": [
-        {
-          "name": "antfu",
-          "specifier": "eslint-plugin-antfu",
-        },
-        {
-          "name": "unused-imports",
-          "specifier": "eslint-plugin-unused-imports",
-        },
-      ],
       "rules": {
         "accessor-pairs": [
           "error",
@@ -10138,12 +10108,6 @@ exports[`oxlint() emission > emits the root options a type-aware consumer asks f
       "excludeFiles": [],
       "files": [
         "**/*",
-      ],
-      "jsPlugins": [
-        {
-          "name": "antfu",
-          "specifier": "eslint-plugin-antfu",
-        },
       ],
       "rules": {
         "antfu/import-dedupe": "error",
@@ -10253,12 +10217,6 @@ exports[`oxlint() emission > emits the root options a type-aware consumer asks f
         "**/*.test.mts",
         "**/*.test.mtsx",
       ],
-      "jsPlugins": [
-        {
-          "name": "antfu",
-          "specifier": "eslint-plugin-antfu",
-        },
-      ],
       "rules": {
         "antfu/no-top-level-await": "off",
         "no-unused-expressions": "off",
@@ -10290,12 +10248,6 @@ exports[`oxlint() emission > emits the root options a type-aware consumer asks f
         "**/scripts/**/*.ctsx",
         "**/scripts/**/*.mts",
         "**/scripts/**/*.mtsx",
-      ],
-      "jsPlugins": [
-        {
-          "name": "antfu",
-          "specifier": "eslint-plugin-antfu",
-        },
       ],
       "rules": {
         "antfu/no-top-level-await": "off",
@@ -10330,12 +10282,6 @@ exports[`oxlint() emission > emits the root options a type-aware consumer asks f
         "**/cli.mts",
         "**/cli.mtsx",
       ],
-      "jsPlugins": [
-        {
-          "name": "antfu",
-          "specifier": "eslint-plugin-antfu",
-        },
-      ],
       "rules": {
         "antfu/no-top-level-await": "off",
         "no-console": "off",
@@ -10358,12 +10304,6 @@ exports[`oxlint() emission > emits the root options a type-aware consumer asks f
         "**/bin.mts",
         "**/bin.mtsx",
       ],
-      "jsPlugins": [
-        {
-          "name": "antfu",
-          "specifier": "eslint-plugin-antfu",
-        },
-      ],
       "rules": {
         "antfu/no-import-dist": "off",
         "antfu/no-import-node-modules-by-path": "off",
@@ -10375,12 +10315,6 @@ exports[`oxlint() emission > emits the root options a type-aware consumer asks f
         "**/*.d.ts",
         "**/*.d.cts",
         "**/*.d.mts",
-      ],
-      "jsPlugins": [
-        {
-          "name": "unused-imports",
-          "specifier": "eslint-plugin-unused-imports",
-        },
       ],
       "rules": {
         "unused-imports/no-unused-vars": "off",
@@ -10423,12 +10357,6 @@ exports[`oxlint() emission > emits the root options a type-aware consumer asks f
         "**/*.config.*.ctsx",
         "**/*.config.*.mts",
         "**/*.config.*.mtsx",
-      ],
-      "jsPlugins": [
-        {
-          "name": "antfu",
-          "specifier": "eslint-plugin-antfu",
-        },
       ],
       "rules": {
         "antfu/no-top-level-await": "off",
@@ -10500,6 +10428,26 @@ exports[`oxlint() emission > emits the stylistic config when the caller turns it
     "/**/.*/skills",
   ],
   "overrides": [
+    {
+      "excludeFiles": [],
+      "files": [
+        "**/*",
+      ],
+      "jsPlugins": [
+        {
+          "name": "antfu",
+          "specifier": "eslint-plugin-antfu",
+        },
+        {
+          "name": "style",
+          "specifier": "@stylistic/eslint-plugin",
+        },
+        {
+          "name": "unused-imports",
+          "specifier": "eslint-plugin-unused-imports",
+        },
+      ],
+    },
     {
       "excludeFiles": [],
       "files": [
@@ -11790,16 +11738,6 @@ exports[`oxlint() emission > emits the stylistic config when the caller turns it
       "files": [
         "**/*",
       ],
-      "jsPlugins": [
-        {
-          "name": "antfu",
-          "specifier": "eslint-plugin-antfu",
-        },
-        {
-          "name": "unused-imports",
-          "specifier": "eslint-plugin-unused-imports",
-        },
-      ],
       "rules": {
         "accessor-pairs": [
           "error",
@@ -12217,12 +12155,6 @@ exports[`oxlint() emission > emits the stylistic config when the caller turns it
       "files": [
         "**/*",
       ],
-      "jsPlugins": [
-        {
-          "name": "antfu",
-          "specifier": "eslint-plugin-antfu",
-        },
-      ],
       "rules": {
         "antfu/import-dedupe": "error",
         "antfu/no-import-dist": "error",
@@ -12277,16 +12209,6 @@ exports[`oxlint() emission > emits the stylistic config when the caller turns it
       "excludeFiles": [],
       "files": [
         "**/*",
-      ],
-      "jsPlugins": [
-        {
-          "name": "style",
-          "specifier": "@stylistic/eslint-plugin",
-        },
-        {
-          "name": "antfu",
-          "specifier": "eslint-plugin-antfu",
-        },
       ],
       "rules": {
         "antfu/consistent-chaining": "error",
@@ -12733,12 +12655,6 @@ exports[`oxlint() emission > emits the stylistic config when the caller turns it
         "**/*.test.mts",
         "**/*.test.mtsx",
       ],
-      "jsPlugins": [
-        {
-          "name": "antfu",
-          "specifier": "eslint-plugin-antfu",
-        },
-      ],
       "rules": {
         "antfu/no-top-level-await": "off",
         "no-unused-expressions": "off",
@@ -12770,12 +12686,6 @@ exports[`oxlint() emission > emits the stylistic config when the caller turns it
         "**/scripts/**/*.ctsx",
         "**/scripts/**/*.mts",
         "**/scripts/**/*.mtsx",
-      ],
-      "jsPlugins": [
-        {
-          "name": "antfu",
-          "specifier": "eslint-plugin-antfu",
-        },
       ],
       "rules": {
         "antfu/no-top-level-await": "off",
@@ -12810,12 +12720,6 @@ exports[`oxlint() emission > emits the stylistic config when the caller turns it
         "**/cli.mts",
         "**/cli.mtsx",
       ],
-      "jsPlugins": [
-        {
-          "name": "antfu",
-          "specifier": "eslint-plugin-antfu",
-        },
-      ],
       "rules": {
         "antfu/no-top-level-await": "off",
         "no-console": "off",
@@ -12838,12 +12742,6 @@ exports[`oxlint() emission > emits the stylistic config when the caller turns it
         "**/bin.mts",
         "**/bin.mtsx",
       ],
-      "jsPlugins": [
-        {
-          "name": "antfu",
-          "specifier": "eslint-plugin-antfu",
-        },
-      ],
       "rules": {
         "antfu/no-import-dist": "off",
         "antfu/no-import-node-modules-by-path": "off",
@@ -12855,12 +12753,6 @@ exports[`oxlint() emission > emits the stylistic config when the caller turns it
         "**/*.d.ts",
         "**/*.d.cts",
         "**/*.d.mts",
-      ],
-      "jsPlugins": [
-        {
-          "name": "unused-imports",
-          "specifier": "eslint-plugin-unused-imports",
-        },
       ],
       "rules": {
         "unused-imports/no-unused-vars": "off",
@@ -12903,12 +12795,6 @@ exports[`oxlint() emission > emits the stylistic config when the caller turns it
         "**/*.config.*.ctsx",
         "**/*.config.*.mts",
         "**/*.config.*.mtsx",
-      ],
-      "jsPlugins": [
-        {
-          "name": "antfu",
-          "specifier": "eslint-plugin-antfu",
-        },
       ],
       "rules": {
         "antfu/no-top-level-await": "off",

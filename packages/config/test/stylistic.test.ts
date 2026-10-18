@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { eslint } from '../src/eslint'
 import { oxlint } from '../src/oxlint'
-import { eslintObject, oxlintObjectWith, rulesOf } from './helpers/emission'
+import { eslintObject, jsPluginsOf, oxlintObjectWith, rulesOf } from './helpers/emission'
 
 /** The house Emission: `.gitignore` reading and editor detection pinned, so nothing reads the cwd. */
 const HOUSE = { gitignore: false, isInEditor: false } as const
@@ -132,7 +132,7 @@ describe('oxlint() stylistic module', () => {
     expect(rules['style/semi']).toEqual(['error', 'never'])
     expect(rules['style/quotes']).toEqual(['error', 'single', { allowTemplateLiterals: 'always', avoidEscape: false }])
     expect(rules['antfu/consistent-chaining']).toBe('error')
-    expect(override.jsPlugins).toEqual(expect.arrayContaining([
+    expect(await jsPluginsOf({ stylistic: true })).toEqual(expect.arrayContaining([
       { name: 'style', specifier: STYLE_PLUGIN },
       { name: 'antfu', specifier: 'eslint-plugin-antfu' },
     ]))
@@ -153,7 +153,7 @@ describe('oxlint() stylistic module', () => {
   it('emits every style rule it carries under the declared alias, so Oxlint can resolve them', async () => {
     const override = await oxlintObjectWith('style/semi', { stylistic: true })
     const keys = Object.keys(override.rules ?? {}).filter(key => key.startsWith('style/'))
-    const aliases = (override.jsPlugins ?? []).map(entry => (typeof entry === 'string' ? entry : entry.name))
+    const aliases = (await jsPluginsOf({ stylistic: true })).map(entry => entry.name)
 
     expect(aliases).toContain('style')
     expect(keys.every(key => key.split('/')[0] === 'style')).toBe(true)

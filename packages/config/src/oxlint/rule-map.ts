@@ -5,7 +5,9 @@ import { findOxlintRule } from './inventory'
 /**
  * Why the Oxlint Emission cannot implement a rule.
  *
- * - `unknown-rule`: Oxlint has a scope for the Plugin id, but no rule of that name.
+ * - `unknown-rule`: Oxlint has no rule of that name in the scope the Emission emits it through;
+ *   for a core rule that is the unprefixed `eslint` scope, so `dot-notation` lands here even
+ *   though Oxlint spells it `typescript/dot-notation` in its type-aware mode.
  * - `type-aware`: the rule only runs in Oxlint's type-aware mode, which the caller did not turn on.
  * - `no-oxlint-realization`: the Plugin id has neither a built-in scope nor a `jsPlugins` entry.
  * - `eslint-only-domain`: the rule belongs to a Domain Oxlint cannot read (no parser, no processor).

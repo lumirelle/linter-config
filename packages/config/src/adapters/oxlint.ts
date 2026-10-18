@@ -91,9 +91,12 @@ function jsPluginsDeclaration(ids: ReadonlySet<PluginId>): FlatConfigItem | unde
     : undefined
 }
 
-/** ESLint declares a global read-only or writable with a boolean; Oxlint spells the same thing out. */
+/**
+ * ESLint declares a global read-only or writable with a boolean (`true` = writable, the `globals`
+ * package's convention); Oxlint spells the same thing out.
+ */
 function mapGlobals(globals: Record<string, boolean>): Record<string, 'readonly' | 'writable'> {
   return Object.fromEntries(
-    Object.entries(globals).map(([name, readonly]) => [name, readonly ? 'readonly' : 'writable']),
+    Object.entries(globals).map(([name, writable]) => [name, writable ? 'writable' : 'readonly']),
   )
 }

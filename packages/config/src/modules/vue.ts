@@ -291,22 +291,25 @@ const A11Y_RULES: ConfigObject['rules'] = {
 /**
  * The auto-import globals the Vue plugin needs to see, so a template or script that uses the
  * compiler macros and the reactivity helpers is not reported as an undefined global.
+ *
+ * Upstream spells every one of them `'readonly'`: they are compiler output, not variables a file
+ * may assign to, so the boolean convention says `false`.
  */
 const VUE_GLOBALS: Record<string, boolean> = {
-  computed: true,
-  defineEmits: true,
-  defineExpose: true,
-  defineProps: true,
-  onMounted: true,
-  onUnmounted: true,
-  reactive: true,
-  ref: true,
-  shallowReactive: true,
-  shallowRef: true,
-  toRef: true,
-  toRefs: true,
-  watch: true,
-  watchEffect: true,
+  computed: false,
+  defineEmits: false,
+  defineExpose: false,
+  defineProps: false,
+  onMounted: false,
+  onUnmounted: false,
+  reactive: false,
+  ref: false,
+  shallowReactive: false,
+  shallowRef: false,
+  toRef: false,
+  toRefs: false,
+  watch: false,
+  watchEffect: false,
 }
 
 /** The block selection Upstream always adds: a `<style>` block becomes lintable CSS-ish text. */

@@ -1300,6 +1300,592 @@
         "reason": "type-aware"
       }
     ],
+    "vue": [
+      {
+        "key": "node/prefer-global/process",
+        "reason": "unknown-rule"
+      },
+      {
+        "key": "vue-a11y/alt-text",
+        "reason": "no-oxlint-realization"
+      },
+      {
+        "key": "vue-a11y/anchor-has-content",
+        "reason": "no-oxlint-realization"
+      },
+      {
+        "key": "vue-a11y/aria-props",
+        "reason": "no-oxlint-realization"
+      },
+      {
+        "key": "vue-a11y/aria-role",
+        "reason": "no-oxlint-realization"
+      },
+      {
+        "key": "vue-a11y/aria-unsupported-elements",
+        "reason": "no-oxlint-realization"
+      },
+      {
+        "key": "vue-a11y/click-events-have-key-events",
+        "reason": "no-oxlint-realization"
+      },
+      {
+        "key": "vue-a11y/form-control-has-label",
+        "reason": "no-oxlint-realization"
+      },
+      {
+        "key": "vue-a11y/heading-has-content",
+        "reason": "no-oxlint-realization"
+      },
+      {
+        "key": "vue-a11y/iframe-has-title",
+        "reason": "no-oxlint-realization"
+      },
+      {
+        "key": "vue-a11y/interactive-supports-focus",
+        "reason": "no-oxlint-realization"
+      },
+      {
+        "key": "vue-a11y/label-has-for",
+        "reason": "no-oxlint-realization"
+      },
+      {
+        "key": "vue-a11y/media-has-caption",
+        "reason": "no-oxlint-realization"
+      },
+      {
+        "key": "vue-a11y/mouse-events-have-key-events",
+        "reason": "no-oxlint-realization"
+      },
+      {
+        "key": "vue-a11y/no-access-key",
+        "reason": "no-oxlint-realization"
+      },
+      {
+        "key": "vue-a11y/no-aria-hidden-on-focusable",
+        "reason": "no-oxlint-realization"
+      },
+      {
+        "key": "vue-a11y/no-autofocus",
+        "reason": "no-oxlint-realization"
+      },
+      {
+        "key": "vue-a11y/no-distracting-elements",
+        "reason": "no-oxlint-realization"
+      },
+      {
+        "key": "vue-a11y/no-redundant-roles",
+        "reason": "no-oxlint-realization"
+      },
+      {
+        "key": "vue-a11y/no-role-presentation-on-focusable",
+        "reason": "no-oxlint-realization"
+      },
+      {
+        "key": "vue-a11y/no-static-element-interactions",
+        "reason": "no-oxlint-realization"
+      },
+      {
+        "key": "vue-a11y/role-has-required-aria-props",
+        "reason": "no-oxlint-realization"
+      },
+      {
+        "key": "vue-a11y/tabindex-no-positive",
+        "reason": "no-oxlint-realization"
+      },
+      {
+        "key": "vue/array-bracket-spacing",
+        "reason": "unknown-rule"
+      },
+      {
+        "key": "vue/arrow-spacing",
+        "reason": "unknown-rule"
+      },
+      {
+        "key": "vue/attribute-hyphenation",
+        "reason": "unknown-rule"
+      },
+      {
+        "key": "vue/attributes-order",
+        "reason": "unknown-rule"
+      },
+      {
+        "key": "vue/block-order",
+        "reason": "unknown-rule"
+      },
+      {
+        "key": "vue/block-spacing",
+        "reason": "unknown-rule"
+      },
+      {
+        "key": "vue/block-tag-newline",
+        "reason": "unknown-rule"
+      },
+      {
+        "key": "vue/brace-style",
+        "reason": "unknown-rule"
+      },
+      {
+        "key": "vue/comma-dangle",
+        "reason": "unknown-rule"
+      },
+      {
+        "key": "vue/comma-spacing",
+        "reason": "unknown-rule"
+      },
+      {
+        "key": "vue/comma-style",
+        "reason": "unknown-rule"
+      },
+      {
+        "key": "vue/comment-directive",
+        "reason": "unknown-rule"
+      },
+      {
+        "key": "vue/component-name-in-template-casing",
+        "reason": "unknown-rule"
+      },
+      {
+        "key": "vue/component-options-name-casing",
+        "reason": "unknown-rule"
+      },
+      {
+        "key": "vue/component-tags-order",
+        "reason": "unknown-rule"
+      },
+      {
+        "key": "vue/custom-event-name-casing",
+        "reason": "unknown-rule"
+      },
+      {
+        "key": "vue/define-macros-order",
+        "reason": "unknown-rule"
+      },
+      {
+        "key": "vue/dot-location",
+        "reason": "unknown-rule"
+      },
+      {
+        "key": "vue/dot-notation",
+        "reason": "unknown-rule"
+      },
+      {
+        "key": "vue/eqeqeq",
+        "reason": "unknown-rule"
+      },
+      {
+        "key": "vue/first-attribute-linebreak",
+        "reason": "unknown-rule"
+      },
+      {
+        "key": "vue/html-closing-bracket-newline",
+        "reason": "unknown-rule"
+      },
+      {
+        "key": "vue/html-closing-bracket-spacing",
+        "reason": "unknown-rule"
+      },
+      {
+        "key": "vue/html-comment-content-spacing",
+        "reason": "unknown-rule"
+      },
+      {
+        "key": "vue/html-end-tags",
+        "reason": "unknown-rule"
+      },
+      {
+        "key": "vue/html-indent",
+        "reason": "unknown-rule"
+      },
+      {
+        "key": "vue/html-quotes",
+        "reason": "unknown-rule"
+      },
+      {
+        "key": "vue/html-self-closing",
+        "reason": "unknown-rule"
+      },
+      {
+        "key": "vue/jsx-uses-vars",
+        "reason": "unknown-rule"
+      },
+      {
+        "key": "vue/key-spacing",
+        "reason": "unknown-rule"
+      },
+      {
+        "key": "vue/keyword-spacing",
+        "reason": "unknown-rule"
+      },
+      {
+        "key": "vue/max-attributes-per-line",
+        "reason": "unknown-rule"
+      },
+      {
+        "key": "vue/multi-word-component-names",
+        "reason": "unknown-rule"
+      },
+      {
+        "key": "vue/multiline-html-element-content-newline",
+        "reason": "unknown-rule"
+      },
+      {
+        "key": "vue/mustache-interpolation-spacing",
+        "reason": "unknown-rule"
+      },
+      {
+        "key": "vue/no-child-content",
+        "reason": "unknown-rule"
+      },
+      {
+        "key": "vue/no-deprecated-dollar-listeners-api",
+        "reason": "unknown-rule"
+      },
+      {
+        "key": "vue/no-deprecated-dollar-scopedslots-api",
+        "reason": "unknown-rule"
+      },
+      {
+        "key": "vue/no-deprecated-filter",
+        "reason": "unknown-rule"
+      },
+      {
+        "key": "vue/no-deprecated-functional-template",
+        "reason": "unknown-rule"
+      },
+      {
+        "key": "vue/no-deprecated-html-element-is",
+        "reason": "unknown-rule"
+      },
+      {
+        "key": "vue/no-deprecated-inline-template",
+        "reason": "unknown-rule"
+      },
+      {
+        "key": "vue/no-deprecated-router-link-tag-prop",
+        "reason": "unknown-rule"
+      },
+      {
+        "key": "vue/no-deprecated-scope-attribute",
+        "reason": "unknown-rule"
+      },
+      {
+        "key": "vue/no-deprecated-slot-attribute",
+        "reason": "unknown-rule"
+      },
+      {
+        "key": "vue/no-deprecated-slot-scope-attribute",
+        "reason": "unknown-rule"
+      },
+      {
+        "key": "vue/no-deprecated-v-bind-sync",
+        "reason": "unknown-rule"
+      },
+      {
+        "key": "vue/no-deprecated-v-is",
+        "reason": "unknown-rule"
+      },
+      {
+        "key": "vue/no-deprecated-v-on-native-modifier",
+        "reason": "unknown-rule"
+      },
+      {
+        "key": "vue/no-deprecated-v-on-number-modifiers",
+        "reason": "unknown-rule"
+      },
+      {
+        "key": "vue/no-dupe-v-else-if",
+        "reason": "unknown-rule"
+      },
+      {
+        "key": "vue/no-duplicate-attributes",
+        "reason": "unknown-rule"
+      },
+      {
+        "key": "vue/no-empty-pattern",
+        "reason": "unknown-rule"
+      },
+      {
+        "key": "vue/no-irregular-whitespace",
+        "reason": "unknown-rule"
+      },
+      {
+        "key": "vue/no-lone-template",
+        "reason": "unknown-rule"
+      },
+      {
+        "key": "vue/no-loss-of-precision",
+        "reason": "unknown-rule"
+      },
+      {
+        "key": "vue/no-multi-spaces",
+        "reason": "unknown-rule"
+      },
+      {
+        "key": "vue/no-mutating-props",
+        "reason": "unknown-rule"
+      },
+      {
+        "key": "vue/no-parsing-error",
+        "reason": "unknown-rule"
+      },
+      {
+        "key": "vue/no-ref-as-operand",
+        "reason": "unknown-rule"
+      },
+      {
+        "key": "vue/no-restricted-syntax",
+        "reason": "unknown-rule"
+      },
+      {
+        "key": "vue/no-restricted-v-bind",
+        "reason": "unknown-rule"
+      },
+      {
+        "key": "vue/no-setup-props-reactivity-loss",
+        "reason": "unknown-rule"
+      },
+      {
+        "key": "vue/no-spaces-around-equal-signs-in-attribute",
+        "reason": "unknown-rule"
+      },
+      {
+        "key": "vue/no-sparse-arrays",
+        "reason": "unknown-rule"
+      },
+      {
+        "key": "vue/no-template-key",
+        "reason": "unknown-rule"
+      },
+      {
+        "key": "vue/no-template-shadow",
+        "reason": "unknown-rule"
+      },
+      {
+        "key": "vue/no-textarea-mustache",
+        "reason": "unknown-rule"
+      },
+      {
+        "key": "vue/no-unused-components",
+        "reason": "unknown-rule"
+      },
+      {
+        "key": "vue/no-unused-refs",
+        "reason": "unknown-rule"
+      },
+      {
+        "key": "vue/no-unused-vars",
+        "reason": "unknown-rule"
+      },
+      {
+        "key": "vue/no-use-computed-property-like-method",
+        "reason": "unknown-rule"
+      },
+      {
+        "key": "vue/no-use-v-if-with-v-for",
+        "reason": "unknown-rule"
+      },
+      {
+        "key": "vue/no-useless-template-attributes",
+        "reason": "unknown-rule"
+      },
+      {
+        "key": "vue/no-useless-v-bind",
+        "reason": "unknown-rule"
+      },
+      {
+        "key": "vue/no-v-for-template-key-on-child",
+        "reason": "unknown-rule"
+      },
+      {
+        "key": "vue/no-v-html",
+        "reason": "unknown-rule"
+      },
+      {
+        "key": "vue/no-v-text-v-html-on-component",
+        "reason": "unknown-rule"
+      },
+      {
+        "key": "vue/object-curly-newline",
+        "reason": "unknown-rule"
+      },
+      {
+        "key": "vue/object-curly-spacing",
+        "reason": "unknown-rule"
+      },
+      {
+        "key": "vue/object-property-newline",
+        "reason": "unknown-rule"
+      },
+      {
+        "key": "vue/object-shorthand",
+        "reason": "unknown-rule"
+      },
+      {
+        "key": "vue/one-component-per-file",
+        "reason": "unknown-rule"
+      },
+      {
+        "key": "vue/operator-linebreak",
+        "reason": "unknown-rule"
+      },
+      {
+        "key": "vue/order-in-components",
+        "reason": "unknown-rule"
+      },
+      {
+        "key": "vue/padding-line-between-blocks",
+        "reason": "unknown-rule"
+      },
+      {
+        "key": "vue/prefer-separate-static-class",
+        "reason": "unknown-rule"
+      },
+      {
+        "key": "vue/prefer-template",
+        "reason": "unknown-rule"
+      },
+      {
+        "key": "vue/quote-props",
+        "reason": "unknown-rule"
+      },
+      {
+        "key": "vue/require-component-is",
+        "reason": "unknown-rule"
+      },
+      {
+        "key": "vue/require-explicit-emits",
+        "reason": "unknown-rule"
+      },
+      {
+        "key": "vue/require-toggle-inside-transition",
+        "reason": "unknown-rule"
+      },
+      {
+        "key": "vue/require-v-for-key",
+        "reason": "unknown-rule"
+      },
+      {
+        "key": "vue/require-valid-default-prop",
+        "reason": "unknown-rule"
+      },
+      {
+        "key": "vue/singleline-html-element-content-newline",
+        "reason": "unknown-rule"
+      },
+      {
+        "key": "vue/space-in-parens",
+        "reason": "unknown-rule"
+      },
+      {
+        "key": "vue/space-infix-ops",
+        "reason": "unknown-rule"
+      },
+      {
+        "key": "vue/space-unary-ops",
+        "reason": "unknown-rule"
+      },
+      {
+        "key": "vue/template-curly-spacing",
+        "reason": "unknown-rule"
+      },
+      {
+        "key": "vue/this-in-template",
+        "reason": "unknown-rule"
+      },
+      {
+        "key": "vue/use-v-on-exact",
+        "reason": "unknown-rule"
+      },
+      {
+        "key": "vue/v-bind-style",
+        "reason": "unknown-rule"
+      },
+      {
+        "key": "vue/v-on-event-hyphenation",
+        "reason": "unknown-rule"
+      },
+      {
+        "key": "vue/v-on-style",
+        "reason": "unknown-rule"
+      },
+      {
+        "key": "vue/v-slot-style",
+        "reason": "unknown-rule"
+      },
+      {
+        "key": "vue/valid-attribute-name",
+        "reason": "unknown-rule"
+      },
+      {
+        "key": "vue/valid-template-root",
+        "reason": "unknown-rule"
+      },
+      {
+        "key": "vue/valid-v-bind",
+        "reason": "unknown-rule"
+      },
+      {
+        "key": "vue/valid-v-cloak",
+        "reason": "unknown-rule"
+      },
+      {
+        "key": "vue/valid-v-else",
+        "reason": "unknown-rule"
+      },
+      {
+        "key": "vue/valid-v-else-if",
+        "reason": "unknown-rule"
+      },
+      {
+        "key": "vue/valid-v-for",
+        "reason": "unknown-rule"
+      },
+      {
+        "key": "vue/valid-v-html",
+        "reason": "unknown-rule"
+      },
+      {
+        "key": "vue/valid-v-if",
+        "reason": "unknown-rule"
+      },
+      {
+        "key": "vue/valid-v-is",
+        "reason": "unknown-rule"
+      },
+      {
+        "key": "vue/valid-v-memo",
+        "reason": "unknown-rule"
+      },
+      {
+        "key": "vue/valid-v-model",
+        "reason": "unknown-rule"
+      },
+      {
+        "key": "vue/valid-v-on",
+        "reason": "unknown-rule"
+      },
+      {
+        "key": "vue/valid-v-once",
+        "reason": "unknown-rule"
+      },
+      {
+        "key": "vue/valid-v-pre",
+        "reason": "unknown-rule"
+      },
+      {
+        "key": "vue/valid-v-show",
+        "reason": "unknown-rule"
+      },
+      {
+        "key": "vue/valid-v-slot",
+        "reason": "unknown-rule"
+      },
+      {
+        "key": "vue/valid-v-text",
+        "reason": "unknown-rule"
+      }
+    ],
     "yaml": [
       {
         "key": "style/spaced-comment",

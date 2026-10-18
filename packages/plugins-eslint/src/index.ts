@@ -6,6 +6,7 @@ import stylistic from '@stylistic/eslint-plugin'
 import tsPlugin from '@typescript-eslint/eslint-plugin'
 import tsParser from '@typescript-eslint/parser'
 import vitestPlugin from '@vitest/eslint-plugin'
+import { mergeProcessors } from 'eslint-merge-processors'
 import antfu from 'eslint-plugin-antfu'
 import command from 'eslint-plugin-command'
 import importLite from 'eslint-plugin-import-lite'
@@ -20,9 +21,14 @@ import regexp from 'eslint-plugin-regexp'
 import toml from 'eslint-plugin-toml'
 import unicorn from 'eslint-plugin-unicorn'
 import unusedImports from 'eslint-plugin-unused-imports'
+import vuePlugin from 'eslint-plugin-vue'
 import yaml from 'eslint-plugin-yml'
+import processorVueBlocks from 'eslint-processor-vue-blocks'
 import * as tomlParser from 'toml-eslint-parser'
+import vueParser from 'vue-eslint-parser'
 import * as yamlParser from 'yaml-eslint-parser'
+
+type Processor = Extract<Linter.Config['processor'], object>
 
 /**
  * The plugin Upstream calls `test`: `@vitest/eslint-plugin` with `eslint-plugin-no-only-tests`
@@ -65,6 +71,7 @@ export const eslintPlugins: Record<string, ESLint.Plugin> = {
   'ts': tsPlugin as unknown as ESLint.Plugin,
   'unicorn': unicorn as unknown as ESLint.Plugin,
   'unused-imports': unusedImports as ESLint.Plugin,
+  'vue': vuePlugin as unknown as ESLint.Plugin,
   'yaml': yaml as unknown as ESLint.Plugin,
 }
 
@@ -78,5 +85,22 @@ export const eslintPlugins: Record<string, ESLint.Plugin> = {
 export const eslintParsers: Record<string, Linter.LanguageOptions['parser']> = {
   toml: tomlParser as unknown as Linter.LanguageOptions['parser'],
   ts: tsParser as Linter.LanguageOptions['parser'],
+  vue: vueParser as unknown as Linter.LanguageOptions['parser'],
   yaml: yamlParser as unknown as Linter.LanguageOptions['parser'],
+}
+
+/**
+ * Processor glue, keyed `"<Plugin id>/<processor name>"`, for the processors a plugin does not
+ * register itself.
+ *
+ * Vue's `.vue` processor lives on `eslint-plugin-vue`, but the SFC block handling Upstream turns
+ * on by default is `eslint-processor-vue-blocks`' own processor merged in front of it. Building it
+ * here keeps the composition in the package that already loads both, so the config package names
+ * it as data and never imports either.
+ */
+export const eslintProcessors: Record<string, (options?: Record<string, unknown>) => Linter.Config['processor']> = {
+  'vue/vue-blocks': (options) => {
+    const { processors } = vuePlugin as unknown as { processors: Record<string, Processor> }
+    return mergeProcessors([processors['.vue']!, processorVueBlocks(options ?? {}) as unknown as Processor])
+  },
 }

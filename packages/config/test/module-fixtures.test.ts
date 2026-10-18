@@ -15,6 +15,11 @@ interface Reported {
   line: number
 }
 
+/** What each Module needs besides the house Emission: the option that enables it. */
+const OPTIONS: Record<string, Parameters<typeof eslint>[0]> = {
+  vue: { vue: true },
+}
+
 /** What each Module's fixture trips under the real binaries, in the spelling of each engine. */
 const EXPECTATIONS: Record<string, { eslint: Reported[], oxlint: Reported[] }> = {
   imports: {
@@ -62,6 +67,22 @@ const EXPECTATIONS: Record<string, { eslint: Reported[], oxlint: Reported[] }> =
     // `no-only-tests` is Oxlint's `vitest/no-focused-tests`, which the Emission records instead.
     oxlint: [{ file: 'violations.test.js', ruleId: 'vitest/consistent-test-it', line: 3 }],
   },
+  vue: {
+    eslint: [
+      { file: 'violations.vue', ruleId: 'vue/no-restricted-v-bind', line: 2 },
+      { file: 'violations.vue', ruleId: 'vue/singleline-html-element-content-newline', line: 2 },
+      { file: 'violations.vue', ruleId: 'vue/singleline-html-element-content-newline', line: 2 },
+      { file: 'violations.vue', ruleId: 'vue/block-order', line: 5 },
+      { file: 'violations.vue', ruleId: 'eqeqeq', line: 8 },
+      { file: 'violations.vue', ruleId: 'no-debugger', line: 9 },
+    ],
+    // Oxlint's built-in `vue` scope has neither `block-order`, `no-restricted-v-bind` nor the
+    // formatting rule; `coverage.json` records the rest of what the Module emits.
+    oxlint: [
+      { file: 'violations.vue', ruleId: 'eqeqeq', line: 8 },
+      { file: 'violations.vue', ruleId: 'no-debugger', line: 9 },
+    ],
+  },
   disables: {
     eslint: [
       { file: 'src/app.js', ruleId: 'antfu/no-top-level-await', line: 1 },
@@ -89,7 +110,7 @@ async function lintWithEslint(module: string): Promise<Reported[]> {
   const directory = fixtureDirectory(module)
   const eslintApi = new ESLint({
     overrideConfigFile: true,
-    overrideConfig: await eslint({ gitignore: false, isInEditor: false }),
+    overrideConfig: await eslint({ gitignore: false, isInEditor: false, ...OPTIONS[module] }),
     cwd: directory,
   })
 
@@ -108,7 +129,7 @@ async function lintWithOxlint(module: string): Promise<Reported[]> {
   const directory = project(
     scratch.directory,
     module,
-    await oxlint({ gitignore: false, isInEditor: false }),
+    await oxlint({ gitignore: false, isInEditor: false, ...OPTIONS[module] }),
     fixtureDirectory(module),
   )
 

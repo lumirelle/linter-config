@@ -35,7 +35,12 @@ function workspace(): { directory: string, remove: () => void } {
 }
 
 /** The options each case composes with; the workspace runs them all in one process. */
-const CASES = { react: { react: true }, angular: { angular: true }, none: {} } as const
+const CASES = {
+  react: { react: true },
+  angular: { angular: true },
+  vueA11y: { vue: { a11y: true } },
+  none: {},
+} as const
 
 type Case = keyof typeof CASES
 
@@ -94,6 +99,12 @@ describe('a Module whose peer packages are missing', () => {
       .toBe('The "angular" Module needs packages this project has not installed: '
         + '"@angular-eslint/eslint-plugin", "@angular-eslint/eslint-plugin-template", "@angular-eslint/template-parser". '
         + 'Install them to enable the Module.')
+  })
+
+  it('names the optional accessibility peer only when the Vue Module asks for it', () => {
+    expect(results.vueA11y)
+      .toBe('The "vue" Module needs a package this project has not installed: "eslint-plugin-vuejs-accessibility". '
+        + 'Install it to enable the Module.')
   })
 
   it('stays quiet for a Module whose peers are not asked for', () => {

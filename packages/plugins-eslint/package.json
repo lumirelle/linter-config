@@ -50,6 +50,7 @@
     "@typescript-eslint/eslint-plugin": "catalog:bundle",
     "@typescript-eslint/parser": "catalog:bundle",
     "@vitest/eslint-plugin": "catalog:bundle",
+    "eslint-merge-processors": "catalog:bundle",
     "eslint-plugin-antfu": "catalog:bundle",
     "eslint-plugin-command": "catalog:bundle",
     "eslint-plugin-import-lite": "catalog:bundle",
@@ -63,8 +64,11 @@
     "eslint-plugin-toml": "catalog:bundle",
     "eslint-plugin-unicorn": "catalog:bundle",
     "eslint-plugin-unused-imports": "catalog:bundle",
+    "eslint-plugin-vue": "catalog:bundle",
     "eslint-plugin-yml": "catalog:bundle",
+    "eslint-processor-vue-blocks": "catalog:bundle",
     "toml-eslint-parser": "catalog:bundle",
+    "vue-eslint-parser": "catalog:bundle",
     "yaml-eslint-parser": "catalog:bundle"
   },
   "devDependencies": {

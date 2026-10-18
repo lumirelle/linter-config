@@ -1,6 +1,6 @@
 import { readFileSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
-import { eslintParsers, eslintPlugins } from '@lumirelle/linter-plugins-eslint'
+import { eslintParsers, eslintPlugins, eslintProcessors } from '@lumirelle/linter-plugins-eslint'
 import { builtinPlugins, jsPlugins } from '@lumirelle/linter-plugins-oxlint'
 import { describe, expect, it } from 'vitest'
 import { isPluginId, PLUGIN_IDS, pluginDefinition } from '../src/plugins'
@@ -23,7 +23,28 @@ describe('plugin bundles', () => {
   })
 
   it('carry no rule semantics of their own, only forwarded plugin objects', () => {
-    expect(Object.keys(eslintPlugins).sort()).toEqual(['antfu', 'command', 'e18e', 'eslint-comments', 'import', 'jsdoc', 'jsonc', 'md', 'node', 'perfectionist', 'pnpm', 'regexp', 'style', 'test', 'toml', 'ts', 'unicorn', 'unused-imports', 'yaml'])
+    expect(Object.keys(eslintPlugins).sort()).toEqual([
+      'antfu',
+      'command',
+      'e18e',
+      'eslint-comments',
+      'import',
+      'jsdoc',
+      'jsonc',
+      'md',
+      'node',
+      'perfectionist',
+      'pnpm',
+      'regexp',
+      'style',
+      'test',
+      'toml',
+      'ts',
+      'unicorn',
+      'unused-imports',
+      'vue',
+      'yaml',
+    ])
     for (const plugin of Object.values(eslintPlugins)) {
       expect(plugin.rules).toBeTypeOf('object')
     }
@@ -49,13 +70,22 @@ describe('plugin bundles', () => {
   })
 
   it('forward the parser a Plugin id registers, separately from its plugin', () => {
-    expect(Object.keys(eslintParsers).sort()).toEqual(['toml', 'ts', 'yaml'])
+    expect(Object.keys(eslintParsers).sort()).toEqual(['toml', 'ts', 'vue', 'yaml'])
     expect(eslintParsers.ts).toMatchObject({ meta: { name: 'typescript-eslint/parser' } })
+    expect(eslintParsers.vue).toMatchObject({ meta: { name: 'vue-eslint-parser' } })
+  })
+
+  it('forward the processor glue a Plugin id needs, keyed by id and name', () => {
+    expect(Object.keys(eslintProcessors)).toEqual(['vue/vue-blocks'])
   })
 
   it('keys every entry by a registered Plugin id', () => {
-    const unregistered = [...Object.keys(eslintPlugins), ...Object.keys(eslintParsers), ...Object.keys(jsPlugins)]
-      .filter(id => !isPluginId(id))
+    const unregistered = [
+      ...Object.keys(eslintPlugins),
+      ...Object.keys(eslintParsers),
+      ...Object.keys(jsPlugins),
+      ...Object.keys(eslintProcessors).map(key => key.split('/')[0]!),
+    ].filter(id => !isPluginId(id))
 
     expect(unregistered).toEqual([])
   })

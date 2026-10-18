@@ -1,5 +1,6 @@
-import type { ConfigObject, RuleEntry, RuleKey } from '../types'
+import type { ConfigObject, PluginId, RuleEntry, RuleKey } from '../types'
 import { pluginDefinition, pluginIdOfRuleKey } from '../plugins'
+import { blacklistEntry } from './blacklist'
 import { findOxlintRule } from './inventory'
 
 /**
@@ -15,6 +16,8 @@ import { findOxlintRule } from './inventory'
  *   emitting it would make the whole Oxlint config unloadable.
  * - `renamed-rule`: Oxlint implements the rule under a different name, recorded in `oxlint`; the
  *   Emission cannot emit it, because a built-in scope only reads its own names.
+ * - `blacklisted-plugin`: the Plugin id is on the Oxlint blacklist, so none of its rules is safe
+ *   to emit; `plugin` names the dropped plugin for the report.
  */
 type CoverageReason
   = | 'unknown-rule'
@@ -23,6 +26,7 @@ type CoverageReason
     | 'eslint-only-domain'
     | 'incompatible-options'
     | 'renamed-rule'
+    | 'blacklisted-plugin'
 
 /** A rule key the Oxlint Emission had to leave out, with the reason it did. */
 export interface UnemittedRule {
@@ -30,6 +34,8 @@ export interface UnemittedRule {
   reason: CoverageReason
   /** For `renamed-rule`: the key Oxlint reads the same rule under. */
   oxlint?: string
+  /** For `blacklisted-plugin`: the Plugin id whose rules were dropped. */
+  plugin?: PluginId
 }
 
 export interface RuleMapping {
@@ -37,6 +43,8 @@ export interface RuleMapping {
   rules?: Partial<Record<string, RuleEntry>>
   /** The rules that did not, in Source order; the Coverage report derives from this. */
   unemitted: UnemittedRule[]
+  /** The Plugin ids the surviving rules are resolved through, as `jsPlugins` aliases. */
+  jsPlugins: PluginId[]
 }
 
 /**
@@ -70,7 +78,8 @@ const RENAMED_RULES: ReadonlyMap<RuleKey, string> = new Map<RuleKey, string>([
  * when the committed inventory has it: a rule Oxlint does not implement would otherwise make the
  * whole config unloadable. A Plugin id with a built-in scope emits `scope/rule` the same way; one
  * that only has a `jsPlugins` package emits `alias/rule`, which Oxlint resolves through the
- * declared alias, and one with neither is dropped.
+ * declared alias, and one with neither is dropped. A blacklisted Plugin id is dropped before any
+ * of its rules are considered, so nothing reaches an alias that is proven unsafe.
  */
 export function mapRules(
   rules: ConfigObject['rules'],
@@ -78,6 +87,7 @@ export function mapRules(
 ): RuleMapping {
   const mapped: Partial<Record<string, RuleEntry>> = {}
   const unemitted: UnemittedRule[] = []
+  const jsPlugins = new Set<PluginId>()
 
   for (const key of Object.keys(rules ?? {}) as RuleKey[]) {
     const entry = rules?.[key]
@@ -86,6 +96,11 @@ export function mapRules(
     }
 
     const id = pluginIdOfRuleKey(key)
+    if (id && blacklistEntry(id)) {
+      unemitted.push({ key, reason: 'blacklisted-plugin', plugin: id })
+      continue
+    }
+
     if (INCOMPATIBLE_OPTIONS.has(key)) {
       unemitted.push({ key, reason: 'incompatible-options' })
       continue
@@ -126,11 +141,12 @@ export function mapRules(
 
     if (definition?.alias) {
       mapped[`${definition.alias}/${rule}`] = entry
+      jsPlugins.add(id)
       continue
     }
 
     unemitted.push({ key, reason: 'no-oxlint-realization' })
   }
 
-  return { rules: Object.keys(mapped).length > 0 ? mapped : undefined, unemitted }
+  return { rules: Object.keys(mapped).length > 0 ? mapped : undefined, unemitted, jsPlugins: [...jsPlugins] }
 }

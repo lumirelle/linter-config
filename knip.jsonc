@@ -20,6 +20,10 @@
     "eslint-plugin-erasable-syntax-only",
     // Referenced as an Oxlint jsPlugins specifier string, which knip cannot follow
     "@eslint-community/eslint-plugin-eslint-comments",
+    "eslint-plugin-command",
+    "eslint-plugin-perfectionist",
+    "eslint-plugin-slop",
+    "eslint-plugin-sonarjs",
     // Node.js dependencies manager
     "taze",
     // Node.js releasing tools

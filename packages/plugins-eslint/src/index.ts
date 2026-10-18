@@ -1,4 +1,5 @@
 import type { ESLint, Linter } from 'eslint'
+import markdown from '@eslint/markdown'
 import stylistic from '@stylistic/eslint-plugin'
 import tsPlugin from '@typescript-eslint/eslint-plugin'
 import tsParser from '@typescript-eslint/parser'
@@ -6,11 +7,17 @@ import vitestPlugin from '@vitest/eslint-plugin'
 import antfu from 'eslint-plugin-antfu'
 import importLite from 'eslint-plugin-import-lite'
 import jsdoc from 'eslint-plugin-jsdoc'
+import jsonc from 'eslint-plugin-jsonc'
 import node from 'eslint-plugin-n'
 // @ts-expect-error -- the package ships no type declarations.
 import noOnlyTests from 'eslint-plugin-no-only-tests'
+import pnpm from 'eslint-plugin-pnpm'
+import toml from 'eslint-plugin-toml'
 import unicorn from 'eslint-plugin-unicorn'
 import unusedImports from 'eslint-plugin-unused-imports'
+import yaml from 'eslint-plugin-yml'
+import tomlParser from 'toml-eslint-parser'
+import yamlParser from 'yaml-eslint-parser'
 
 /**
  * The plugin Upstream calls `test`: `@vitest/eslint-plugin` with `eslint-plugin-no-only-tests`
@@ -38,12 +45,17 @@ export const eslintPlugins: Record<string, ESLint.Plugin> = {
   'antfu': antfu as ESLint.Plugin,
   'import': importLite as ESLint.Plugin,
   'jsdoc': jsdoc as unknown as ESLint.Plugin,
+  'jsonc': jsonc as unknown as ESLint.Plugin,
+  'md': markdown as unknown as ESLint.Plugin,
   'node': node as unknown as ESLint.Plugin,
+  'pnpm': pnpm as unknown as ESLint.Plugin,
   'style': stylistic as unknown as ESLint.Plugin,
   'test': testPlugin,
+  'toml': toml as unknown as ESLint.Plugin,
   'ts': tsPlugin as unknown as ESLint.Plugin,
   'unicorn': unicorn as unknown as ESLint.Plugin,
   'unused-imports': unusedImports as ESLint.Plugin,
+  'yaml': yaml as unknown as ESLint.Plugin,
 }
 
 /**
@@ -54,5 +66,7 @@ export const eslintPlugins: Record<string, ESLint.Plugin> = {
  * here instead of importing a parser package from Source.
  */
 export const eslintParsers: Record<string, Linter.LanguageOptions['parser']> = {
+  toml: tomlParser as unknown as Linter.LanguageOptions['parser'],
   ts: tsParser as Linter.LanguageOptions['parser'],
+  yaml: yamlParser as unknown as Linter.LanguageOptions['parser'],
 }

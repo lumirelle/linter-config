@@ -23,7 +23,7 @@ describe('plugin bundles', () => {
   })
 
   it('carry no rule semantics of their own, only forwarded plugin objects', () => {
-    expect(Object.keys(eslintPlugins).sort()).toEqual(['antfu', 'import', 'jsdoc', 'node', 'style', 'test', 'ts', 'unicorn', 'unused-imports'])
+    expect(Object.keys(eslintPlugins).sort()).toEqual(['antfu', 'import', 'jsdoc', 'jsonc', 'md', 'node', 'pnpm', 'style', 'test', 'toml', 'ts', 'unicorn', 'unused-imports', 'yaml'])
     for (const plugin of Object.values(eslintPlugins)) {
       expect(plugin.rules).toBeTypeOf('object')
     }
@@ -49,7 +49,7 @@ describe('plugin bundles', () => {
   })
 
   it('forward the parser a Plugin id registers, separately from its plugin', () => {
-    expect(Object.keys(eslintParsers).sort()).toEqual(['ts'])
+    expect(Object.keys(eslintParsers).sort()).toEqual(['toml', 'ts', 'yaml'])
     expect(eslintParsers.ts).toMatchObject({ meta: { name: 'typescript-eslint/parser' } })
   })
 

@@ -80,6 +80,152 @@
         "reason": "unknown-rule"
       }
     ],
+    "jsonc": [
+      {
+        "key": "jsonc/array-bracket-spacing",
+        "reason": "eslint-only-domain"
+      },
+      {
+        "key": "jsonc/comma-dangle",
+        "reason": "eslint-only-domain"
+      },
+      {
+        "key": "jsonc/comma-style",
+        "reason": "eslint-only-domain"
+      },
+      {
+        "key": "jsonc/indent",
+        "reason": "eslint-only-domain"
+      },
+      {
+        "key": "jsonc/key-spacing",
+        "reason": "eslint-only-domain"
+      },
+      {
+        "key": "jsonc/no-bigint-literals",
+        "reason": "eslint-only-domain"
+      },
+      {
+        "key": "jsonc/no-binary-expression",
+        "reason": "eslint-only-domain"
+      },
+      {
+        "key": "jsonc/no-binary-numeric-literals",
+        "reason": "eslint-only-domain"
+      },
+      {
+        "key": "jsonc/no-dupe-keys",
+        "reason": "eslint-only-domain"
+      },
+      {
+        "key": "jsonc/no-escape-sequence-in-identifier",
+        "reason": "eslint-only-domain"
+      },
+      {
+        "key": "jsonc/no-floating-decimal",
+        "reason": "eslint-only-domain"
+      },
+      {
+        "key": "jsonc/no-hexadecimal-numeric-literals",
+        "reason": "eslint-only-domain"
+      },
+      {
+        "key": "jsonc/no-infinity",
+        "reason": "eslint-only-domain"
+      },
+      {
+        "key": "jsonc/no-multi-str",
+        "reason": "eslint-only-domain"
+      },
+      {
+        "key": "jsonc/no-nan",
+        "reason": "eslint-only-domain"
+      },
+      {
+        "key": "jsonc/no-number-props",
+        "reason": "eslint-only-domain"
+      },
+      {
+        "key": "jsonc/no-numeric-separators",
+        "reason": "eslint-only-domain"
+      },
+      {
+        "key": "jsonc/no-octal",
+        "reason": "eslint-only-domain"
+      },
+      {
+        "key": "jsonc/no-octal-escape",
+        "reason": "eslint-only-domain"
+      },
+      {
+        "key": "jsonc/no-octal-numeric-literals",
+        "reason": "eslint-only-domain"
+      },
+      {
+        "key": "jsonc/no-parenthesized",
+        "reason": "eslint-only-domain"
+      },
+      {
+        "key": "jsonc/no-plus-sign",
+        "reason": "eslint-only-domain"
+      },
+      {
+        "key": "jsonc/no-regexp-literals",
+        "reason": "eslint-only-domain"
+      },
+      {
+        "key": "jsonc/no-sparse-arrays",
+        "reason": "eslint-only-domain"
+      },
+      {
+        "key": "jsonc/no-template-literals",
+        "reason": "eslint-only-domain"
+      },
+      {
+        "key": "jsonc/no-undefined-value",
+        "reason": "eslint-only-domain"
+      },
+      {
+        "key": "jsonc/no-unicode-codepoint-escapes",
+        "reason": "eslint-only-domain"
+      },
+      {
+        "key": "jsonc/no-useless-escape",
+        "reason": "eslint-only-domain"
+      },
+      {
+        "key": "jsonc/object-curly-newline",
+        "reason": "eslint-only-domain"
+      },
+      {
+        "key": "jsonc/object-curly-spacing",
+        "reason": "eslint-only-domain"
+      },
+      {
+        "key": "jsonc/object-property-newline",
+        "reason": "eslint-only-domain"
+      },
+      {
+        "key": "jsonc/quote-props",
+        "reason": "eslint-only-domain"
+      },
+      {
+        "key": "jsonc/quotes",
+        "reason": "eslint-only-domain"
+      },
+      {
+        "key": "jsonc/space-unary-ops",
+        "reason": "eslint-only-domain"
+      },
+      {
+        "key": "jsonc/valid-json-number",
+        "reason": "eslint-only-domain"
+      },
+      {
+        "key": "jsonc/vue-custom-block/no-parsing-error",
+        "reason": "eslint-only-domain"
+      }
+    ],
     "node": [
       {
         "key": "node/no-deprecated-api",
@@ -98,6 +244,16 @@
         "reason": "unknown-rule"
       }
     ],
+    "sort": [
+      {
+        "key": "jsonc/sort-array-values",
+        "reason": "eslint-only-domain"
+      },
+      {
+        "key": "jsonc/sort-keys",
+        "reason": "eslint-only-domain"
+      }
+    ],
     "test": [
       {
         "key": "node/prefer-global/process",
@@ -107,6 +263,88 @@
         "key": "test/no-only-tests",
         "oxlint": "vitest/no-focused-tests",
         "reason": "renamed-rule"
+      }
+    ],
+    "toml": [
+      {
+        "key": "style/spaced-comment",
+        "reason": "eslint-only-domain"
+      },
+      {
+        "key": "toml/array-bracket-newline",
+        "reason": "eslint-only-domain"
+      },
+      {
+        "key": "toml/array-bracket-spacing",
+        "reason": "eslint-only-domain"
+      },
+      {
+        "key": "toml/array-element-newline",
+        "reason": "eslint-only-domain"
+      },
+      {
+        "key": "toml/comma-style",
+        "reason": "eslint-only-domain"
+      },
+      {
+        "key": "toml/indent",
+        "reason": "eslint-only-domain"
+      },
+      {
+        "key": "toml/inline-table-curly-spacing",
+        "reason": "eslint-only-domain"
+      },
+      {
+        "key": "toml/key-spacing",
+        "reason": "eslint-only-domain"
+      },
+      {
+        "key": "toml/keys-order",
+        "reason": "eslint-only-domain"
+      },
+      {
+        "key": "toml/no-space-dots",
+        "reason": "eslint-only-domain"
+      },
+      {
+        "key": "toml/no-unreadable-number-separator",
+        "reason": "eslint-only-domain"
+      },
+      {
+        "key": "toml/padding-line-between-pairs",
+        "reason": "eslint-only-domain"
+      },
+      {
+        "key": "toml/padding-line-between-tables",
+        "reason": "eslint-only-domain"
+      },
+      {
+        "key": "toml/precision-of-fractional-seconds",
+        "reason": "eslint-only-domain"
+      },
+      {
+        "key": "toml/precision-of-integer",
+        "reason": "eslint-only-domain"
+      },
+      {
+        "key": "toml/quoted-keys",
+        "reason": "eslint-only-domain"
+      },
+      {
+        "key": "toml/spaced-comment",
+        "reason": "eslint-only-domain"
+      },
+      {
+        "key": "toml/table-bracket-spacing",
+        "reason": "eslint-only-domain"
+      },
+      {
+        "key": "toml/tables-order",
+        "reason": "eslint-only-domain"
+      },
+      {
+        "key": "toml/vue-custom-block/no-parsing-error",
+        "reason": "eslint-only-domain"
       }
     ],
     "typescript": [
@@ -245,6 +483,88 @@
       {
         "key": "ts/unbound-method",
         "reason": "type-aware"
+      }
+    ],
+    "yaml": [
+      {
+        "key": "style/spaced-comment",
+        "reason": "eslint-only-domain"
+      },
+      {
+        "key": "yaml/block-mapping",
+        "reason": "eslint-only-domain"
+      },
+      {
+        "key": "yaml/block-mapping-question-indicator-newline",
+        "reason": "eslint-only-domain"
+      },
+      {
+        "key": "yaml/block-sequence",
+        "reason": "eslint-only-domain"
+      },
+      {
+        "key": "yaml/block-sequence-hyphen-indicator-newline",
+        "reason": "eslint-only-domain"
+      },
+      {
+        "key": "yaml/flow-mapping-curly-newline",
+        "reason": "eslint-only-domain"
+      },
+      {
+        "key": "yaml/flow-mapping-curly-spacing",
+        "reason": "eslint-only-domain"
+      },
+      {
+        "key": "yaml/flow-sequence-bracket-newline",
+        "reason": "eslint-only-domain"
+      },
+      {
+        "key": "yaml/flow-sequence-bracket-spacing",
+        "reason": "eslint-only-domain"
+      },
+      {
+        "key": "yaml/indent",
+        "reason": "eslint-only-domain"
+      },
+      {
+        "key": "yaml/key-spacing",
+        "reason": "eslint-only-domain"
+      },
+      {
+        "key": "yaml/no-empty-key",
+        "reason": "eslint-only-domain"
+      },
+      {
+        "key": "yaml/no-empty-sequence-entry",
+        "reason": "eslint-only-domain"
+      },
+      {
+        "key": "yaml/no-irregular-whitespace",
+        "reason": "eslint-only-domain"
+      },
+      {
+        "key": "yaml/no-multiple-empty-lines",
+        "reason": "eslint-only-domain"
+      },
+      {
+        "key": "yaml/no-tab-indent",
+        "reason": "eslint-only-domain"
+      },
+      {
+        "key": "yaml/plain-scalar",
+        "reason": "eslint-only-domain"
+      },
+      {
+        "key": "yaml/quotes",
+        "reason": "eslint-only-domain"
+      },
+      {
+        "key": "yaml/spaced-comment",
+        "reason": "eslint-only-domain"
+      },
+      {
+        "key": "yaml/vue-custom-block/no-parsing-error",
+        "reason": "eslint-only-domain"
       }
     ]
   }

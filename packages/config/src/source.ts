@@ -6,11 +6,15 @@ import { ignores } from './modules/ignores'
 import { imports } from './modules/imports'
 import { javascript } from './modules/javascript'
 import { jsdoc } from './modules/jsdoc'
+import { jsonc } from './modules/jsonc'
 import { node } from './modules/node'
+import { sortPackageJson, sortTsconfig } from './modules/sort'
 import { stylistic } from './modules/stylistic'
 import { isTestEnabled, test, testOverrides } from './modules/test'
+import { toml } from './modules/toml'
 import { typescript } from './modules/typescript'
 import { unicorn } from './modules/unicorn'
+import { yaml } from './modules/yaml'
 import { isPackageInstalled } from './packages'
 import { enabledRuleKeys } from './rules'
 
@@ -41,6 +45,12 @@ export function source(options: Options = {}): ConfigObject[] {
     ...options.imports === false ? [] : imports({ stylistic: stylisticSlices }),
     ...options.unicorn === false ? [] : unicorn(),
     ...isStylisticEnabled(options.stylistic) ? stylistic(stylisticOptions(options.stylistic)) : [],
+
+    // The data Modules follow Upstream's factory: `jsonc` carries the two `sort` objects, and
+    // `yaml`/`toml` come after them. All three are ESLint-only, because Oxlint has no parser hook.
+    ...options.jsonc === false ? [] : [...jsonc({ stylistic: stylisticSlices }), ...sortPackageJson(), ...sortTsconfig()],
+    ...options.yaml === false ? [] : yaml({ stylistic: stylisticSlices }),
+    ...options.toml === false ? [] : toml({ stylistic: stylisticSlices }),
   ]
 
   if (isTestEnabled(options.test)) {

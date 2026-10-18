@@ -43,6 +43,7 @@
     }
   },
   "dependencies": {
+    "@eslint/markdown": "catalog:bundle",
     "@stylistic/eslint-plugin": "catalog:bundle",
     "@typescript-eslint/eslint-plugin": "catalog:bundle",
     "@typescript-eslint/parser": "catalog:bundle",
@@ -50,10 +51,16 @@
     "eslint-plugin-antfu": "catalog:bundle",
     "eslint-plugin-import-lite": "catalog:bundle",
     "eslint-plugin-jsdoc": "catalog:bundle",
+    "eslint-plugin-jsonc": "catalog:bundle",
     "eslint-plugin-n": "catalog:bundle",
     "eslint-plugin-no-only-tests": "catalog:bundle",
+    "eslint-plugin-pnpm": "catalog:bundle",
+    "eslint-plugin-toml": "catalog:bundle",
     "eslint-plugin-unicorn": "catalog:bundle",
-    "eslint-plugin-unused-imports": "catalog:bundle"
+    "eslint-plugin-unused-imports": "catalog:bundle",
+    "eslint-plugin-yml": "catalog:bundle",
+    "toml-eslint-parser": "catalog:bundle",
+    "yaml-eslint-parser": "catalog:bundle"
   },
   "devDependencies": {
     "@lumirelle/tsconfig": "catalog:types",

@@ -4,6 +4,7 @@ import type { UnemittedRule } from './rule-map'
 import { PLUGIN_IDS } from '../plugins'
 import { source } from '../source'
 import { OXLINT_BLACKLIST } from './blacklist'
+import { isOxlintDomain } from './domains'
 import { oxlintVersion } from './inventory'
 import { mapRules } from './rule-map'
 
@@ -47,21 +48,26 @@ const WIDEST_SOURCE: Options = {
 /**
  * The rules the Oxlint Emission drops, grouped by Module.
  *
- * `eslint-only-domain` is the reason for the Modules Oxlint cannot read at all (data and markup
- * Domains); the Adapter filters those out before mapping, so no rule of the first slice carries
- * it yet.
+ * `eslint-only-domain` is the reason for the Modules Oxlint cannot read at all (the data and
+ * markup Domains): the Adapter filters those Config objects out before mapping, so the report
+ * reads every one of their rules under that reason rather than inventing a per-rule analysis.
  */
 export function coverageReport(): CoverageReport {
   const modules: CoverageReport['modules'] = {}
   const jsPlugins = new Set<PluginId>()
 
   for (const config of source(WIDEST_SOURCE)) {
+    if (!isOxlintDomain(config.domain)) {
+      record(
+        modules,
+        config.module,
+        Object.keys(config.rules ?? {}).map(key => ({ key, reason: 'eslint-only-domain' })),
+      )
+      continue
+    }
+
     for (const rule of mapRules(config.rules).unemitted) {
-      const collected = modules[config.module] ?? []
-      if (!collected.some(entry => entry.key === rule.key && entry.reason === rule.reason)) {
-        collected.push(rule)
-      }
-      modules[config.module] = collected
+      record(modules, config.module, [rule])
     }
     for (const id of mapRules(config.rules).jsPlugins) {
       jsPlugins.add(id)
@@ -81,4 +87,19 @@ export function coverageReport(): CoverageReport {
         ]),
     ) as CoverageReport['modules'],
   }
+}
+
+/** Collects one Module's dropped rules, keeping one entry per key and reason. */
+function record(
+  modules: CoverageReport['modules'],
+  module: ModuleId,
+  rules: UnemittedRule[],
+): void {
+  const collected = modules[module] ?? []
+  for (const rule of rules) {
+    if (!collected.some(entry => entry.key === rule.key && entry.reason === rule.reason)) {
+      collected.push(rule)
+    }
+  }
+  modules[module] = collected
 }

@@ -18,6 +18,12 @@
         "reason": "unknown-rule"
       }
     ],
+    "formatters": [
+      {
+        "key": "format/prettier",
+        "reason": "eslint-only-domain"
+      }
+    ],
     "imports": [
       {
         "key": "import/consistent-type-specifier-style",
@@ -416,6 +422,36 @@
       {
         "key": "node/process-exit-as-throw",
         "reason": "unknown-rule"
+      }
+    ],
+    "pnpm": [
+      {
+        "key": "pnpm/json-prefer-workspace-settings",
+        "reason": "eslint-only-domain"
+      },
+      {
+        "key": "pnpm/json-valid-catalog",
+        "reason": "eslint-only-domain"
+      },
+      {
+        "key": "pnpm/yaml-blank-lines",
+        "reason": "eslint-only-domain"
+      },
+      {
+        "key": "pnpm/yaml-enforce-settings",
+        "reason": "eslint-only-domain"
+      },
+      {
+        "key": "pnpm/yaml-no-duplicate-catalog-item",
+        "reason": "eslint-only-domain"
+      },
+      {
+        "key": "pnpm/yaml-no-unused-catalog-item",
+        "reason": "eslint-only-domain"
+      },
+      {
+        "key": "yaml/sort-keys",
+        "reason": "eslint-only-domain"
       }
     ],
     "sort": [

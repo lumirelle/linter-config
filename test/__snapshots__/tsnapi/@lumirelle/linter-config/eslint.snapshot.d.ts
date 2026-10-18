@@ -33,6 +33,20 @@ export interface ConfigObject {
     };
   };
 }
+export interface FormattersOptions {
+  css?: 'prettier' | boolean;
+  html?: 'prettier' | boolean;
+  xml?: 'prettier' | boolean;
+  svg?: 'prettier' | boolean;
+  markdown?: 'prettier' | 'dprint' | boolean;
+  graphql?: 'prettier' | boolean;
+  astro?: 'prettier' | boolean;
+  slidev?: boolean | {
+    files?: string[];
+  };
+  prettierOptions?: Record<string, unknown>;
+  dprintOptions?: Record<string, unknown>;
+}
 export interface Options {
   vue?: boolean | {
     a11y?: boolean;
@@ -117,7 +131,6 @@ export interface StylisticOptions {
 
 // #region Types
 export type Domain = 'js' | 'vue' | 'svelte' | 'astro' | 'angular' | 'data' | 'markup' | 'style';
-export type FormattersOptions = Record<string, unknown>;
 export type Glob = string;
 export type ModuleId = 'ignores' | 'javascript' | 'typescript' | 'imports' | 'unicorn' | 'node' | 'jsdoc' | 'test' | 'jsx' | 'vue' | 'nextjs' | 'react' | 'solid' | 'unocss' | 'regexp' | 'perfectionist' | 'e18e' | 'antfu' | 'command' | 'eslint-comments' | 'unused-imports' | 'antislop' | 'stylistic' | 'svelte' | 'astro' | 'angular' | 'jsonc' | 'yaml' | 'toml' | 'markdown' | 'formatters' | 'sort' | 'pnpm' | 'disables';
 export type PluginId = keyof typeof registry;

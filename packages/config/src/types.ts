@@ -2,7 +2,20 @@ import type { Linter } from 'eslint'
 import type { FlatGitignoreOptions } from 'eslint-config-flat-gitignore'
 import type { PluginId } from './plugins'
 
-export type { PluginId } from './plugins'
+/** Options for the `formatters` Module, mirroring Upstream's `OptionsFormatters`. */
+export interface FormattersOptions {
+  css?: 'prettier' | boolean
+  html?: 'prettier' | boolean
+  xml?: 'prettier' | boolean
+  svg?: 'prettier' | boolean
+  markdown?: 'prettier' | 'dprint' | boolean
+  graphql?: 'prettier' | boolean
+  astro?: 'prettier' | boolean
+  /** Whether the Slidev `slides.md` file is formatted, and with which files. */
+  slidev?: boolean | { files?: string[] }
+  prettierOptions?: Record<string, unknown>
+  dprintOptions?: Record<string, unknown>
+}
 
 /**
  * The file domain of a Config object.
@@ -161,8 +174,7 @@ export interface PnpmOptions {
   yaml?: boolean
 }
 
-/** Options for the `formatters` module; its concrete shape lands with that module. */
-export type FormattersOptions = Record<string, unknown>
+export type { PluginId } from './plugins'
 
 /**
  * The `indent` option of `@stylistic/eslint-plugin`'s `customize()`: a level, or a level plus the rule

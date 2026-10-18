@@ -118,248 +118,216 @@ export function pnpm(options: {
           'yaml/sort-keys': [
             'error',
             {
-          order: [
-            // Workspace
-            // @keep-sorted
-            ...[
-              'dedupeInjectedDeps',
-              'disallowWorkspaceCycles',
-              'failIfNoMatch',
-              'ignoreWorkspaceCycles',
-              'ignoreWorkspaceRootCheck',
-              'includeWorkspaceRoot',
-              'injectWorkspacePackages',
-              'legacyDirFiltering',
-              'linkWorkspacePackages',
-              'preferWorkspacePackages',
-              'saveWorkspaceProtocol',
-              'sharedWorkspaceLockfile',
-              'syncInjectedDepsAfterScripts',
-            ],
+              order: [
+                // Workspace
+                // @keep-sorted
 
-            // Catalogs
-            // @keep-sorted
-            ...[
-              'catalogMode',
-              'catalogPrune',
-              'cleanupUnusedCatalogs',
-            ],
+                // Build approvals
+                'allowBuilds',
 
-            // Dependency resolution
-            ...[
-              'allowedDeprecatedVersions',
-              'blockExoticSubdeps',
-              'ignoredOptionalDependencies',
-              'minimumReleaseAge',
-              'minimumReleaseAgeIgnoreMissingTime',
-              'minimumReleaseAgeStrict',
-              'minimumReleaseAgeExcludePrune',
-              'minimumReleaseAgeExclude',
-              'registrySupportsTimeField',
-              'resolutionMode',
-              'supportedArchitectures',
-              'trustLockfile',
-              'trustPolicy',
-              'trustPolicyIgnoreAfter',
-              'trustPolicyExclude',
-              'update',
-            ],
+                // Dependency resolution
+                'allowedDeprecatedVersions',
 
-            // Peer dependencies
-            // @keep-sorted
-            ...[
-              'autoInstallPeers',
-              'dedupePeerDependents',
-              'dedupePeers',
-              'peerDependencyRules',
-              'resolvePeersFromWorkspaceRoot',
-              'strictPeerDependencies',
-            ],
+                // Misc
+                // @keep-sorted
+                'allowNonAppliedPatches',
 
-            // Registry and network
-            // @keep-sorted
-            ...[
-              'fetchMinSpeedKiBps',
-              'fetchRetries',
-              'fetchRetryFactor',
-              'fetchRetryMaxtimeout',
-              'fetchRetryMintimeout',
-              'fetchTimeout',
-              'fetchWarnTimeoutMs',
-              'gitShallowHosts',
-              'httpProxy',
-              'httpsProxy',
-              'localAddress',
-              'maxsockets',
-              'namedRegistries',
-              'networkConcurrency',
-              'noProxy',
-              'registries',
-              'registry',
-              'strictSsl',
-            ],
+                // Audit and versioning
+                // @keep-sorted
+                'audit',
 
-            // node_modules
-            // @keep-sorted
-            ...[
-              'dlxCacheMaxAge',
-              'enableGlobalVirtualStore',
-              'enableModulesDir',
-              'extendNodePath',
-              'modulesCacheMaxAge',
-              'modulesDir',
-              'nodeExperimentalPackageMap',
-              'nodeLinker',
-              'nodePackageMapType',
-              'packageImportMethod',
-              'preferSymlinkedExecutables',
-              'symlink',
-              'virtualStoreDir',
-              'virtualStoreDirMaxLength',
-              'virtualStoreOnly',
-              'virtualStoreType',
-            ],
+                // Peer dependencies
+                // @keep-sorted
+                'autoInstallPeers',
+                'blockExoticSubdeps',
 
-            // Hoisting
-            // @keep-sorted
-            ...[
-              'hoist',
-              'hoistingLimits',
-              'hoistPattern',
-              'hoistWorkspacePackages',
-              'publicHoistPattern',
-              'shamefullyHoist',
-            ],
+                // Directories and pnpmfile
+                // @keep-sorted
+                'cacheDir',
 
-            // Store
-            // @keep-sorted
-            ...[
-              'frozenStore',
-              'storeDir',
-              'strictStorePkgContentCheck',
-              'useRunningStoreServer',
-              'verifyStoreIntegrity',
-            ],
+                // Catalogs, usually the largest blocks
+                'catalog',
 
-            // Lockfile
-            // @keep-sorted
-            ...[
-              'gitBranchLockfile',
-              'lockfile',
-              'lockfileIncludeTarballUrl',
-              'mergeGitBranchLockfilesBranchPattern',
-              'peersSuffixMaxLength',
-              'preferFrozenLockfile',
-            ],
+                // Catalogs
+                // @keep-sorted
+                'catalogMode',
+                'catalogPrune',
+                'catalogs',
 
-            // Scripts and builds
-            // @keep-sorted
-            ...[
-              'childConcurrency',
-              'dangerouslyAllowAllBuilds',
-              'enablePrePostScripts',
-              'ignoreDepScripts',
-              'ignoreScripts',
-              'nodeOptions',
-              'requiredScripts',
-              'scriptShell',
-              'shellEmulator',
-              'sideEffectsCache',
-              'sideEffectsCacheReadonly',
-              'strictDepBuilds',
-              'unsafePerm',
-              'verifyDepsBeforeRun',
-            ],
+                // Scripts and builds
+                // @keep-sorted
+                'childConcurrency',
 
-            // Node.js and package manager versions
-            // @keep-sorted
-            ...[
-              'managePackageManagerVersions',
-              'nodeDownloadMirrors',
-              'nodeVersion',
-              'packageManagerStrict',
-              'packageManagerStrictVersion',
-              'pmOnFail',
-              'runtimeOnFail',
-            ],
+                // CLI and output
+                // @keep-sorted
+                'ci',
+                'cleanupUnusedCatalogs',
+                'color',
+                'configDependencies',
+                'dangerouslyAllowAllBuilds',
+                'dedupeDirectDeps',
+                'dedupeInjectedDeps',
+                'dedupePeerDependents',
+                'dedupePeers',
+                'deployAllFiles',
+                'disallowWorkspaceCycles',
 
-            // CLI and output
-            // @keep-sorted
-            ...[
-              'ci',
-              'color',
-              'engineStrict',
-              'loglevel',
-              'npmPath',
-              'recursiveInstall',
-              'updateNotifier',
-              'useBetaCli',
-              'useStderr',
-            ],
+                // node_modules
+                // @keep-sorted
+                'dlxCacheMaxAge',
+                'enableGlobalVirtualStore',
+                'enableModulesDir',
+                'enablePrePostScripts',
+                'engineStrict',
+                'extendNodePath',
+                'failIfNoMatch',
 
-            // Directories and pnpmfile
-            // @keep-sorted
-            ...[
-              'cacheDir',
-              'globalBinDir',
-              'globalDir',
-              'globalPnpmfile',
-              'globalShims',
-              'ignorePnpmfile',
-              'npmrcAuthFile',
-              'pnpmfile',
-              'stateDir',
-            ],
+                // Registry and network
+                // @keep-sorted
+                'fetchMinSpeedKiBps',
+                'fetchRetries',
+                'fetchRetryFactor',
+                'fetchRetryMaxtimeout',
+                'fetchRetryMintimeout',
+                'fetchTimeout',
+                'fetchWarnTimeoutMs',
 
-            // Audit and versioning
-            // @keep-sorted
-            ...[
-              'audit',
-              'versioning',
-            ],
+                // Store
+                // @keep-sorted
+                'frozenStore',
 
-            // Misc
-            // @keep-sorted
-            ...[
-              'allowNonAppliedPatches',
-              'dedupeDirectDeps',
-              'deployAllFiles',
-              'ignoreCompatibilityDb',
-              'initAuthorEmail',
-              'initAuthorName',
-              'initAuthorUrl',
-              'initLicense',
-              'initVersion',
-              'optimisticRepeatInstall',
-              'saveExact',
-              'savePrefix',
-              'tag',
-            ],
+                // Lockfile
+                // @keep-sorted
+                'gitBranchLockfile',
+                'gitShallowHosts',
+                'globalBinDir',
+                'globalDir',
+                'globalPnpmfile',
+                'globalShims',
 
-            // Workspace layout and dependency declarations, ordered by how
-            // a `pnpm-workspace.yaml` usually reads top to bottom
-            'packages',
-            'packageConfigs',
-            'overrides',
-            'packageExtensions',
-            'patchedDependencies',
-            'configDependencies',
+                // Hoisting
+                // @keep-sorted
+                'hoist',
+                'hoistingLimits',
+                'hoistPattern',
+                'hoistWorkspacePackages',
+                'httpProxy',
+                'httpsProxy',
+                'ignoreCompatibilityDb',
+                // Superseded by `allowBuilds` in pnpm v11
+                // @keep-sorted
+                'ignoredBuiltDependencies',
+                'ignoreDepScripts',
+                'ignoredOptionalDependencies',
+                'ignorePnpmfile',
+                'ignoreScripts',
+                'ignoreWorkspaceCycles',
+                'ignoreWorkspaceRootCheck',
+                'includeWorkspaceRoot',
+                'initAuthorEmail',
+                'initAuthorName',
+                'initAuthorUrl',
+                'initLicense',
+                'initVersion',
+                'injectWorkspacePackages',
+                'legacyDirFiltering',
+                'linkWorkspacePackages',
+                'localAddress',
+                'lockfile',
+                'lockfileIncludeTarballUrl',
+                'loglevel',
 
-            // Build approvals
-            'allowBuilds',
-            // Superseded by `allowBuilds` in pnpm v11
-            // @keep-sorted
-            ...[
-              'ignoredBuiltDependencies',
-              'neverBuiltDependencies',
-              'onlyBuiltDependencies',
-              'onlyBuiltDependenciesFile',
-            ],
+                // Node.js and package manager versions
+                // @keep-sorted
+                'managePackageManagerVersions',
+                'maxsockets',
+                'mergeGitBranchLockfilesBranchPattern',
+                'minimumReleaseAge',
+                'minimumReleaseAgeExclude',
+                'minimumReleaseAgeExcludePrune',
+                'minimumReleaseAgeIgnoreMissingTime',
+                'minimumReleaseAgeStrict',
+                'modulesCacheMaxAge',
+                'modulesDir',
+                'namedRegistries',
+                'networkConcurrency',
+                'neverBuiltDependencies',
+                'nodeDownloadMirrors',
+                'nodeExperimentalPackageMap',
+                'nodeLinker',
+                'nodeOptions',
+                'nodePackageMapType',
+                'nodeVersion',
+                'noProxy',
+                'npmPath',
+                'npmrcAuthFile',
+                'onlyBuiltDependencies',
+                'onlyBuiltDependenciesFile',
+                'optimisticRepeatInstall',
+                'overrides',
+                'packageConfigs',
+                'packageExtensions',
+                'packageImportMethod',
+                'packageManagerStrict',
+                'packageManagerStrictVersion',
 
-            // Catalogs, usually the largest blocks
-            'catalog',
-            'catalogs',
-          ],
+                // Workspace layout and dependency declarations, ordered by how
+                // a `pnpm-workspace.yaml` usually reads top to bottom
+                'packages',
+                'patchedDependencies',
+                'peerDependencyRules',
+                'peersSuffixMaxLength',
+                'pmOnFail',
+                'pnpmfile',
+                'preferFrozenLockfile',
+                'preferSymlinkedExecutables',
+                'preferWorkspacePackages',
+                'publicHoistPattern',
+                'recursiveInstall',
+                'registries',
+                'registry',
+                'registrySupportsTimeField',
+                'requiredScripts',
+                'resolutionMode',
+                'resolvePeersFromWorkspaceRoot',
+                'runtimeOnFail',
+                'saveExact',
+                'savePrefix',
+                'saveWorkspaceProtocol',
+                'scriptShell',
+                'shamefullyHoist',
+                'sharedWorkspaceLockfile',
+                'shellEmulator',
+                'sideEffectsCache',
+                'sideEffectsCacheReadonly',
+                'stateDir',
+                'storeDir',
+                'strictDepBuilds',
+                'strictPeerDependencies',
+                'strictSsl',
+                'strictStorePkgContentCheck',
+                'supportedArchitectures',
+                'symlink',
+                'syncInjectedDepsAfterScripts',
+                'tag',
+                'trustLockfile',
+                'trustPolicy',
+                'trustPolicyExclude',
+                'trustPolicyIgnoreAfter',
+                'unsafePerm',
+                'update',
+                'updateNotifier',
+                'useBetaCli',
+                'useRunningStoreServer',
+                'useStderr',
+                'verifyDepsBeforeRun',
+                'verifyStoreIntegrity',
+                'versioning',
+                'virtualStoreDir',
+                'virtualStoreDirMaxLength',
+                'virtualStoreOnly',
+                'virtualStoreType',
+              ],
             },
             {
               order: { type: 'asc' },

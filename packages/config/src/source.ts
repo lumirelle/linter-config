@@ -1,9 +1,11 @@
 import type { ConfigObject, Glob, Options, PnpmOptions, StylisticOptions } from './types'
 import { existsSync, readFileSync } from 'node:fs'
 import { dirname, join, parse } from 'node:path'
+import process from 'node:process'
 import { isInEditorEnv } from './editor'
 import { assertGlobVocabulary } from './globs'
 import { disables } from './modules/disables'
+import { formatters } from './modules/formatters'
 import { ignores } from './modules/ignores'
 import { imports } from './modules/imports'
 import { javascript } from './modules/javascript'
@@ -57,6 +59,7 @@ export function source(options: Options = {}): ConfigObject[] {
     ...options.toml === false ? [] : toml({ stylistic: stylisticSlices }),
     ...options.markdown === false ? [] : markdown({ componentExts: options.componentExts, stylistic: stylisticSlices }),
     ...pnpmModule(options.pnpm, { isInEditor, stylistic: stylisticSlices }),
+    ...formatterModules(options.formatters),
   ]
 
   if (isTestEnabled(options.test)) {
@@ -80,6 +83,17 @@ export function source(options: Options = {}): ConfigObject[] {
  */
 function isStylisticEnabled(option: Options['stylistic']): boolean {
   return option !== undefined && option !== false
+}
+
+/**
+ * The `formatters` Module, which is opt-in: Upstream enables it only for a truthy option, and so
+ * does the house. `true` asks for the formatters that need no extra Prettier plugin.
+ */
+function formatterModules(option: Options['formatters']): ConfigObject[] {
+  if (!option) {
+    return []
+  }
+  return formatters(option === true ? { css: true, graphql: true, html: true, markdown: true } : option)
 }
 
 /**

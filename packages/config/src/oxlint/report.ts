@@ -35,11 +35,14 @@ export interface CoverageReport {
  * `erasableOnly` plugin, the `lib` rule set and the stylistic slices are the option-dependent
  * parts of Source, and all of them stay visible here.
  *
- * `gitignore` and `isInEditor` are pinned because they read the environment, not a Module.
+ * `gitignore` and `isInEditor` are pinned because they read the environment, not a Module, and
+ * `pnpm` is pinned because it auto-detects a `pnpm-workspace.yaml`.
  */
 const WIDEST_SOURCE: Options = {
+  formatters: true,
   gitignore: false,
   isInEditor: false,
+  pnpm: true,
   stylistic: true,
   type: 'lib',
   typescript: { erasableOnly: true, tsconfigPath: 'tsconfig.json' },

@@ -25,7 +25,7 @@ export function composeEslint(options: Options): FlatConfigComposer<Linter.Confi
   // Markdown has its own `SourceCode`, which lacks the JS-only methods (`getAllComments`, ...) that
   // an unscoped rule can call; Upstream keeps every such rule off `.md` files the same way.
   if (options.markdown !== false) {
-    composer.setDefaultIgnores(previous => [...previous, GLOB_MARKDOWN])
+    return composer.setDefaultIgnores(previous => [...previous, GLOB_MARKDOWN])
   }
 
   return composer

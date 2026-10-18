@@ -7,7 +7,7 @@ const FRAMEWORK_TAGS = ['jsx', 'react', 'nextjs', 'solid', 'unocss', 'svelte', '
 
 /** The names of the Config objects an Emission emitted. */
 async function names(options = {}): Promise<string[]> {
-  return (await eslint(houseOptions(options))).map(config => config.name)
+  return (await eslint(houseOptions(options))).map(config => config.name as string)
 }
 
 describe('the framework Modules', () => {
@@ -110,7 +110,9 @@ describe('eslint() jsx module', () => {
 
     expect(setup.files).toEqual(['**/*.{jsx,cjsx,mjsx}', '**/*.{tsx,ctsx,mtsx}'])
     expect(setup.plugins).toBeUndefined()
-    expect(setup.languageOptions?.parserOptions?.ecmaFeatures).toEqual({ jsx: true })
+    const parserOptions = setup.languageOptions?.parserOptions as { ecmaFeatures?: unknown } | undefined
+
+    expect(parserOptions?.ecmaFeatures).toEqual({ jsx: true })
   })
 })
 

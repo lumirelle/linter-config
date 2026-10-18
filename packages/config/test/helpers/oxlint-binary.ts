@@ -149,8 +149,3 @@ function ruleIdOf(code: string): string {
   const [, scope, rule] = match as unknown as [string, string, string]
   return scope === 'eslint' ? rule : `${scope}/${rule}`
 }
-
-/** Rule id and line per diagnostic, which is what a fixture assertion usually needs. */
-export function reported(diagnostics: readonly Diagnostic[]): Array<{ file: string, ruleId: string }> {
-  return diagnostics.map(diagnostic => ({ file: diagnostic.file, ruleId: diagnostic.ruleId }))
-}

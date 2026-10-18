@@ -39,7 +39,9 @@ describe('oxlint() JavaScript rules', () => {
 
   it('keeps jsPlugin rules under their Plugin id and declares the package Oxlint must load', async () => {
     const config = await house()
-    const emitted = Object.assign({}, ...(config.overrides ?? []).map(override => override.rules ?? {}))
+    // Scoped Modules — `test`, `disables` — also set some of these rules, so read the rules the
+    // way Oxlint applies them to a plain JavaScript file.
+    const emitted = rulesFor(config, JS_EXTENSIONS)
     const jsPlugins = (config.overrides ?? []).flatMap(override => override.jsPlugins ?? [])
 
     expect(emitted['antfu/no-top-level-await']).toBe('error')

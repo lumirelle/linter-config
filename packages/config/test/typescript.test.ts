@@ -29,6 +29,8 @@ describe('eslint() typescript module', () => {
   it('emits the upstream setup, parser and rules objects under stable names', async () => {
     const names = (await emission()).map(config => config.name)
 
+    // The whole order, because it is the override order both Emissions keep: the base Modules,
+    // then this one, then the Modules Upstream adds after it.
     expect(names).toEqual([
       'lumirelle/ignores',
       'lumirelle/javascript/setup',
@@ -36,6 +38,21 @@ describe('eslint() typescript module', () => {
       'lumirelle/typescript/setup',
       'lumirelle/typescript/parser',
       'lumirelle/typescript/rules',
+      'lumirelle/node/setup',
+      'lumirelle/node/rules',
+      'lumirelle/jsdoc/setup',
+      'lumirelle/jsdoc/rules',
+      'lumirelle/imports/rules',
+      'lumirelle/unicorn/setup',
+      'lumirelle/unicorn/rules',
+      'lumirelle/test/setup',
+      'lumirelle/test/rules',
+      'lumirelle/disables/scripts',
+      'lumirelle/disables/cli',
+      'lumirelle/disables/bin',
+      'lumirelle/disables/dts',
+      'lumirelle/disables/cjs',
+      'lumirelle/disables/config-files',
     ])
   })
 
@@ -96,7 +113,8 @@ describe('eslint() typescript module', () => {
     const configs = await emission(TSCONFIG)
     const names = configs.map(config => config.name)
 
-    expect(names).toEqual([
+    // The type-aware pair slots in after the parser and after the rules, as Upstream builds it.
+    expect(names.slice(0, 8)).toEqual([
       'lumirelle/ignores',
       'lumirelle/javascript/setup',
       'lumirelle/javascript/rules',

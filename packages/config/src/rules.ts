@@ -1,7 +1,7 @@
 import type { ConfigObject, RuleEntry, RuleKey } from './types'
 
 /** Whether a rule entry turns its rule off; every other severity turns it on. */
-export function isRuleOff(entry: RuleEntry): boolean {
+function isRuleOff(entry: RuleEntry): boolean {
   const severity = Array.isArray(entry) ? entry[0] : entry
   return severity === 0 || severity === 'off'
 }

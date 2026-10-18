@@ -12,7 +12,7 @@ type Options = Parameters<typeof eslint>[0]
 
 /** The disables objects of an Emission, in emission order. */
 async function disablesObjects(options: Options = {}): Promise<Linter.Config[]> {
-  return (await eslint(houseOptions(options))).filter(config => config.name.startsWith('lumirelle/disables/'))
+  return (await eslint(houseOptions(options))).filter(config => config.name?.startsWith('lumirelle/disables/'))
 }
 
 /** How the Oxlint Emission spells each rule the disables table turns off, or `undefined` if it drops it. */
@@ -25,6 +25,22 @@ const OXLINT_SPELLING: Readonly<Record<string, string | undefined>> = {
   'ts/explicit-function-return-type': 'typescript/explicit-function-return-type',
   'ts/no-require-imports': 'typescript/no-require-imports',
   'unused-imports/no-unused-vars': 'unused-imports/no-unused-vars',
+}
+
+/** Paths one row of the disables table is written for, plus two it must leave alone. */
+const SAMPLES = [
+  'scripts/tool.ts',
+  'cli/main.js',
+  'bin/cli.js',
+  'types/index.d.ts',
+  'lib/legacy.cjs',
+  'vite.config.ts',
+  'src/app.ts',
+]
+
+/** Whether one of the object's globs matches `file`; ESLint allows a nested array per pattern. */
+function matches(file: string, globs: Linter.Config['files'] = []): boolean {
+  return globs.flat().some(glob => typeof glob === 'string' && minimatch(file, glob))
 }
 
 /** Every rule the Oxlint Emission sets to `off`, across all overrides. */
@@ -141,12 +157,12 @@ describe('disables in both Emissions', () => {
     for (const sample of SAMPLES) {
       const fromEslint = new Set(
         (await disablesObjects({ type: 'lib' }))
-          .filter(object => matches(sample, object.files ?? []))
+          .filter(object => matches(sample, object.files))
           .flatMap(object => Object.keys(object.rules ?? {})),
       )
       const fromOxlint = new Set(
         oxlintDisables
-          .filter(override => matches(sample, override.files ?? []))
+          .filter(override => matches(sample, override.files))
           .flatMap(override => Object.keys(override.rules ?? {})),
       )
       const expected = [...fromEslint]
@@ -157,18 +173,3 @@ describe('disables in both Emissions', () => {
     }
   })
 })
-
-/** Paths one row of the disables table is written for, plus two it must leave alone. */
-const SAMPLES = [
-  'scripts/tool.ts',
-  'cli/main.js',
-  'bin/cli.js',
-  'types/index.d.ts',
-  'lib/legacy.cjs',
-  'vite.config.ts',
-  'src/app.ts',
-]
-
-function matches(file: string, globs: readonly string[]): boolean {
-  return globs.some(glob => minimatch(file, glob))
-}

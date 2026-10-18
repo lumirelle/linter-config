@@ -59,7 +59,7 @@ describe('eslint() test module', () => {
   it('turns the module off with test: false', async () => {
     const names = (await eslint(houseOptions({ test: false }))).map(config => config.name)
 
-    expect(names.some(name => name.startsWith('lumirelle/test/'))).toBe(false)
+    expect(names.some(name => name?.startsWith('lumirelle/test/'))).toBe(false)
   })
 
   it('takes rule overrides from the option object, as Upstream\'s option shape allows', async () => {

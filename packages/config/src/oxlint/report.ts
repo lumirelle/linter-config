@@ -20,8 +20,8 @@ export interface CoverageReport {
 
 /**
  * The Source the report is computed from: the type-aware TypeScript block, the peer
- * `erasableOnly` plugin and the stylistic slices are the option-dependent parts of Source, and
- * all of them stay visible here.
+ * `erasableOnly` plugin, the `lib` rule set and the stylistic slices are the option-dependent
+ * parts of Source, and all of them stay visible here.
  *
  * `gitignore` and `isInEditor` are pinned because they read the environment, not a Module.
  */
@@ -29,6 +29,7 @@ const WIDEST_SOURCE: Options = {
   gitignore: false,
   isInEditor: false,
   stylistic: true,
+  type: 'lib',
   typescript: { erasableOnly: true, tsconfigPath: 'tsconfig.json' },
 }
 

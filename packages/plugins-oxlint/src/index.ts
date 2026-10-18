@@ -26,6 +26,14 @@ export const builtinPlugins: readonly BuiltinPlugin[] = [
  * ESLint plugins loaded through Oxlint's `jsPlugins`, keyed by Plugin id; the value is
  * the specifier Oxlint resolves. The alias Oxlint sees is the key itself, so supported
  * rule keys are identical in ESLint and Oxlint.
+ *
+ * These are package names, and the Consumer installs them: Oxlint resolves a `jsPlugins` specifier
+ * from the config file's own directory, never from this Bundle's `node_modules`, so a project that
+ * runs the Oxlint Emission needs the plugins of the Modules it enables among its own dependencies.
+ * With the default Modules that is a small, fixed set (`eslint-plugin-antfu`,
+ * `eslint-plugin-command`, `@e18e/eslint-plugin`, `eslint-plugin-perfectionist`,
+ * `eslint-plugin-regexp`, `eslint-plugin-unused-imports`), and a Module whose peers are missing
+ * names them when it is enabled.
  */
 export const jsPlugins: Readonly<Record<string, string>> = {
   'antfu': 'eslint-plugin-antfu',

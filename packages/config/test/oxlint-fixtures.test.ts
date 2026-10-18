@@ -16,6 +16,13 @@ const TS_FIXTURES = fileURLToPath(new URL('./fixtures/typescript/', import.meta.
 
 const scratch = scratchDirectory()
 
+/** The whole fixture set linted once under the house Emission, so the assertions below share one run. */
+let houseRun: { diagnostics: Diagnostic[], files: number } = { diagnostics: [], files: 0 }
+
+beforeAll(async () => {
+  houseRun = lint(project(scratch.directory, 'house', await house(), FIXTURES))
+})
+
 afterAll(() => {
   scratch.remove()
 })
@@ -24,13 +31,6 @@ afterAll(() => {
 async function house(options: Parameters<typeof oxlint>[0] = {}): Promise<OxlintConfig> {
   return oxlint({ gitignore: false, isInEditor: false, ...options })
 }
-
-/** The whole fixture set linted once under the house Emission, so the assertions below share one run. */
-let houseRun: { diagnostics: Diagnostic[], files: number } = { diagnostics: [], files: 0 }
-
-beforeAll(async () => {
-  houseRun = lint(project(scratch.directory, 'house', await house(), FIXTURES))
-})
 
 describe('oxlint() over the JavaScript fixtures', () => {
   it('lints every fixture and reports nothing for house-style code', () => {

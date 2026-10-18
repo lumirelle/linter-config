@@ -2,9 +2,18 @@
   "extends": "@lumirelle/tsconfig/ts",
   "compilerOptions": {
     "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.lib.tsbuildinfo",
-    "types": ["node"],
+    "types": [
+      "node"
+    ],
     "declaration": true
   },
-  "include": ["src/**/*", "scripts/**/*", "test/**/*"],
-  "exclude": ["test/fixtures/**/*"]
+  "include": [
+    "src/**/*",
+    "scripts/**/*",
+    "test/**/*",
+    "*.config.ts"
+  ],
+  "exclude": [
+    "test/fixtures/**/*"
+  ]
 }

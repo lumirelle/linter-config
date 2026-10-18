@@ -8,10 +8,13 @@ export type * from './types'
 /**
  * Lumirelle's ESLint flat config.
  *
- * Emits the house JavaScript config: one global `ignores` object (house excludes, the
+ * Emits Source's Modules in order: one global `ignores` object (house excludes, the
  * project's `.gitignore` when {@link Options.gitignore} is on, and {@link Options.ignores}),
- * then the shared language setup and the house rules. Autofixable rules report as warnings
- * inside an editor, which {@link Options.isInEditor} detects or overrides.
+ * the shared language setup and house rules for JavaScript and TypeScript, then the `node`,
+ * `jsdoc`, `imports`, `unicorn` and `test` Modules, and last the `disables` Module, which
+ * relaxes rules for scripts, CLIs, bins, declaration files, CommonJS entry points and config
+ * files. Autofixable rules report as warnings inside an editor, which {@link Options.isInEditor}
+ * detects or overrides.
  *
  * The returned composer is thenable, so `eslint.config.js` can export it directly
  * without a top-level `await`, and it supports `append` / `override` / `remove` by

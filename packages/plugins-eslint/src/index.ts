@@ -1,8 +1,30 @@
 import type { ESLint, Linter } from 'eslint'
 import tsPlugin from '@typescript-eslint/eslint-plugin'
 import tsParser from '@typescript-eslint/parser'
+import vitestPlugin from '@vitest/eslint-plugin'
 import antfu from 'eslint-plugin-antfu'
+import importLite from 'eslint-plugin-import-lite'
+import jsdoc from 'eslint-plugin-jsdoc'
+import node from 'eslint-plugin-n'
+// @ts-expect-error -- the package ships no type declarations.
+import noOnlyTests from 'eslint-plugin-no-only-tests'
+import unicorn from 'eslint-plugin-unicorn'
 import unusedImports from 'eslint-plugin-unused-imports'
+
+/**
+ * The plugin Upstream calls `test`: `@vitest/eslint-plugin` with `eslint-plugin-no-only-tests`
+ * rules merged on top, because the `test` rule prefix spans both packages.
+ *
+ * It is composed once here rather than per call, so every Config object that declares the `test`
+ * plugin gets the same object.
+ */
+const testPlugin: ESLint.Plugin = {
+  ...vitestPlugin,
+  rules: {
+    ...vitestPlugin.rules,
+    ...noOnlyTests.rules,
+  },
+} as unknown as ESLint.Plugin
 
 /**
  * ESLint plugin objects, keyed by Plugin id.
@@ -13,7 +35,12 @@ import unusedImports from 'eslint-plugin-unused-imports'
  */
 export const eslintPlugins: Record<string, ESLint.Plugin> = {
   'antfu': antfu as ESLint.Plugin,
+  'import': importLite as ESLint.Plugin,
+  'jsdoc': jsdoc as unknown as ESLint.Plugin,
+  'node': node as unknown as ESLint.Plugin,
+  'test': testPlugin,
   'ts': tsPlugin as unknown as ESLint.Plugin,
+  'unicorn': unicorn as unknown as ESLint.Plugin,
   'unused-imports': unusedImports as ESLint.Plugin,
 }
 

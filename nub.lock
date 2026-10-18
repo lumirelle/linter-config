@@ -16,9 +16,27 @@ catalogs:
     '@typescript-eslint/parser':
       specifier: ^8.68.0
       version: 8.71.2
+    '@vitest/eslint-plugin':
+      specifier: ^1.6.27
+      version: 1.6.27
     eslint-plugin-antfu:
       specifier: ^3.2.3
       version: 3.2.3
+    eslint-plugin-import-lite:
+      specifier: ^0.6.0
+      version: 0.6.0
+    eslint-plugin-jsdoc:
+      specifier: ^64.3.2
+      version: 64.5.4
+    eslint-plugin-n:
+      specifier: ^18.3.0
+      version: 18.4.1
+    eslint-plugin-no-only-tests:
+      specifier: ^3.4.0
+      version: 3.4.0
+    eslint-plugin-unicorn:
+      specifier: ^74.0.0
+      version: 74.0.0
     eslint-plugin-unused-imports:
       specifier: ^4.4.1
       version: 4.4.1
@@ -329,9 +347,27 @@ importers:
       '@typescript-eslint/parser':
         specifier: catalog:bundle
         version: 8.71.2(eslint@10.12.0)(typescript@6.0.3-bridge.18.tsgo.7.0.2)
+      '@vitest/eslint-plugin':
+        specifier: catalog:bundle
+        version: 1.6.27(@typescript-eslint/eslint-plugin@8.71.2(@typescript-eslint/parser@8.71.2(eslint@10.12.0)(typescript@6.0.3-bridge.18.tsgo.7.0.2))(eslint@10.12.0)(typescript@6.0.3-bridge.18.tsgo.7.0.2))(eslint@10.12.0)(vitest@5.0.4(@types/node@26.6.5)(@vitest/coverage-v8@5.0.4)(vite@8.3.4(@types/node@26.6.5)))
       eslint-plugin-antfu:
         specifier: catalog:bundle
         version: 3.2.3(eslint@10.12.0)
+      eslint-plugin-import-lite:
+        specifier: catalog:bundle
+        version: 0.6.0(eslint@10.12.0)
+      eslint-plugin-jsdoc:
+        specifier: catalog:bundle
+        version: 64.5.4(eslint@10.12.0)(typescript@6.0.3-bridge.18.tsgo.7.0.2)
+      eslint-plugin-n:
+        specifier: catalog:bundle
+        version: 18.4.1(eslint@10.12.0)
+      eslint-plugin-no-only-tests:
+        specifier: catalog:bundle
+        version: 3.4.0
+      eslint-plugin-unicorn:
+        specifier: catalog:bundle
+        version: 74.0.0(eslint@10.12.0)
       eslint-plugin-unused-imports:
         specifier: catalog:bundle
         version: 4.4.1(@typescript-eslint/eslint-plugin@8.71.2(@typescript-eslint/parser@8.71.2(eslint@10.12.0)(typescript@6.0.3-bridge.18.tsgo.7.0.2))(eslint@10.12.0)(typescript@6.0.3-bridge.18.tsgo.7.0.2))(eslint@10.12.0)

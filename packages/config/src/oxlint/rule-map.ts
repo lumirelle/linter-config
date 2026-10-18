@@ -11,17 +11,25 @@ import { findOxlintRule } from './inventory'
  * - `type-aware`: the rule only runs in Oxlint's type-aware mode, which the caller did not turn on.
  * - `no-oxlint-realization`: the Plugin id has neither a built-in scope nor a `jsPlugins` entry.
  * - `eslint-only-domain`: the rule belongs to a Domain Oxlint cannot read (no parser, no processor).
+ * - `incompatible-options`: Oxlint implements the rule but rejects the options Source gives it, so
+ *   emitting it would make the whole Oxlint config unloadable.
+ * - `renamed-rule`: Oxlint implements the rule under a different name, recorded in `oxlint`; the
+ *   Emission cannot emit it, because a built-in scope only reads its own names.
  */
 type CoverageReason
   = | 'unknown-rule'
     | 'type-aware'
     | 'no-oxlint-realization'
     | 'eslint-only-domain'
+    | 'incompatible-options'
+    | 'renamed-rule'
 
 /** A rule key the Oxlint Emission had to leave out, with the reason it did. */
 export interface UnemittedRule {
   key: RuleKey
   reason: CoverageReason
+  /** For `renamed-rule`: the key Oxlint reads the same rule under. */
+  oxlint?: string
 }
 
 export interface RuleMapping {
@@ -30,6 +38,30 @@ export interface RuleMapping {
   /** The rules that did not, in Source order; the Coverage report derives from this. */
   unemitted: UnemittedRule[]
 }
+
+/**
+ * Source rules whose options Oxlint's own schema rejects.
+ *
+ * `eslint-plugin-import-lite` spells the option of `consistent-type-specifier-style` `top-level`,
+ * while Oxlint's forked schema only accepts `prefer-top-level` / `prefer-inline`. Oxlint refuses
+ * the whole config over one unknown option value, so the rule is left to ESLint and recorded in
+ * the Coverage report instead of making the Emission unloadable.
+ */
+const INCOMPATIBLE_OPTIONS: ReadonlySet<RuleKey> = new Set<RuleKey>([
+  'import/consistent-type-specifier-style',
+])
+
+/**
+ * Source rules Oxlint implements under another name.
+ *
+ * `test/no-only-tests` comes from `eslint-plugin-no-only-tests`, which Upstream merges into the
+ * `test` plugin; Oxlint's built-in `vitest` scope calls the same check `no-focused-tests`. The
+ * Emission keeps Source's key rather than translating the rule, so the Coverage report names the
+ * Oxlint spelling for a reviewer to judge.
+ */
+const RENAMED_RULES: ReadonlyMap<RuleKey, string> = new Map<RuleKey, string>([
+  ['test/no-only-tests', 'vitest/no-focused-tests'],
+])
 
 /**
  * Maps Source rule keys onto the keys Oxlint reads.
@@ -54,6 +86,17 @@ export function mapRules(
     }
 
     const id = pluginIdOfRuleKey(key)
+    if (INCOMPATIBLE_OPTIONS.has(key)) {
+      unemitted.push({ key, reason: 'incompatible-options' })
+      continue
+    }
+
+    const renamedTo = RENAMED_RULES.get(key)
+    if (renamedTo) {
+      unemitted.push({ key, oxlint: renamedTo, reason: 'renamed-rule' })
+      continue
+    }
+
     if (!id) {
       if (findOxlintRule('eslint', key)) {
         mapped[key] = entry

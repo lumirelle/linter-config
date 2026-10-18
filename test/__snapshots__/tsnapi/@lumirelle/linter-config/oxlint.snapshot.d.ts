@@ -41,7 +41,10 @@ export interface Options {
   solid?: boolean;
   angular?: boolean;
   nextjs?: boolean;
-  test?: boolean;
+  node?: boolean;
+  test?: boolean | {
+    overrides?: ConfigObject['rules'];
+  };
   jsonc?: boolean;
   yaml?: boolean;
   toml?: boolean;

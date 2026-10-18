@@ -1,6 +1,18 @@
 {
   "oxlintVersion": "1.88.0",
   "modules": {
+    "disables": [
+      {
+        "key": "no-restricted-syntax",
+        "reason": "unknown-rule"
+      }
+    ],
+    "imports": [
+      {
+        "key": "import/consistent-type-specifier-style",
+        "reason": "incompatible-options"
+      }
+    ],
     "javascript": [
       {
         "key": "dot-notation",
@@ -25,6 +37,65 @@
       {
         "key": "no-undef-init",
         "reason": "unknown-rule"
+      }
+    ],
+    "jsdoc": [
+      {
+        "key": "jsdoc/check-alignment",
+        "reason": "unknown-rule"
+      },
+      {
+        "key": "jsdoc/check-param-names",
+        "reason": "unknown-rule"
+      },
+      {
+        "key": "jsdoc/check-types",
+        "reason": "unknown-rule"
+      },
+      {
+        "key": "jsdoc/multiline-blocks",
+        "reason": "unknown-rule"
+      },
+      {
+        "key": "jsdoc/no-multi-asterisks",
+        "reason": "unknown-rule"
+      },
+      {
+        "key": "jsdoc/require-returns-check",
+        "reason": "unknown-rule"
+      },
+      {
+        "key": "jsdoc/require-yields-check",
+        "reason": "unknown-rule"
+      }
+    ],
+    "node": [
+      {
+        "key": "node/no-deprecated-api",
+        "reason": "unknown-rule"
+      },
+      {
+        "key": "node/prefer-global/buffer",
+        "reason": "unknown-rule"
+      },
+      {
+        "key": "node/prefer-global/process",
+        "reason": "unknown-rule"
+      },
+      {
+        "key": "node/process-exit-as-throw",
+        "reason": "unknown-rule"
+      }
+    ],
+    "test": [
+      {
+        "key": "node/prefer-global/process",
+        "reason": "unknown-rule"
+      },
+      {
+        "key": "test/no-only-tests",
+        "oxlint": "vitest/no-focused-tests",
+        "reason": "renamed-rule"
       }
     ],
     "typescript": [

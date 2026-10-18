@@ -1,9 +1,10 @@
 import type { Composer } from '@oxlint-flat-config/composer'
 import type { FlatConfigItem } from 'oxlint-flat-config'
 import type { RuleMapping } from '../oxlint/rule-map'
-import type { ConfigObject, Options, OxlintOptions, PluginId } from '../types'
+import type { ConfigObject, Options, PluginId } from '../types'
 import { composer } from '@oxlint-flat-config/composer'
 import { isOxlintDomain } from '../oxlint/domains'
+import { oxlintRootOptions } from '../oxlint/options'
 import { mapRules } from '../oxlint/rule-map'
 import { PLUGIN_IDS, pluginDefinition } from '../plugins'
 import { source } from '../source'
@@ -68,20 +69,6 @@ function toOxlintConfig(config: ConfigObject, { rules }: RuleMapping): FlatConfi
     fields.ignores = config.ignores
   }
   return fields as FlatConfigItem
-}
-
-/** `options.oxlint` is the Bridge flag in its boolean form and Oxlint's root options in its object form. */
-function oxlintRootOptions(option: Options['oxlint']): OxlintOptions | undefined {
-  if (typeof option !== 'object' || option === null) {
-    return undefined
-  }
-
-  const { typeAware, typeCheck } = option
-  const root: OxlintOptions = {
-    ...(typeAware === undefined ? {} : { typeAware }),
-    ...(typeCheck === undefined ? {} : { typeCheck }),
-  }
-  return Object.keys(root).length > 0 ? root : undefined
 }
 
 /**

@@ -290,6 +290,19 @@ export interface Options {
    * single object can be targeted, e.g. `typescript/overrides-type-aware`.
    */
   overrides?: Partial<Record<ModuleId | `lumirelle/${string}`, Pick<ConfigObject, 'rules' | 'files' | 'ignores'>>>
-  /** ESLint-side Bridge: turn off rules already handled by Oxlint. */
+  /**
+   * Turn ESLint into Oxlint's complement: append the Bridge, one config object per Config object
+   * the Oxlint Emission takes, with every rule Oxlint reports turned `off` in the same file scopes.
+   *
+   * `true` is the flag; the object form carries Oxlint's root options, and `typeAware` reaches the
+   * Bridge too, so a type-aware rule is turned off only when Oxlint is type-aware — otherwise it
+   * stays on in ESLint, which is the side that can check it. A rule Oxlint cannot emit (see
+   * `coverage.json`) always stays on.
+   *
+   * The Bridge is appended at the end of this Emission. A consumer that appends its own configs
+   * after it must re-append `oxlintBridge(options)` last, with the same options the Oxlint side got.
+   *
+   * @default undefined (no Bridge: ESLint reports everything Source enables)
+   */
   oxlint?: boolean | OxlintOptions
 }

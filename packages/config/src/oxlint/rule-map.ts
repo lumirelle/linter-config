@@ -41,6 +41,11 @@ export interface UnemittedRule {
 export interface RuleMapping {
   /** The rules that survived, keyed the way Oxlint spells them. */
   rules?: Partial<Record<string, RuleEntry>>
+  /**
+   * The Source keys of those rules, in Source order, which is how the Bridge names them: an ESLint
+   * config reads a rule under its Source key, while Oxlint reads the mapped one.
+   */
+  emitted: RuleKey[]
   /** The rules that did not, in Source order; the Coverage report derives from this. */
   unemitted: UnemittedRule[]
   /** The Plugin ids the surviving rules are resolved through, as `jsPlugins` aliases. */
@@ -86,6 +91,7 @@ export function mapRules(
   { typeAware = false }: { typeAware?: boolean } = {},
 ): RuleMapping {
   const mapped: Partial<Record<string, RuleEntry>> = {}
+  const emitted: RuleKey[] = []
   const unemitted: UnemittedRule[] = []
   const jsPlugins = new Set<PluginId>()
 
@@ -115,6 +121,7 @@ export function mapRules(
     if (!id) {
       if (findOxlintRule('eslint', key)) {
         mapped[key] = entry
+        emitted.push(key)
       }
       else {
         unemitted.push({ key, reason: 'unknown-rule' })
@@ -135,12 +142,14 @@ export function mapRules(
       }
       else {
         mapped[`${definition.builtin}/${rule}`] = entry
+        emitted.push(key)
       }
       continue
     }
 
     if (definition?.alias) {
       mapped[`${definition.alias}/${rule}`] = entry
+      emitted.push(key)
       jsPlugins.add(id)
       continue
     }
@@ -148,5 +157,5 @@ export function mapRules(
     unemitted.push({ key, reason: 'no-oxlint-realization' })
   }
 
-  return { rules: Object.keys(mapped).length > 0 ? mapped : undefined, unemitted, jsPlugins: [...jsPlugins] }
+  return { rules: Object.keys(mapped).length > 0 ? mapped : undefined, emitted, unemitted, jsPlugins: [...jsPlugins] }
 }

@@ -4,7 +4,7 @@ import { tmpdir } from 'node:os'
 import { dirname, join } from 'node:path'
 import process from 'node:process'
 import { fileURLToPath, pathToFileURL } from 'node:url'
-import { describe, expect, it } from 'vitest'
+import { afterAll, beforeAll, describe, expect, it } from 'vitest'
 
 const PACKAGE_ROOT = fileURLToPath(new URL('../', import.meta.url))
 
@@ -34,58 +34,66 @@ function workspace(): { directory: string, remove: () => void } {
   return { directory, remove: () => rmSync(directory, { force: true, recursive: true }) }
 }
 
-/** Runs the Emission in the workspace and returns the error the factory threw. */
-function factoryError(directory: string, options: Record<string, boolean>): string {
+/** The options each case composes with; the workspace runs them all in one process. */
+const CASES = { react: { react: true }, angular: { angular: true }, none: {} } as const
+
+type Case = keyof typeof CASES
+
+/**
+ * Composes the Emission in the workspace once per case and returns what each factory did: the
+ * error message it threw, or `NO ERROR`.
+ *
+ * One process for every case, because booting Node and ESLint is the expensive part and the
+ * composition itself reads nothing but the options.
+ */
+function factoryResults(directory: string): Record<Case, string> {
   const entry = pathToFileURL(join(directory, 'node_modules/@lumirelle/linter-config/dist/eslint.mjs')).href
   const script = `
     const { eslint } = await import(${JSON.stringify(entry)})
-    try {
-      eslint({ gitignore: false, isInEditor: false, typescript: false, ...${JSON.stringify(options)} })
-      console.log('NO ERROR')
-    } catch (error) {
-      console.log(error.message)
+    const results = {}
+    for (const [name, options] of Object.entries(${JSON.stringify(CASES)})) {
+      try {
+        eslint({ gitignore: false, isInEditor: false, typescript: false, ...options })
+        results[name] = 'NO ERROR'
+      } catch (error) {
+        results[name] = error.message
+      }
     }
+    console.log(JSON.stringify(results))
   `
   const result = spawnSync(process.execPath, ['--input-type=module', '-e', script], { cwd: directory, encoding: 'utf8' })
   if (result.error || result.status !== 0) {
     throw new Error(`the Emission could not run in the fixture workspace: ${result.stderr}`)
   }
-  return result.stdout.trim()
+  return JSON.parse(result.stdout) as Record<Case, string>
 }
 
 describe('a Module whose peer packages are missing', () => {
-  it('names the packages to install instead of failing to resolve them', async () => {
-    const { directory, remove } = workspace()
-    try {
-      expect(factoryError(directory, { react: true }))
-        .toBe('The "react" Module needs packages this project has not installed: "@eslint-react/eslint-plugin", '
-          + '"eslint-plugin-react-refresh". Install them to enable the Module.')
-    }
-    finally {
-      remove()
-    }
+  let results: Record<Case, string>
+  let remove: () => void
+
+  beforeAll(() => {
+    const created = workspace()
+    remove = created.remove
+    results = factoryResults(created.directory)
+  }, 60_000)
+
+  afterAll(() => remove())
+
+  it('names the packages to install instead of failing to resolve them', () => {
+    expect(results.react)
+      .toBe('The "react" Module needs packages this project has not installed: "@eslint-react/eslint-plugin", '
+        + '"eslint-plugin-react-refresh". Install them to enable the Module.')
   })
 
   it('names every package of a Module that needs a parser as well as plugins', () => {
-    const { directory, remove } = workspace()
-    try {
-      expect(factoryError(directory, { angular: true }))
-        .toBe('The "angular" Module needs packages this project has not installed: '
-          + '"@angular-eslint/eslint-plugin", "@angular-eslint/eslint-plugin-template", "@angular-eslint/template-parser". '
-          + 'Install them to enable the Module.')
-    }
-    finally {
-      remove()
-    }
+    expect(results.angular)
+      .toBe('The "angular" Module needs packages this project has not installed: '
+        + '"@angular-eslint/eslint-plugin", "@angular-eslint/eslint-plugin-template", "@angular-eslint/template-parser". '
+        + 'Install them to enable the Module.')
   })
 
   it('stays quiet for a Module whose peers are not asked for', () => {
-    const { directory, remove } = workspace()
-    try {
-      expect(factoryError(directory, {})).toBe('NO ERROR')
-    }
-    finally {
-      remove()
-    }
+    expect(results.none).toBe('NO ERROR')
   })
 })

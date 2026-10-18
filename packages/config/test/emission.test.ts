@@ -4,14 +4,24 @@ import { eslint } from '../src/eslint'
 import { oxlint } from '../src/oxlint'
 
 /**
- * A stable form of the Emission: keys sorted at every depth, and plugin objects replaced by
- * the ids Source declared, because a plugin object is a package's internal shape.
+ * A stable form of the Emission: keys sorted at every depth, plugin objects replaced by
+ * the ids Source declared, and parser objects by the name the parser reports for itself,
+ * because both are a package's internal shape.
  */
 function normalize(configs: Linter.Config[]): unknown {
-  return configs.map(config => sortKeys({
-    ...config,
-    ...(config.plugins ? { plugins: Object.keys(config.plugins).sort() } : {}),
-  }))
+  return configs.map((config) => {
+    const parser = config.languageOptions?.parser
+    return sortKeys({
+      ...config,
+      ...(config.plugins ? { plugins: Object.keys(config.plugins).sort() } : {}),
+      ...(parser ? { languageOptions: { ...config.languageOptions, parser: parserName(parser) } } : {}),
+    })
+  })
+}
+
+/** The name a parser module declares for itself. */
+function parserName(parser: unknown): string {
+  return (parser as { meta?: { name?: string } })?.meta?.name ?? '<unnamed parser>'
 }
 
 function sortKeys(value: unknown): unknown {

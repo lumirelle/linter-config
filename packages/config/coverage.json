@@ -1,5 +1,16 @@
 {
   "oxlintVersion": "1.88.0",
+  "jsPlugins": [
+    "antfu",
+    "style",
+    "unused-imports"
+  ],
+  "blacklist": [
+    {
+      "id": "eslint-comments",
+      "failure": "`no-unlimited-disable` throws `RangeError: Line/column pair translates to an out of range offset` out of Oxlint's report shim on a block `/* eslint-disable */` directive: on the first line Oxlint reports `Error running JS plugin`, anywhere else the rule silently misses the directive. Only the line-comment form works, so the plugin cannot be trusted to see the block directives it exists for."
+    }
+  ],
   "modules": {
     "disables": [
       {

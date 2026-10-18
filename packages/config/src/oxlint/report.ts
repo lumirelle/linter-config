@@ -1,6 +1,9 @@
-import type { ModuleId, Options } from '../types'
+import type { ModuleId, Options, PluginId } from '../types'
+import type { BlacklistEntry } from './blacklist'
 import type { UnemittedRule } from './rule-map'
+import { PLUGIN_IDS } from '../plugins'
 import { source } from '../source'
+import { OXLINT_BLACKLIST } from './blacklist'
 import { oxlintVersion } from './inventory'
 import { mapRules } from './rule-map'
 
@@ -15,6 +18,14 @@ import { mapRules } from './rule-map'
 export interface CoverageReport {
   /** The Oxlint version the rule inventory — and so this report — was generated from. */
   oxlintVersion: string
+  /** The Plugin ids the Emission's one `jsPlugins` declaration aliases, in registry order. */
+  jsPlugins: PluginId[]
+  /**
+   * The Plugins the Emission refuses to load, with the failure that put them here. Source may not
+   * use them yet; the report carries them so adding a rule of a dead plugin cannot look like a
+   * new gap, and so the reason is reviewable next to the gaps it causes.
+   */
+  blacklist: BlacklistEntry[]
   modules: Partial<Record<ModuleId, UnemittedRule[]>>
 }
 
@@ -42,6 +53,7 @@ const WIDEST_SOURCE: Options = {
  */
 export function coverageReport(): CoverageReport {
   const modules: CoverageReport['modules'] = {}
+  const jsPlugins = new Set<PluginId>()
 
   for (const config of source(WIDEST_SOURCE)) {
     for (const rule of mapRules(config.rules).unemitted) {
@@ -51,10 +63,15 @@ export function coverageReport(): CoverageReport {
       }
       modules[config.module] = collected
     }
+    for (const id of mapRules(config.rules).jsPlugins) {
+      jsPlugins.add(id)
+    }
   }
 
   return {
     oxlintVersion,
+    jsPlugins: PLUGIN_IDS.filter(id => jsPlugins.has(id)),
+    blacklist: [...OXLINT_BLACKLIST].sort((left, right) => left.id.localeCompare(right.id)),
     modules: Object.fromEntries(
       Object.entries(modules)
         .sort(([left], [right]) => left.localeCompare(right))

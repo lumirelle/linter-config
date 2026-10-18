@@ -3,7 +3,7 @@ import { fileURLToPath } from 'node:url'
 import { eslintParsers, eslintPlugins } from '@lumirelle/linter-plugins-eslint'
 import { builtinPlugins, jsPlugins } from '@lumirelle/linter-plugins-oxlint'
 import { describe, expect, it } from 'vitest'
-import { isPluginId } from '../src/plugins'
+import { isPluginId, PLUGIN_IDS, pluginDefinition } from '../src/plugins'
 
 const packageJson = JSON.parse(
   readFileSync(fileURLToPath(new URL('../package.json', import.meta.url)), 'utf8'),
@@ -27,8 +27,20 @@ describe('plugin bundles', () => {
     for (const plugin of Object.values(eslintPlugins)) {
       expect(plugin.rules).toBeTypeOf('object')
     }
-    expect(jsPlugins).toEqual({})
-    expect(builtinPlugins).toEqual([])
+  })
+
+  it('carry the Oxlint specifiers the registry declares, and nothing else', () => {
+    const builtin = PLUGIN_IDS.flatMap((id) => {
+      const oxlint = pluginDefinition(id).oxlint
+      return oxlint && 'builtin' in oxlint && oxlint.builtin ? [oxlint.builtin] : []
+    })
+    const specifiers = Object.fromEntries(PLUGIN_IDS.flatMap((id) => {
+      const oxlint = pluginDefinition(id).oxlint
+      return oxlint && 'jsPlugin' in oxlint && oxlint.jsPlugin ? [[id, oxlint.jsPlugin]] : []
+    }))
+
+    expect([...builtinPlugins].sort()).toEqual([...builtin].sort())
+    expect(jsPlugins).toEqual(specifiers)
   })
 
   it('composes the merged test plugin', () => {

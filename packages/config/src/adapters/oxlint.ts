@@ -1,15 +1,19 @@
 import type { Composer } from '@oxlint-flat-config/composer'
 import type { FlatConfigItem } from 'oxlint-flat-config'
-import type { ConfigObject, Domain, Options, OxlintOptions, RuleKey } from '../types'
+import type { RuleMapping } from '../oxlint/rule-map'
+import type { ConfigObject, Domain, Options, OxlintOptions, PluginId } from '../types'
 import { composer } from '@oxlint-flat-config/composer'
 import { mapRules } from '../oxlint/rule-map'
-import { pluginDefinition, pluginIdOfRuleKey } from '../plugins'
+import { PLUGIN_IDS, pluginDefinition } from '../plugins'
 import { source } from '../source'
 
 const OXLINT_DOMAINS: readonly Domain[] = ['js', 'vue']
 
 /** Oxlint-only Config object name for the root `options` field, which has no ESLint counterpart. */
 const OXLINT_OPTIONS_NAME = 'lumirelle/oxlint/options'
+
+/** Oxlint-only Config object name for the single `jsPlugins` declaration of an Emission. */
+const OXLINT_JSPLUGINS_NAME = 'lumirelle/oxlint/jsPlugins'
 
 /**
  * Turns Source into the Oxlint Emission: keep the Domains Oxlint can read, drop the fields
@@ -21,9 +25,21 @@ export function composeOxlint(options: Options): Composer {
   const rootOptions = oxlintRootOptions(options.oxlint)
   const typeAware = rootOptions?.typeAware === true
 
+  const declared = new Set<PluginId>()
   const items: FlatConfigItem[] = source(options)
     .filter(config => OXLINT_DOMAINS.includes(config.domain) && config.tools?.oxlint !== false)
-    .map(config => toOxlintConfig(config, { typeAware }))
+    .map((config) => {
+      const mapping = mapRules(config.rules, { typeAware })
+      for (const id of mapping.jsPlugins) {
+        declared.add(id)
+      }
+      return toOxlintConfig(config, mapping)
+    })
+
+  const jsPlugins = jsPluginsDeclaration(declared)
+  if (jsPlugins) {
+    items.unshift(jsPlugins)
+  }
 
   if (rootOptions) {
     // Oxlint reads `typeAware` / `typeCheck` only in the root config, so the object carries no `files`.
@@ -33,9 +49,7 @@ export function composeOxlint(options: Options): Composer {
   return composer(...items)
 }
 
-function toOxlintConfig(config: ConfigObject, mapping: { typeAware: boolean }): FlatConfigItem {
-  const { rules } = mapRules(config.rules, mapping)
-  const jsPlugins = jsPluginsFor(config.rules)
+function toOxlintConfig(config: ConfigObject, { rules }: RuleMapping): FlatConfigItem {
   const oxlintTools = config.tools?.oxlint === false ? undefined : config.tools?.oxlint
 
   // `oxlint-flat-config` models scopes more strictly than Source does (an object with
@@ -43,7 +57,6 @@ function toOxlintConfig(config: ConfigObject, mapping: { typeAware: boolean }): 
   const fields: Record<string, unknown> = {
     name: config.name,
     ...(rules ? { rules } : {}),
-    ...(jsPlugins ? { jsPlugins } : {}),
     ...(oxlintTools?.env ? { env: oxlintTools.env } : {}),
     ...(config.globals ? { globals: mapGlobals(config.globals) } : {}),
     ...(config.settings ? { settings: config.settings } : {}),
@@ -72,20 +85,24 @@ function oxlintRootOptions(option: Options['oxlint']): OxlintOptions | undefined
   return Object.keys(root).length > 0 ? root : undefined
 }
 
-function jsPluginsFor(rules: ConfigObject['rules']): Array<{ name: string, specifier: string }> | undefined {
-  if (!rules) {
-    return undefined
-  }
+/**
+ * The one `jsPlugins` declaration of an Emission: every Plugin id a surviving rule resolves
+ * through, declared once, in registry order.
+ *
+ * Oxlint reads `jsPlugins` from an override too, so declaring per Config object would carry the
+ * same alias several times — once per object that happens to use it — and leave it to Oxlint which
+ * copy wins. One unscoped declaration covers every file. The object form is what a scoped package
+ * requires, and the alias is the Plugin id, so a rule key reads the same in both Emissions.
+ */
+function jsPluginsDeclaration(ids: ReadonlySet<PluginId>): FlatConfigItem | undefined {
+  const entries = PLUGIN_IDS.filter(id => ids.has(id)).flatMap((id) => {
+    const oxlint = pluginDefinition(id).oxlint
+    return oxlint?.alias && oxlint.jsPlugin ? [{ name: oxlint.alias, specifier: oxlint.jsPlugin }] : []
+  })
 
-  const ids = new Set((Object.keys(rules) as RuleKey[]).map(key => pluginIdOfRuleKey(key)))
-  const entries: Array<{ name: string, specifier: string }> = []
-  for (const id of ids) {
-    const oxlint = id ? pluginDefinition(id).oxlint : undefined
-    if (oxlint?.alias && oxlint.jsPlugin) {
-      entries.push({ name: oxlint.alias, specifier: oxlint.jsPlugin })
-    }
-  }
-  return entries.length > 0 ? entries : undefined
+  return entries.length > 0
+    ? { name: OXLINT_JSPLUGINS_NAME, jsPlugins: entries }
+    : undefined
 }
 
 /** ESLint declares a global read-only or writable with a boolean; Oxlint spells the same thing out. */

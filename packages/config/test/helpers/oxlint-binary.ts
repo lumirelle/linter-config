@@ -105,6 +105,20 @@ function resolvePackageDirectory(from: string, specifier: string): string | unde
   return undefined
 }
 
+/**
+ * Runs the real Oxlint and returns what it printed, for a run whose outcome is itself the subject
+ * (a plugin that crashes the report shim exits nothing like a clean run).
+ */
+export function runOxlint(directory: string, patterns: string[] = ['fixtures']): { status: number | null, output: string } {
+  const result = spawnSync(
+    process.execPath,
+    [OXLINT_BIN, '--config', join(directory, 'oxlint.config.json'), '--format', 'json', ...patterns],
+    { cwd: directory, encoding: 'utf8' },
+  )
+
+  return { status: result.status, output: `${result.stdout ?? ''}${result.stderr ?? ''}` }
+}
+
 /** Runs the real Oxlint over `patterns` and returns its diagnostics, in a stable order. */
 export function lint(directory: string, patterns: string[] = ['fixtures']): { diagnostics: Diagnostic[], files: number } {
   const result = spawnSync(

@@ -15,19 +15,14 @@ const HOUSE_RULES: ConfigObject['rules'] = {
   'toml/vue-custom-block/no-parsing-error': 'error',
 }
 
-/**
- * Upstream's stylistic slice, carrying the two house overrides the root `eslint.config.js` passes
- * as `toml.overrides`: arrays that are already multi-line stay that way, and brackets never get
- * inner padding. They are house style, so they live here rather than in a consumer's options; a
- * caller can still change them through `overrides.toml`.
- */
+/** Upstream's stylistic slice; the house turns it off through {@link Options.stylistic}. */
 const STYLISTIC_RULES: ConfigObject['rules'] = {
   // The stylistic Module owns `style/spaced-comment`; the house turns that Module off by default,
   // so the disable travels with the slice that would otherwise enable it.
   'style/spaced-comment': 'off',
   'toml/array-bracket-newline': 'error',
-  'toml/array-bracket-spacing': ['error', 'never'],
-  'toml/array-element-newline': ['error', 'consistent'],
+  'toml/array-bracket-spacing': 'error',
+  'toml/array-element-newline': 'error',
   'toml/indent': ['error', 2],
   'toml/inline-table-curly-spacing': 'error',
   'toml/key-spacing': 'error',
@@ -36,6 +31,18 @@ const STYLISTIC_RULES: ConfigObject['rules'] = {
   'toml/quoted-keys': 'error',
   'toml/spaced-comment': 'error',
   'toml/table-bracket-spacing': 'error',
+}
+
+/**
+ * The two house overrides the root `eslint.config.js` passes as `toml.overrides`: a TOML array is
+ * either fully multi-line or fully single-line, and brackets never get inner padding.
+ *
+ * They sit among the unconditional rules, like Upstream's own `overrides` argument, so they apply
+ * even while the house keeps the stylistic slice off.
+ */
+const HOUSE_OVERRIDES: ConfigObject['rules'] = {
+  'toml/array-bracket-spacing': ['error', 'never'],
+  'toml/array-element-newline': ['error', 'consistent'],
 }
 
 /**
@@ -70,6 +77,7 @@ export function toml(options: {
       rules: {
         ...HOUSE_RULES,
         ...stylistic ? STYLISTIC_RULES : {},
+        ...HOUSE_OVERRIDES,
         ...overrides,
       },
     },

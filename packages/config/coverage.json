@@ -226,6 +226,180 @@
         "reason": "eslint-only-domain"
       }
     ],
+    "markdown": [
+      {
+        "key": "antfu/no-top-level-await",
+        "reason": "eslint-only-domain"
+      },
+      {
+        "key": "e18e/prefer-static-regex",
+        "reason": "eslint-only-domain"
+      },
+      {
+        "key": "md/fenced-code-language",
+        "reason": "eslint-only-domain"
+      },
+      {
+        "key": "md/heading-increment",
+        "reason": "eslint-only-domain"
+      },
+      {
+        "key": "md/no-duplicate-definitions",
+        "reason": "eslint-only-domain"
+      },
+      {
+        "key": "md/no-empty-definitions",
+        "reason": "eslint-only-domain"
+      },
+      {
+        "key": "md/no-empty-images",
+        "reason": "eslint-only-domain"
+      },
+      {
+        "key": "md/no-empty-links",
+        "reason": "eslint-only-domain"
+      },
+      {
+        "key": "md/no-invalid-label-refs",
+        "reason": "eslint-only-domain"
+      },
+      {
+        "key": "md/no-missing-atx-heading-space",
+        "reason": "eslint-only-domain"
+      },
+      {
+        "key": "md/no-missing-label-refs",
+        "reason": "eslint-only-domain"
+      },
+      {
+        "key": "md/no-missing-link-fragments",
+        "reason": "eslint-only-domain"
+      },
+      {
+        "key": "md/no-multiple-h1",
+        "reason": "eslint-only-domain"
+      },
+      {
+        "key": "md/no-reference-like-urls",
+        "reason": "eslint-only-domain"
+      },
+      {
+        "key": "md/no-reversed-media-syntax",
+        "reason": "eslint-only-domain"
+      },
+      {
+        "key": "md/no-space-in-emphasis",
+        "reason": "eslint-only-domain"
+      },
+      {
+        "key": "md/no-unused-definitions",
+        "reason": "eslint-only-domain"
+      },
+      {
+        "key": "md/require-alt-text",
+        "reason": "eslint-only-domain"
+      },
+      {
+        "key": "md/table-column-count",
+        "reason": "eslint-only-domain"
+      },
+      {
+        "key": "no-alert",
+        "reason": "eslint-only-domain"
+      },
+      {
+        "key": "no-console",
+        "reason": "eslint-only-domain"
+      },
+      {
+        "key": "no-labels",
+        "reason": "eslint-only-domain"
+      },
+      {
+        "key": "no-lone-blocks",
+        "reason": "eslint-only-domain"
+      },
+      {
+        "key": "no-restricted-syntax",
+        "reason": "eslint-only-domain"
+      },
+      {
+        "key": "no-undef",
+        "reason": "eslint-only-domain"
+      },
+      {
+        "key": "no-unused-expressions",
+        "reason": "eslint-only-domain"
+      },
+      {
+        "key": "no-unused-labels",
+        "reason": "eslint-only-domain"
+      },
+      {
+        "key": "no-unused-vars",
+        "reason": "eslint-only-domain"
+      },
+      {
+        "key": "node/prefer-global/process",
+        "reason": "eslint-only-domain"
+      },
+      {
+        "key": "style/comma-dangle",
+        "reason": "eslint-only-domain"
+      },
+      {
+        "key": "style/eol-last",
+        "reason": "eslint-only-domain"
+      },
+      {
+        "key": "style/padding-line-between-statements",
+        "reason": "eslint-only-domain"
+      },
+      {
+        "key": "ts/consistent-type-imports",
+        "reason": "eslint-only-domain"
+      },
+      {
+        "key": "ts/explicit-function-return-type",
+        "reason": "eslint-only-domain"
+      },
+      {
+        "key": "ts/no-namespace",
+        "reason": "eslint-only-domain"
+      },
+      {
+        "key": "ts/no-redeclare",
+        "reason": "eslint-only-domain"
+      },
+      {
+        "key": "ts/no-require-imports",
+        "reason": "eslint-only-domain"
+      },
+      {
+        "key": "ts/no-unused-expressions",
+        "reason": "eslint-only-domain"
+      },
+      {
+        "key": "ts/no-unused-vars",
+        "reason": "eslint-only-domain"
+      },
+      {
+        "key": "ts/no-use-before-define",
+        "reason": "eslint-only-domain"
+      },
+      {
+        "key": "unicode-bom",
+        "reason": "eslint-only-domain"
+      },
+      {
+        "key": "unused-imports/no-unused-imports",
+        "reason": "eslint-only-domain"
+      },
+      {
+        "key": "unused-imports/no-unused-vars",
+        "reason": "eslint-only-domain"
+      }
+    ],
     "node": [
       {
         "key": "node/no-deprecated-api",

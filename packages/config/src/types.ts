@@ -128,6 +128,14 @@ export interface ConfigObject {
       languageOptions?: Record<string, unknown>
       linterOptions?: Record<string, unknown>
       processor?: unknown
+      /**
+       * ESLint-only: the Plugin id's processor of that name, merged with a pass-through so the
+       * document itself is linted as well as the code blocks the processor extracts.
+       *
+       * The Markdown Module needs both halves; Source cannot build the merged object, because one
+       * half is a plugin package's processor and Source imports no plugin package.
+       */
+      processorMerge?: { plugin: PluginRef, name: string }
     }
     /** `false` marks this object as ESLint-only; the object form carries Oxlint-only fields. */
     oxlint?: false | {
@@ -135,6 +143,22 @@ export interface ConfigObject {
       jsPlugins?: Array<string | { name: string, specifier: string }>
     }
   }
+}
+
+/** Options for the `pnpm` Module, mirroring Upstream's `OptionsPnpm`. */
+export interface PnpmOptions {
+  /** Whether `pnpm/json-enforce-catalog` runs; defaults to whether the workspace declares catalogs. */
+  catalogs?: boolean
+  /** In an editor the Module stops autofixing, like Upstream. */
+  isInEditor?: boolean
+  /** The `package.json` objects. */
+  json?: boolean
+  /** The `yaml/sort-keys` object for `pnpm-workspace.yaml`. */
+  sort?: boolean
+  /** The stylistic slice of the YAML objects. */
+  stylistic?: boolean
+  /** The `pnpm-workspace.yaml` objects. */
+  yaml?: boolean
 }
 
 /** Options for the `formatters` module; its concrete shape lands with that module. */
@@ -195,7 +219,14 @@ export interface Options {
   imports?: boolean
   unicorn?: boolean
   perfectionist?: boolean
-  pnpm?: boolean
+  /**
+   * The `pnpm` Module, for `package.json` and `pnpm-workspace.yaml`.
+   *
+   * @default detected: on when the project has a `pnpm-workspace.yaml`, like Upstream; the object
+   * form carries the Module's own options, and `catalogs` defaults to whether that file declares
+   * a `catalog:` block
+   */
+  pnpm?: boolean | PnpmOptions
   e18e?: boolean
   antislop?: boolean
   sonarjs?: boolean

@@ -19,6 +19,10 @@ export interface ConfigObject {
       languageOptions?: Record<string, unknown>;
       linterOptions?: Record<string, unknown>;
       processor?: unknown;
+      processorMerge?: {
+        plugin: PluginRef;
+        name: string;
+      };
     };
     oxlint?: false | {
       env?: Record<string, boolean>;
@@ -53,7 +57,7 @@ export interface Options {
   imports?: boolean;
   unicorn?: boolean;
   perfectionist?: boolean;
-  pnpm?: boolean;
+  pnpm?: boolean | PnpmOptions;
   e18e?: boolean;
   antislop?: boolean;
   sonarjs?: boolean;
@@ -90,6 +94,14 @@ export interface PluginDefinition {
     jsPlugin?: string;
     alias?: string;
   };
+}
+export interface PnpmOptions {
+  catalogs?: boolean;
+  isInEditor?: boolean;
+  json?: boolean;
+  sort?: boolean;
+  stylistic?: boolean;
+  yaml?: boolean;
 }
 export interface StylisticOptions {
   braceStyle?: '1tbs' | 'stroustrup' | 'allman';

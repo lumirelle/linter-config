@@ -1,4 +1,6 @@
-import type { ConfigObject, Glob, Options, StylisticOptions } from './types'
+import type { ConfigObject, Glob, Options, PnpmOptions, StylisticOptions } from './types'
+import { existsSync, readFileSync } from 'node:fs'
+import { dirname, join, parse } from 'node:path'
 import { isInEditorEnv } from './editor'
 import { assertGlobVocabulary } from './globs'
 import { disables } from './modules/disables'
@@ -7,7 +9,9 @@ import { imports } from './modules/imports'
 import { javascript } from './modules/javascript'
 import { jsdoc } from './modules/jsdoc'
 import { jsonc } from './modules/jsonc'
+import { markdown } from './modules/markdown'
 import { node } from './modules/node'
+import { pnpm } from './modules/pnpm'
 import { sortPackageJson, sortTsconfig } from './modules/sort'
 import { stylistic } from './modules/stylistic'
 import { isTestEnabled, test, testOverrides } from './modules/test'
@@ -51,6 +55,8 @@ export function source(options: Options = {}): ConfigObject[] {
     ...options.jsonc === false ? [] : [...jsonc({ stylistic: stylisticSlices }), ...sortPackageJson(), ...sortTsconfig()],
     ...options.yaml === false ? [] : yaml({ stylistic: stylisticSlices }),
     ...options.toml === false ? [] : toml({ stylistic: stylisticSlices }),
+    ...options.markdown === false ? [] : markdown({ componentExts: options.componentExts, stylistic: stylisticSlices }),
+    ...pnpmModule(options.pnpm, { isInEditor, stylistic: stylisticSlices }),
   ]
 
   if (isTestEnabled(options.test)) {
@@ -67,13 +73,70 @@ export function source(options: Options = {}): ConfigObject[] {
 }
 
 /**
- * Whether the stylistic slices of otherwise-useful Modules are on.
+ * Upstream enables the stylistic slices of otherwise-useful Modules when the house asks for them.
  *
- * Upstream enables them by default; the house turns them off ({@link Options.stylistic}), so a
+ * Upstream has them on by default; the house turns them off ({@link Options.stylistic}), so a
  * Module asks this instead of its own default.
  */
 function isStylisticEnabled(option: Options['stylistic']): boolean {
   return option !== undefined && option !== false
+}
+
+/**
+ * The `pnpm` Module, which Upstream enables only where a `pnpm-workspace.yaml` exists.
+ *
+ * The flag wins when the caller gives one; otherwise the presence of that file decides, and its
+ * contents decide whether catalogs are in use. Both readings are of the working directory, like
+ * the gitignore handling, so a test pins them rather than inheriting the environment.
+ */
+function pnpmModule(
+  option: Options['pnpm'],
+  defaults: { isInEditor: boolean, stylistic: boolean },
+): ConfigObject[] {
+  if (option === false) {
+    return []
+  }
+
+  const workspace = findPnpmWorkspace()
+  if (option === undefined && !workspace) {
+    return []
+  }
+
+  const moduleOptions: PnpmOptions = typeof option === 'object' && option !== null ? option : {}
+  return pnpm({
+    catalogs: workspace?.hasCatalogs ?? false,
+    stylistic: defaults.stylistic,
+    ...moduleOptions,
+    isInEditor: moduleOptions.isInEditor ?? defaults.isInEditor,
+  })
+}
+
+interface PnpmWorkspace {
+  /** Whether the file declares a `catalog:` or `catalogs:` block. */
+  hasCatalogs: boolean
+}
+
+/**
+ * The nearest `pnpm-workspace.yaml`, walking up from the working directory.
+ *
+ * Upstream reads the same file at config-build time; the Module can only be enabled where the
+ * project declares a pnpm workspace.
+ */
+function findPnpmWorkspace(): PnpmWorkspace | undefined {
+  const root = parse(process.cwd()).root
+  let directory = process.cwd()
+
+  for (;;) {
+    const candidate = join(directory, 'pnpm-workspace.yaml')
+    if (existsSync(candidate)) {
+      const contents = readFileSync(candidate, 'utf8')
+      return { hasCatalogs: contents.includes('catalog:') || contents.includes('catalogs:') }
+    }
+    if (directory === root) {
+      return undefined
+    }
+    directory = dirname(directory)
+  }
 }
 
 /** The object form of the `stylistic` option carries the Module's options; every other form is enablement. */

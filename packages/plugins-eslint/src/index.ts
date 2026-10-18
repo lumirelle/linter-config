@@ -16,8 +16,8 @@ import toml from 'eslint-plugin-toml'
 import unicorn from 'eslint-plugin-unicorn'
 import unusedImports from 'eslint-plugin-unused-imports'
 import yaml from 'eslint-plugin-yml'
-import tomlParser from 'toml-eslint-parser'
-import yamlParser from 'yaml-eslint-parser'
+import * as tomlParser from 'toml-eslint-parser'
+import * as yamlParser from 'yaml-eslint-parser'
 
 /**
  * The plugin Upstream calls `test`: `@vitest/eslint-plugin` with `eslint-plugin-no-only-tests`

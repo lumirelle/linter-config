@@ -640,6 +640,42 @@ importers:
         specifier: npm:typescript-native-bridge@^6.0.3-bridge.18.tsgo.7.0.2
         version: 6.0.3-bridge.18.tsgo.7.0.2
 
+  playground/next:
+    devDependencies:
+      '@eslint-react/eslint-plugin':
+        specifier: catalog:peer
+        version: 5.28.0(eslint@10.12.0)(typescript@6.0.3-bridge.18.tsgo.7.0.2)
+      '@lumirelle/linter-config':
+        specifier: workspace:*
+        version: link:../../packages/config
+      '@lumirelle/linter-plugins-eslint':
+        specifier: workspace:*
+        version: link:../../packages/plugins-eslint
+      '@lumirelle/linter-plugins-oxlint':
+        specifier: workspace:*
+        version: link:../../packages/plugins-oxlint
+      '@lumirelle/tsconfig':
+        specifier: catalog:types
+        version: 0.1.6(typescript@6.0.3-bridge.18.tsgo.7.0.2)
+      '@next/eslint-plugin-next':
+        specifier: catalog:peer
+        version: 16.4.2(eslint@10.12.0)
+      eslint:
+        specifier: catalog:check
+        version: 10.12.0
+      eslint-plugin-react-refresh:
+        specifier: catalog:peer
+        version: 0.5.7(eslint@10.12.0)
+      oxlint:
+        specifier: catalog:check
+        version: 1.88.0(oxlint-tsgolint@7.0.2004)
+      typescript:
+        specifier: npm:typescript-native-bridge@^6.0.3-bridge.18.tsgo.7.0.2
+        version: 6.0.3-bridge.18.tsgo.7.0.2
+      vitest:
+        specifier: catalog:test
+        version: 5.0.4(@types/node@26.6.5)(@vitest/coverage-v8@5.0.4)(vite@8.3.4(@types/node@26.6.5))
+
   playground/nuxt:
     devDependencies:
       '@lumirelle/linter-config':
@@ -666,6 +702,42 @@ importers:
       typescript:
         specifier: npm:typescript-native-bridge@^6.0.3-bridge.18.tsgo.7.0.2
         version: 6.0.3-bridge.18.tsgo.7.0.2
+
+  playground/react:
+    devDependencies:
+      '@eslint-react/eslint-plugin':
+        specifier: catalog:peer
+        version: 5.28.0(eslint@10.12.0)(typescript@6.0.3-bridge.18.tsgo.7.0.2)
+      '@lumirelle/linter-config':
+        specifier: workspace:*
+        version: link:../../packages/config
+      '@lumirelle/linter-plugins-eslint':
+        specifier: workspace:*
+        version: link:../../packages/plugins-eslint
+      '@lumirelle/linter-plugins-oxlint':
+        specifier: workspace:*
+        version: link:../../packages/plugins-oxlint
+      '@lumirelle/tsconfig':
+        specifier: catalog:types
+        version: 0.1.6(typescript@6.0.3-bridge.18.tsgo.7.0.2)
+      '@unocss/eslint-plugin':
+        specifier: catalog:peer
+        version: 66.11.0(eslint@10.12.0)(typescript@6.0.3-bridge.18.tsgo.7.0.2)
+      eslint:
+        specifier: catalog:check
+        version: 10.12.0
+      eslint-plugin-react-refresh:
+        specifier: catalog:peer
+        version: 0.5.7(eslint@10.12.0)
+      oxlint:
+        specifier: catalog:check
+        version: 1.88.0(oxlint-tsgolint@7.0.2004)
+      typescript:
+        specifier: npm:typescript-native-bridge@^6.0.3-bridge.18.tsgo.7.0.2
+        version: 6.0.3-bridge.18.tsgo.7.0.2
+      vitest:
+        specifier: catalog:test
+        version: 5.0.4(@types/node@26.6.5)(@vitest/coverage-v8@5.0.4)(vite@8.3.4(@types/node@26.6.5))
 
   playground/ts:
     devDependencies:
@@ -720,6 +792,7 @@ importers:
       vitest:
         specifier: catalog:test
         version: 5.0.4(@types/node@26.6.5)(@vitest/coverage-v8@5.0.4)(vite@8.3.4(@types/node@26.6.5))
+
   playground/vue:
     devDependencies:
       '@lumirelle/linter-config':

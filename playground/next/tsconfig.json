@@ -1,0 +1,10 @@
+{
+  "extends": "@lumirelle/tsconfig/ts",
+  "compilerOptions": {
+    // The preset targets a Node library; App Router components need the DOM types, and Next
+    // compiles the JSX itself, so the transform is left to it.
+    "jsx": "preserve",
+    "lib": ["ESNext", "DOM"]
+  },
+  "include": ["app/**/*"]
+}

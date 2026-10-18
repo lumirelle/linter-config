@@ -20,6 +20,13 @@
     "eslint-plugin-svelte",
     "eslint-plugin-vuejs-accessibility",
     "svelte-eslint-parser",
+    // Runtime frameworks the examples simulate and deliberately do not install: an example's source
+    // tree is a consumer snapshot, so its entry file imports the framework the example leaves out.
+    // One entry per framework, so a later example adds only its own.
+    "next",
+    "react",
+    "react-dom",
+    "vue",
     // Referenced as an Oxlint jsPlugins specifier string, which knip cannot follow
     "@eslint-community/eslint-plugin-eslint-comments",
     // Peer packages loaded by a plugin's own resolution at runtime (eslint-plugin-jsx-a11y by
@@ -30,9 +37,6 @@
     "eslint-plugin-perfectionist",
     "eslint-plugin-slop",
     "eslint-plugin-sonarjs",
-    // Runtime frameworks the examples simulate and deliberately do not install: an example's entry
-    // file imports one to show the tree is a real application, which knip reads as unlisted
-    "vue",
     // Node.js dependencies manager
     "taze",
     // Node.js releasing tools
@@ -68,14 +72,14 @@
     // the two config modules built from it are the whole program. Globbed, so a later example
     // package needs no edit here; a declared peer is covered by the root `ignoreDependencies`
     // above, which a workspace inherits. `packages/*/src/**/*` is a monorepo example's nested
-    // package sources, which the workspace glob does not make workspaces of their own. The
-    // framework build configs are entries too: nothing imports them, and they are part of the
-    // snapshot rather than dead code.
+    // package sources, which the workspace glob does not make workspaces of their own.
     "playground/*": {
       "entry": [
-        "eslint.config.{js,ts}",
-        "options.ts",
+        // The paired lint configs and the framework config files an example keeps — the
+        // `uno.config.ts` a UnoCSS project needs before its plugin can order a class name. Nothing
+        // imports them, and they are part of the snapshot rather than dead code.
         "*.config.{js,ts}",
+        "options.ts",
         "src/**/*",
         "app/**/*",
         "entrypoints/**/*",

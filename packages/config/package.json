@@ -1,7 +1,7 @@
 {
   "name": "@lumirelle/linter-config",
   "type": "module",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Lumirelle's opinionated linter config.",
   "author": "Lumirelle <lumirelle@outlook.com>",
   "license": "MIT",

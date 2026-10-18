@@ -50,16 +50,19 @@ describe('oxlint() TypeScript rules', () => {
     }
   })
 
-  it('declares no jsPlugins: Oxlint ships the typescript scope itself', async () => {
+  it('declares no jsPlugin for the typescript scope: Oxlint ships it itself', async () => {
     const config = await emission()
-    // Several Config objects declare the same package, one override each; `adapters/oxlint.ts`
-    // still repeats them per object, which is what ticket 9 makes unique per emission.
     const declared = [...new Set(
       (config.overrides ?? []).flatMap(override => override.jsPlugins ?? []).map(entry => `${typeof entry === 'string' ? entry : `${entry.name}:${entry.specifier}`}`),
     )].sort()
 
+    // The jsPlugin-backed Modules of the widest Source, and nothing for a built-in scope.
     expect(declared).toEqual([
       'antfu:eslint-plugin-antfu',
+      'command:eslint-plugin-command',
+      'e18e:@e18e/eslint-plugin',
+      'perfectionist:eslint-plugin-perfectionist',
+      'regexp:eslint-plugin-regexp',
       'unused-imports:eslint-plugin-unused-imports',
     ])
   })

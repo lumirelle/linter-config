@@ -35,6 +35,9 @@ describe('eslint() typescript module', () => {
       'lumirelle/ignores',
       'lumirelle/javascript/setup',
       'lumirelle/javascript/rules',
+      'lumirelle/eslint-comments/rules',
+      'lumirelle/command/rules',
+      'lumirelle/perfectionist/setup',
       'lumirelle/typescript/setup',
       'lumirelle/typescript/parser',
       'lumirelle/typescript/rules',
@@ -43,8 +46,10 @@ describe('eslint() typescript module', () => {
       'lumirelle/jsdoc/setup',
       'lumirelle/jsdoc/rules',
       'lumirelle/imports/rules',
+      'lumirelle/e18e/rules',
       'lumirelle/unicorn/setup',
       'lumirelle/unicorn/rules',
+      'lumirelle/regexp/rules',
       'lumirelle/test/setup',
       'lumirelle/test/rules',
       'lumirelle/disables/scripts',
@@ -114,10 +119,13 @@ describe('eslint() typescript module', () => {
     const names = configs.map(config => config.name)
 
     // The type-aware pair slots in after the parser and after the rules, as Upstream builds it.
-    expect(names.slice(0, 8)).toEqual([
+    expect(names.slice(0, 11)).toEqual([
       'lumirelle/ignores',
       'lumirelle/javascript/setup',
       'lumirelle/javascript/rules',
+      'lumirelle/eslint-comments/rules',
+      'lumirelle/command/rules',
+      'lumirelle/perfectionist/setup',
       'lumirelle/typescript/setup',
       'lumirelle/typescript/parser',
       'lumirelle/typescript/type-aware-parser',

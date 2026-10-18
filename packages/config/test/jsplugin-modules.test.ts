@@ -3,6 +3,7 @@ import type { OxlintConfig } from 'oxlint'
 import type { ModuleId } from '../src/types'
 import { join } from 'node:path'
 import { fileURLToPath } from 'node:url'
+import { ESLint } from 'eslint'
 import { describe, expect, it } from 'vitest'
 import { eslint } from '../src/eslint'
 import { oxlint } from '../src/oxlint'
@@ -112,6 +113,24 @@ describe('the eslint-comments Module', () => {
     expect(JSON.stringify(config)).not.toContain('"eslint-comments/')
     expect(recorded).toHaveLength(4)
     expect(recorded.every(entry => entry.reason === 'blacklisted-plugin' && entry.plugin === 'eslint-comments')).toBe(true)
+  })
+})
+
+describe('the same fixtures under the real ESLint', () => {
+  it.each(PROBES)('$plugin: $rule fires on its fixture and stays quiet on the clean one', { timeout: 30_000 }, async (probe) => {
+    const options = 'options' in probe ? probe.options : undefined
+    const eslintApi = new ESLint({
+      cwd: FIXTURES,
+      overrideConfig: await eslint(house(options)),
+      overrideConfigFile: true,
+    })
+    const lint = async (file: string): Promise<string[]> =>
+      (await eslintApi.lintFiles([join(probe.plugin, file)]))
+        .flatMap(result => result.messages.map(message => message.ruleId ?? '(fatal)'))
+        .filter(ruleId => ruleId === probe.rule)
+
+    expect(await lint('violations.js'), `${probe.rule} should fire on ${probe.plugin}/violations.js`).not.toEqual([])
+    expect(await lint('clean.js'), `${probe.rule} should not fire on ${probe.plugin}/clean.js`).toEqual([])
   })
 })
 

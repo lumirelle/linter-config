@@ -43,7 +43,7 @@ function quote(key: string): string {
 
 function renderEntry([key, entry]: [string, RuleEntry]): string {
   if (typeof entry !== 'string') {
-    throw new Error(`"${key}" is not a bare severity; teach the generator how to write "${JSON.stringify(entry)}".`)
+    throw new TypeError(`"${key}" is not a bare severity; teach the generator how to write "${JSON.stringify(entry)}".`)
   }
   return `  ${quote(key)}: ${quote(entry)},`
 }

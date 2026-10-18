@@ -1,0 +1,9 @@
+{
+  "extends": "@lumirelle/tsconfig/ts",
+  "compilerOptions": {
+    "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.lib.tsbuildinfo",
+    "types": ["node"],
+    "declaration": true
+  },
+  "include": ["src/**/*", "test/**/*"]
+}

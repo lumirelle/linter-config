@@ -1,6 +1,7 @@
 import type { Linter } from 'eslint'
 import { describe, expect, it } from 'vitest'
 import { eslint } from '../src/eslint'
+import { oxlint } from '../src/oxlint'
 
 /**
  * A stable form of the Emission: keys sorted at every depth, and plugin objects replaced by
@@ -36,5 +37,16 @@ describe('eslint() emission', () => {
 
   it('emits the editor config', async () => {
     expect(normalize(await eslint({ gitignore: false, isInEditor: true }))).toMatchSnapshot()
+  })
+})
+
+describe('oxlint() emission', () => {
+  it('emits the house config', async () => {
+    expect(sortKeys(await oxlint({ gitignore: false, isInEditor: false }))).toMatchSnapshot()
+  })
+
+  it('emits the root options a type-aware consumer asks for', async () => {
+    expect(sortKeys(await oxlint({ gitignore: false, isInEditor: false, oxlint: { typeAware: true, typeCheck: true } })))
+      .toMatchSnapshot()
   })
 })

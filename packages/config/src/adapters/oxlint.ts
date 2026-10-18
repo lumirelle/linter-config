@@ -1,13 +1,12 @@
 import type { Composer } from '@oxlint-flat-config/composer'
 import type { FlatConfigItem } from 'oxlint-flat-config'
 import type { RuleMapping } from '../oxlint/rule-map'
-import type { ConfigObject, Domain, Options, OxlintOptions, PluginId } from '../types'
+import type { ConfigObject, Options, OxlintOptions, PluginId } from '../types'
 import { composer } from '@oxlint-flat-config/composer'
+import { isOxlintDomain } from '../oxlint/domains'
 import { mapRules } from '../oxlint/rule-map'
 import { PLUGIN_IDS, pluginDefinition } from '../plugins'
 import { source } from '../source'
-
-const OXLINT_DOMAINS: readonly Domain[] = ['js', 'vue']
 
 /** Oxlint-only Config object name for the root `options` field, which has no ESLint counterpart. */
 const OXLINT_OPTIONS_NAME = 'lumirelle/oxlint/options'
@@ -27,7 +26,7 @@ export function composeOxlint(options: Options): Composer {
 
   const declared = new Set<PluginId>()
   const items: FlatConfigItem[] = source(options)
-    .filter(config => OXLINT_DOMAINS.includes(config.domain) && config.tools?.oxlint !== false)
+    .filter(config => isOxlintDomain(config.domain) && config.tools?.oxlint !== false)
     .map((config) => {
       const mapping = mapRules(config.rules, { typeAware })
       for (const id of mapping.jsPlugins) {

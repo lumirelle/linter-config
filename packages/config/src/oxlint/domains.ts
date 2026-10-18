@@ -7,7 +7,7 @@ import type { Domain } from '../types'
  * Adapter filters on this list before mapping any rule, and the Coverage report records what
  * the filter leaves behind.
  */
-export const OXLINT_DOMAINS: readonly Domain[] = ['js', 'vue']
+const OXLINT_DOMAINS: readonly Domain[] = ['js', 'vue']
 
 /** Whether the Oxlint Emission can carry Config objects of that Domain. */
 export function isOxlintDomain(domain: Domain): boolean {

@@ -18,6 +18,8 @@
     "publint",
     // Optional peers the ESLint Adapter imports by their registry name, so knip sees no import
     "eslint-plugin-erasable-syntax-only",
+    // Referenced as an Oxlint jsPlugins specifier string, which knip cannot follow
+    "@eslint-community/eslint-plugin-eslint-comments",
     // Node.js dependencies manager
     "taze",
     // Node.js releasing tools

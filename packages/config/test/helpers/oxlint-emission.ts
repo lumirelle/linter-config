@@ -15,5 +15,7 @@ export function rulesFor(config: OxlintConfig, extensions: readonly string[]): R
       && files.every(file => file === EVERY_FILE || extensions.some(extension => file.endsWith(extension)))
   })
 
-  return Object.assign({}, ...scoped.map(override => override.rules ?? {}))
+  const merged: Record<string, unknown> = {}
+  Object.assign(merged, ...scoped.map(override => override.rules ?? {}))
+  return merged
 }

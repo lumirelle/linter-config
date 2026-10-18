@@ -12,6 +12,7 @@ import {
   GLOB_SVG,
   GLOB_XML,
 } from '../globs'
+import { requirePeerPackages } from '../packages'
 import { pluginRef } from '../plugins'
 
 /**
@@ -100,6 +101,7 @@ function formatter(
  * and leaves the plugin-dependent ones (`xml`, `svg`, `astro`, `slidev`) to the object form.
  */
 export function formatters(options: FormattersOptions = {}): ConfigObject[] {
+  requirePeerPackages('formatters', ['format'])
   const prettierOptions = { ...PRETTIER_OPTIONS, ...options.prettierOptions }
 
   const configs: ConfigObject[] = [

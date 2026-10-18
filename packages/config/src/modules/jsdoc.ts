@@ -3,7 +3,7 @@ import { GLOB_SRC } from '../globs'
 import { pluginRef } from '../plugins'
 
 /** The rules Upstream enables whether or not its stylistic option is on; all of them warn. */
-const HOUSE_RULES: ConfigObject['rules'] = {
+const UPSTREAM_RULES: ConfigObject['rules'] = {
   'jsdoc/check-access': 'warn',
   'jsdoc/check-param-names': 'warn',
   'jsdoc/check-property-names': 'warn',
@@ -51,7 +51,7 @@ export function jsdoc(options: Pick<Options, 'stylistic'> = {}): ConfigObject[] 
       domain: 'js',
       files: [GLOB_SRC],
       rules: {
-        ...HOUSE_RULES,
+        ...UPSTREAM_RULES,
         ...stylistic ? STYLISTIC_RULES : {},
       },
     },

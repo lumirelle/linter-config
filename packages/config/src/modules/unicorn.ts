@@ -3,7 +3,7 @@ import { GLOB_SRC } from '../globs'
 import { pluginRef } from '../plugins'
 
 /** The rules Upstream's `unicorn` config enables unless `allRecommended` replaces them. */
-const HOUSE_RULES: ConfigObject['rules'] = {
+const UPSTREAM_RULES: ConfigObject['rules'] = {
   'unicorn/consistent-empty-array-spread': 'error',
   'unicorn/error-message': 'error',
   'unicorn/escape-case': 'error',
@@ -25,7 +25,7 @@ const HOUSE_RULES: ConfigObject['rules'] = {
  * Upstream's `configs/unicorn.ts`: a setup object that only declares the plugin, then the house
  * `unicorn` rules for source files.
  *
- * Upstream's `allRecommended` option replaces {@link HOUSE_RULES} with its plugin's
+ * Upstream's `allRecommended` option replaces {@link UPSTREAM_RULES} with its plugin's
  * `configs.recommended.rules` at runtime. Source imports no plugin package, so the house table is
  * the ported slice; the recommended preset is not carried yet.
  *
@@ -47,7 +47,7 @@ export function unicorn(options: { overrides?: ConfigObject['rules'] } = {}): Co
       domain: 'js',
       files: [GLOB_SRC],
       rules: {
-        ...HOUSE_RULES,
+        ...UPSTREAM_RULES,
         ...options.overrides,
       },
     },

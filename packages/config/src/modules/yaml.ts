@@ -3,7 +3,7 @@ import { GLOB_YAML } from '../globs'
 import { pluginRef } from '../plugins'
 
 /** Upstream's unconditional YAML rules. */
-const HOUSE_RULES: ConfigObject['rules'] = {
+const UPSTREAM_RULES: ConfigObject['rules'] = {
   'yaml/block-mapping': 'error',
   'yaml/block-sequence': 'error',
   'yaml/no-empty-key': 'error',
@@ -63,7 +63,7 @@ export function yaml(options: {
         eslint: { parser: pluginRef('yaml') },
       },
       rules: {
-        ...HOUSE_RULES,
+        ...UPSTREAM_RULES,
         ...stylistic ? STYLISTIC_RULES : {},
         ...overrides,
       },

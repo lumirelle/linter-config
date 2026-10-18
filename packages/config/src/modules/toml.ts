@@ -3,7 +3,7 @@ import { GLOB_TOML } from '../globs'
 import { pluginRef } from '../plugins'
 
 /** Upstream's unconditional TOML rules. */
-const HOUSE_RULES: ConfigObject['rules'] = {
+const UPSTREAM_RULES: ConfigObject['rules'] = {
   'toml/comma-style': 'error',
   'toml/keys-order': 'error',
   'toml/no-space-dots': 'error',
@@ -40,7 +40,7 @@ const STYLISTIC_RULES: ConfigObject['rules'] = {
  * They sit among the unconditional rules, like Upstream's own `overrides` argument, so they apply
  * even while the house keeps the stylistic slice off.
  */
-const HOUSE_OVERRIDES: ConfigObject['rules'] = {
+const UPSTREAM_OVERRIDES: ConfigObject['rules'] = {
   'toml/array-bracket-spacing': ['error', 'never'],
   'toml/array-element-newline': ['error', 'consistent'],
 }
@@ -75,9 +75,9 @@ export function toml(options: {
         eslint: { parser: pluginRef('toml') },
       },
       rules: {
-        ...HOUSE_RULES,
+        ...UPSTREAM_RULES,
         ...stylistic ? STYLISTIC_RULES : {},
-        ...HOUSE_OVERRIDES,
+        ...UPSTREAM_OVERRIDES,
         ...overrides,
       },
     },

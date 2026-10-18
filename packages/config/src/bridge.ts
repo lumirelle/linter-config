@@ -1,7 +1,7 @@
 import type { Linter } from 'eslint'
 import type { ConfigObject, Options } from './types'
-import { isOxlintDomain } from './oxlint/domains'
-import { oxlintRootOptions } from './oxlint/options'
+import { isOxlintConfig } from './oxlint/domains'
+import { isTypeAware } from './oxlint/options'
 import { mapRules } from './oxlint/rule-map'
 import { source } from './source'
 
@@ -14,8 +14,8 @@ import { source } from './source'
 export const BRIDGE_NAME_SUFFIX = '/oxlint-bridge'
 
 /**
- * The ESLint half of the interop with Oxlint: a config object per Config object the Oxlint
- * Emission takes, turning off every rule that Emission reports.
+ * The ESLint side of running both tools over the same files: a config object per Config object the
+ * Oxlint Emission takes, turning off every rule that Emission reports.
  *
  * Consumers who run both tools get this appended by `eslint({ oxlint: true })`. The reason it is
  * also exported is order: a consumer's own configs come after ours and may turn a rule back on, so
@@ -41,10 +41,10 @@ export function oxlintBridge(options: Options = {}): Linter.Config[] {
  * `source()`; the Bridge is computed from those objects either way, never from Oxlint's output.
  */
 export function bridgeObjects(configs: readonly ConfigObject[], options: Options = {}): Linter.Config[] {
-  const typeAware = oxlintRootOptions(options.oxlint)?.typeAware === true
+  const typeAware = isTypeAware(options)
 
   return configs
-    .filter(config => isOxlintDomain(config.domain) && config.tools?.oxlint !== false)
+    .filter(config => isOxlintConfig(config))
     .flatMap((config): Linter.Config[] => {
       const { emitted } = mapRules(config.rules, { typeAware })
       if (emitted.length === 0) {

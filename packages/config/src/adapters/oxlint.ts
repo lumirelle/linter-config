@@ -3,8 +3,8 @@ import type { FlatConfigItem } from 'oxlint-flat-config'
 import type { RuleMapping } from '../oxlint/rule-map'
 import type { ConfigObject, Options, PluginId } from '../types'
 import { composer } from '@oxlint-flat-config/composer'
-import { isOxlintDomain } from '../oxlint/domains'
-import { oxlintRootOptions } from '../oxlint/options'
+import { isOxlintConfig } from '../oxlint/domains'
+import { isTypeAware, oxlintRootOptions } from '../oxlint/options'
 import { mapRules } from '../oxlint/rule-map'
 import { PLUGIN_IDS, pluginDefinition } from '../plugins'
 import { source } from '../source'
@@ -23,11 +23,11 @@ const OXLINT_JSPLUGINS_NAME = 'lumirelle/oxlint/jsPlugins'
  */
 export function composeOxlint(options: Options): Composer {
   const rootOptions = oxlintRootOptions(options.oxlint)
-  const typeAware = rootOptions?.typeAware === true
+  const typeAware = isTypeAware(options)
 
   const declared = new Set<PluginId>()
   const items: FlatConfigItem[] = source(options)
-    .filter(config => isOxlintDomain(config.domain) && config.tools?.oxlint !== false)
+    .filter(config => isOxlintConfig(config))
     .map((config) => {
       const mapping = mapRules(config.rules, { typeAware })
       for (const id of mapping.jsPlugins) {
@@ -68,7 +68,7 @@ function toOxlintConfig(config: ConfigObject, { rules }: RuleMapping): FlatConfi
   if (config.ignores) {
     fields.ignores = config.ignores
   }
-  return fields as FlatConfigItem
+  return fields
 }
 
 /**
@@ -91,9 +91,12 @@ function jsPluginsDeclaration(ids: ReadonlySet<PluginId>): FlatConfigItem | unde
     : undefined
 }
 
-/** ESLint declares a global read-only or writable with a boolean; Oxlint spells the same thing out. */
+/**
+ * ESLint declares a global read-only or writable with a boolean (`true` = writable, the `globals`
+ * package's convention); Oxlint spells the same thing out.
+ */
 function mapGlobals(globals: Record<string, boolean>): Record<string, 'readonly' | 'writable'> {
   return Object.fromEntries(
-    Object.entries(globals).map(([name, readonly]) => [name, readonly ? 'readonly' : 'writable']),
+    Object.entries(globals).map(([name, writable]) => [name, writable ? 'writable' : 'readonly']),
   )
 }

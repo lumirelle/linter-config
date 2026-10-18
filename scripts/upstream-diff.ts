@@ -1,7 +1,9 @@
+import type { ModuleId, Options } from '../packages/config/src/types'
 import { mkdir, writeFile } from 'node:fs/promises'
 import { dirname } from 'node:path'
 import process from 'node:process'
 import { parseArgs } from 'node:util'
+import { CONFIG_NAME_PREFIX } from '../packages/config/src/source'
 import { readInstalledVersion, readUpstreamPin } from './upstream-pin'
 
 /** The part of a rendered ESLint config the report reads; plugin objects are never compared. */
@@ -16,7 +18,7 @@ export type Severity = 'error' | 'warn' | 'off' | 'unknown'
 /** One Config object after prefix normalization, with rules reduced to their severities. */
 export interface NormalizedConfig {
   name: string
-  module: string
+  module: ModuleId
   rules: Record<string, Severity>
 }
 
@@ -28,7 +30,7 @@ export interface RuleChange {
 
 export interface ConfigDiff {
   name: string
-  module: string
+  module: ModuleId
   status: 'aligned' | 'source-only' | 'upstream-only'
   /** Upstream has the rule and Source does not. */
   added: RuleChange[]
@@ -39,7 +41,7 @@ export interface ConfigDiff {
 }
 
 export interface ModuleDiff {
-  module: string
+  module: ModuleId
   /** Whether Source emits this Module at this option point. */
   implemented: boolean
   configs: ConfigDiff[]
@@ -48,8 +50,8 @@ export interface ModuleDiff {
 
 export interface OptionPointDiff {
   id: string
-  sourceOptions: Record<string, unknown>
-  upstreamOptions: Record<string, unknown>
+  sourceOptions: Options
+  upstreamOptions: Options
   /** Set when Upstream could not be rendered; the point is then informational only. */
   renderError?: string
   modules: ModuleDiff[]
@@ -64,9 +66,9 @@ export interface DiffBaseline {
 export interface DiffPointInput {
   id: string
   /** The same options object both sides are rendered with. */
-  sourceOptions: Record<string, unknown>
+  sourceOptions: Options
   /** The same options after gating to the Modules Source implements; see `gateUpstreamOptions`. */
-  upstreamOptions: Record<string, unknown>
+  upstreamOptions: Options
   sourceConfigs: readonly ComparableConfig[]
   upstreamConfigs: readonly ComparableConfig[]
   renderError?: string
@@ -81,6 +83,9 @@ export interface UpstreamDiffReport {
   baseline: DiffBaseline
   points: OptionPointDiff[]
 }
+
+/** The option key that gates a Module: an `Options` entry that is also a `ModuleId`. */
+export type ModuleOption = keyof Options & ModuleId
 
 /**
  * Upstream's `defaultPluginRenaming`, plus the two renames only Source's registry makes
@@ -101,18 +106,17 @@ const PLUGIN_RENAMING: ReadonlyArray<readonly [string, string]> = [
   ['n', 'node'],
 ]
 
-const CONFIG_NAME_PREFIX = 'lumirelle/'
 const UPSTREAM_CONFIG_NAME_PREFIX = 'antfu/'
 
 /**
- * Upstream option keys that gate a lint Module, mirroring `ModuleId`.
+ * The option key that turns each Module on; every one of them is also a `ModuleId`.
  *
  * Upstream renders these Modules only when their option is on, so the diff turns off every
  * one Source does not emit: the report never needs Upstream's optional peer plugins and is
  * reproducible without installing them. `gitignore` is not listed because it is data
  * handling: Source folds it into its `ignores` Module and the option passes through.
  */
-export const UPSTREAM_MODULE_OPTIONS: readonly string[] = [
+export const UPSTREAM_MODULE_OPTIONS: readonly ModuleOption[] = [
   'angular',
   'antislop',
   'astro',
@@ -142,14 +146,14 @@ export const UPSTREAM_MODULE_OPTIONS: readonly string[] = [
 ]
 
 /** Upstream names its Config objects after the Module, so the first segment is the Module. */
-export function moduleOfConfigName(name: string): string {
+export function moduleOfConfigName(name: string): ModuleId {
   const normalized = normalizeConfigName(name)
   const rest = normalized.startsWith(CONFIG_NAME_PREFIX)
     ? normalized.slice(CONFIG_NAME_PREFIX.length)
     : normalized
   const module = rest.split('/')[0] ?? rest
   // Source implements Upstream's gitignore support inside its `ignores` Module.
-  return module === 'gitignore' ? 'ignores' : module
+  return (module === 'gitignore' ? 'ignores' : module) as ModuleId
 }
 
 /** Config object names are public API; Upstream's `antfu/` prefix becomes `lumirelle/`. */
@@ -171,7 +175,7 @@ export function normalizeRuleKey(key: string): string {
 
 /** ESLint accepts `off`/`warn`/`error` and `0`/`1`/`2`; both spellings normalize to a name. */
 export function normalizeSeverity(entry: unknown): Severity {
-  const severity = Array.isArray(entry) ? entry[0] : entry
+  const severity: unknown = Array.isArray(entry) ? entry[0] : entry
   switch (severity) {
     case 0:
     case 'off':
@@ -216,14 +220,15 @@ export function normalizeConfigs(configs: readonly ComparableConfig[]): Normaliz
  * what Source can already express.
  */
 export function gateUpstreamOptions(
-  options: Record<string, unknown>,
-  implementedModules: Iterable<string>,
-): Record<string, unknown> {
+  options: Options,
+  implementedModules: Iterable<ModuleId>,
+): Options {
   const implemented = new Set(implementedModules)
-  const gated = { ...options }
+  const gated: Options = { ...options }
   for (const option of UPSTREAM_MODULE_OPTIONS) {
     if (!implemented.has(option)) {
-      gated[option] = false
+      // `false` is the "off" spelling of every Module option, whether it is a flag or an object.
+      Object.assign(gated, { [option]: false })
     }
   }
   return gated
@@ -475,7 +480,7 @@ function renderRuleTable(config: ConfigDiff): string[] {
 /** One option point fed to both sides of the comparison. */
 export interface OptionPointDefinition {
   id: string
-  options: Record<string, unknown>
+  options: Options
 }
 
 /**
@@ -486,8 +491,8 @@ export interface OptionPointDefinition {
 export function optionPoints(fullOn: Readonly<object>, fullOff: Readonly<object>): OptionPointDefinition[] {
   return [
     { id: 'defaults', options: { stylistic: false, isInEditor: false } },
-    { id: 'full-on', options: { ...fullOn, isInEditor: false } as Record<string, unknown> },
-    { id: 'full-off', options: { ...fullOff, isInEditor: false } as Record<string, unknown> },
+    { id: 'full-on', options: { ...fullOn, isInEditor: false } },
+    { id: 'full-off', options: { ...fullOff, isInEditor: false } },
   ]
 }
 

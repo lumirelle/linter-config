@@ -51,12 +51,14 @@ describe('eslint() overrides option', () => {
   })
 
   it('throws an error naming an unknown Config object', async () => {
-    expect(() => eslint({ overrides: { 'lumirelle/javascript/unknown': { rules: {} } } }))
-      .toThrow(/lumirelle\/javascript\/unknown/)
+    expect(() => {
+      void eslint({ overrides: { 'lumirelle/javascript/unknown': { rules: {} } } })
+    }).toThrow(/lumirelle\/javascript\/unknown/)
   })
 
   it('rejects an override glob outside the shared vocabulary', async () => {
-    expect(() => eslint({ overrides: { javascript: { files: ['**/*.?([cm])js'] } } }))
-      .toThrow(/only \*, \*\*, \{a,b\} and character classes/)
+    expect(() => {
+      void eslint({ overrides: { javascript: { files: ['**/*.?([cm])js'] } } })
+    }).toThrow(/only \*, \*\*, \{a,b\} and character classes/)
   })
 })

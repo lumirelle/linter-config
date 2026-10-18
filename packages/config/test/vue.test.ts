@@ -25,12 +25,12 @@ describe('eslint() vue module', () => {
 
     expect(Object.keys(setup.plugins ?? {})).toEqual(['vue'])
     expect(setup.files).toBeUndefined()
-    // `true` is a read-only global in both Emissions' spelling.
+    // `false` is a read-only global in both Emissions' spelling; Upstream declares these `'readonly'`.
     expect(setup.languageOptions?.globals).toMatchObject({
-      computed: true,
-      defineProps: true,
-      ref: true,
-      watchEffect: true,
+      computed: false,
+      defineProps: false,
+      ref: false,
+      watchEffect: false,
     })
   })
 
@@ -136,7 +136,8 @@ describe('oxlint() vue module', () => {
 
   it('keeps the Vue globals', async () => {
     const config = await oxlint(houseOptions({ vue: true }))
-    const globals = Object.assign({}, ...(config.overrides ?? []).map(override => override.globals ?? {}))
+    const globals: Record<string, string> = {}
+    Object.assign(globals, ...(config.overrides ?? []).map(override => override.globals ?? {}))
 
     expect(globals).toMatchObject({ ref: 'readonly', defineProps: 'readonly' })
   })

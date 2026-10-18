@@ -28,7 +28,7 @@ const RECOMMENDED_RULES: NonNullable<ConfigObject['rules']> = {
 }
 
 /** Upstream's two deviations from the recommended set. */
-const HOUSE_RULES: NonNullable<ConfigObject['rules']> = {
+const UPSTREAM_RULES: NonNullable<ConfigObject['rules']> = {
   'md/fenced-code-language': 'off',
   // https://github.com/eslint/markdown/issues/294
   'md/no-missing-label-refs': 'off',
@@ -133,7 +133,7 @@ export function markdown(options: {
       files: [GLOB_MARKDOWN],
       rules: {
         ...RECOMMENDED_RULES,
-        ...HOUSE_RULES,
+        ...UPSTREAM_RULES,
         ...overridesMarkdown,
       },
     },
@@ -159,7 +159,7 @@ export function markdown(options: {
       rules: {
         ...rulesEnabledBy(CODE_BLOCK_RULES, enabled),
         ...overrides,
-      } as ConfigObject['rules'],
+      },
     },
   ]
 }

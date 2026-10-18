@@ -4,6 +4,35 @@ Some Modules do not own a rule list: `stylistic` is `@stylistic/eslint-plugin`'s
 
 Regeneration is a deliberate step, reviewed as a diff: a plugin upgrade that changes a recommended set shows up as generated-file churn plus the emission snapshot that changes with it, and the generator scripts fail if the committed table stops matching the plugin's own output (the stylistic script replays every option combination through the shipped composer).
 
+## What is generated and what is hand-transcribed
+
+The regime above covers the tables a plugin owns: a rule list that only exists as the return value
+of a plugin API call (`@stylistic/eslint-plugin`'s `customize()`, `eslint-plugin-regexp`'s
+recommended config, `@e18e/eslint-plugin`'s three named sets) and the Oxlint inventory the adapter
+maps rule names against. Those are generated, carry the version they were generated from in their
+header, and have a drift test:
+
+| Generated file | Generator | Source of truth |
+| --- | --- | --- |
+| `src/modules/stylistic-rules.generated.ts` | `mise run //packages/config:stylistic` | `@stylistic/eslint-plugin`'s `configs.customize()` |
+| `src/modules/plugin-rules.generated.ts` | `mise run //packages/config:plugin-rules` | `eslint-plugin-regexp` and `@e18e/eslint-plugin` recommended configs |
+| `src/oxlint/inventory.generated.ts` | `mise run //packages/config:inventory` | `oxlint --rules --format json` |
+
+Every other table is **hand-transcribed** from Upstream's own source, because there is nothing to
+call: Upstream writes those lists as literals, and Source's copy is a transcription of
+`upstream/antfu-eslint-config/src/configs/<module>.ts` under the canonical Plugin id prefixes. The
+`upstream:diff` report is the drift test for them: a rule Upstream adds or changes shows up as
+`added` / `removed` / `severity-changed` against the same options. Hand-transcribed tables are
+`javascript`, `typescript`, `imports`, `unicorn`, `node`, `jsdoc`, `test`, `jsx`, `vue`, `nextjs`,
+`react`, `solid`, `svelte`, `astro`, `angular`, `unocss`, `perfectionist`, `antfu`, `command`,
+`eslint-comments`, `unused-imports`, `antislop`, `jsonc`, `yaml`, `toml`, `markdown`, `pnpm`,
+`formatters` and `disables`; `pnpm` and `disables` transcribe data rather than a plugin config, and
+`disables` is derived from what the Modules actually enabled.
+
+A framework Module whose peer plugin publishes its recommended set as data (rather than behind an
+API call) stays hand-transcribed on purpose: generating it would add the plugin as a build-time
+dependency of a package that only knows it as an optional peer of the consumer.
+
 ## Considered Options
 
 - **Import the plugin inside Source**: the shortest path, but it makes those plugins hard dependencies of the config package, breaks the "Source imports no plugin package" invariant, and drags an ESLint plugin into the Oxlint Emission for rules Oxlint reads as plain names.

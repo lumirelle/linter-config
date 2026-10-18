@@ -1,22 +1,12 @@
 // @ts-check
 import { eslint } from '@lumirelle/linter-config/eslint'
+import { options } from './lint-options.ts'
 
 // The repository's own ESLint config, and the reference consumer of
 // `@lumirelle/linter-config/eslint`: the package owns every rule, so the only local decisions are
-// the ones a consumer genuinely has to make.
-export default eslint({
-  // A library, not an application: the `node` and `jsdoc` Modules stay on, while Upstream's
-  // application-only defaults stay off.
-  type: 'lib',
-  // Type-aware rules need the project's TypeScript config.
-  typescript: { tsconfigPath: 'tsconfig.json' },
-  // Run both tools over the same files: the Bridge turns off every rule Oxlint reports, and the
-  // object form hands Oxlint its root options — the same ones `oxlint.config.ts` passes.
-  oxlint: { typeAware: true, typeCheck: true },
-  ignores: [
-    // Test fixtures deliberately break house rules to prove that the emitted config reports them.
-    'packages/config/test/fixtures/**',
-    // The Upstream submodule is a reading baseline, not part of this workspace.
-    'upstream/antfu-eslint-config/**',
-  ],
-})
+// the ones a consumer genuinely has to make, and they live in `lint-options.ts` because
+// `oxlint.config.ts` has to pass the very same ones.
+//
+// The `oxlint` option makes the Bridge the last part of this Emission: every rule Oxlint reports
+// is turned off here, in the same file scopes.
+export default eslint(options)

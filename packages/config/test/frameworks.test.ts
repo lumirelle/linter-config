@@ -26,7 +26,9 @@ describe('the framework Modules', () => {
     // that the flag alone is enough to compose it, which is what the peer check runs behind.
     const options = { [tag]: true }
 
-    expect(() => eslint(houseOptions(options))).not.toThrow()
+    expect(() => {
+      void eslint(houseOptions(options))
+    }).not.toThrow()
   })
 })
 

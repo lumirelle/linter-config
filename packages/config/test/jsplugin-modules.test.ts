@@ -84,7 +84,7 @@ describe.each(PORTED)('the $module Module', ({ alwaysOn = false, module, name, p
   })
 
   it.skipIf(alwaysOn)('emits on both sides, and on neither when its option is off', async () => {
-    const off = house({ ...options, [module]: false } as Options)
+    const off = house({ ...options, [module]: false })
 
     expect(withPrefix(eslintRuleKeys(await eslint(house(options))), plugin)).toBe(true)
     expect(withPrefix(oxlintRuleKeys(await oxlint(house(options))), plugin)).toBe(true)

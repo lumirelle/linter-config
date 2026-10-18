@@ -1,10 +1,12 @@
 # Source Schema
 
-Status: accepted — implementation pending.
+Status: accepted — implemented. Source, both Adapters and the Bridge live in [`packages/config/src`](../../packages/config/src); this document stays the reference for their field-level shape, invariants and algorithms.
+
+Terms are defined in [GLOSSARY.md](../../GLOSSARY.md). The decisions behind this shape are [ADR 0001](../adr/0001-source-and-composers.md) (Source is a function graph; both artifacts go through a Composer), [ADR 0002](../adr/0002-plugin-bundles.md) (plugin dependencies live in two Bundles) and [ADR 0003](../adr/0003-generated-rule-tables.md) (plugin rule tables stay committed data).
 
 ## Goals
 
-- Every Module is an `(options) => ConfigObject[]`; module names map one-to-one to Upstream's `configs/*`.
+- Every Module is an `(options) => ConfigObject[]`; module names map one-to-one to Upstream's `configs/*`. The implemented module list and composition order are [`packages/config/src/source.ts`](../../packages/config/src/source.ts); each Module is one file under [`packages/config/src/modules`](../../packages/config/src/modules).
 - A Config object is plain ESLint-flat-config-shaped data; both Adapters consume only that.
 - Shared fields carry semantics both tools understand; tool-specific fields live under `tools`.
 
@@ -119,7 +121,7 @@ interface Options {
 }
 ```
 
-`pluginRef` is a branded string whose runtime value is the Plugin id:
+`pluginRef` is a branded string whose runtime value is the Plugin id; the authoritative registry, including whether each id comes from a Bundle or from the consumer, is [`packages/config/src/plugins.ts`](../../packages/config/src/plugins.ts):
 
 ```ts
 export function pluginRef(id: PluginId): PluginRef
@@ -137,7 +139,9 @@ export function pluginRef(id: PluginId): PluginRef
 8. The Bridge is computed from Source's Config objects, never by parsing Oxlint's output.
 9. A Module whose Plugin ids are `from: 'peer'` only runs when the consumer installed those packages; otherwise it fails with an error naming them.
 
-## Module coverage (initial)
+## Module coverage
+
+The Modules as implemented, with the Oxlint realization each Plugin id records. What an Emission cannot emit is not listed here but derived: the committed [`coverage.json`](../../packages/config/coverage.json) is the per-Module answer for the current Oxlint inventory.
 
 | Module | Domain | ESLint plugin source | Oxlint |
 | --- | --- | --- | --- |
@@ -199,7 +203,7 @@ For every Config object, take the rules Oxlint can implement and emit `off` entr
 
 ## Decisions
 
-1. Source lives in `src/modules/<module>.ts`; `src/source.ts` only composes them. `src/globs.ts`, `src/plugins.ts` (registry), `src/adapters/{eslint,oxlint}.ts`, `src/oxlint/{inventory,rule-map,report}.ts`.
+1. Source lives in `src/modules/<module>.ts`; `src/source.ts` only composes them. `src/globs.ts`, `src/plugins.ts` (registry), `src/adapters/{eslint,oxlint}.ts`, `src/oxlint/{inventory,rule-map,report}.ts`, `src/bridge.ts`; the committed Oxlint Coverage report is [`packages/config/coverage.json`](../../packages/config/coverage.json).
 2. `jsPlugins` aliases always equal the Plugin id; a test forbids collisions with the reserved names.
 3. `domain` is required; Adapters filter on it instead of guessing from globs.
 4. v1 ports `formatters` / `sort` / `pnpm` but keeps them disabled by default; they have no Oxlint realization.

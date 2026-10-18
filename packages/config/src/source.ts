@@ -48,8 +48,9 @@ type Override = NonNullable<Overrides[keyof Overrides]>
 /**
  * Composes every Module into Source's Config objects; the only input to both Adapters.
  *
- * Modules (`src/modules/<module>.ts`) land ticket by ticket, so Source grows here while
- * both Emissions stay valid.
+ * The order below is the emission order both Adapters preserve; the Modules themselves live in
+ * `src/modules/<module>.ts`, and the ones that switch rules off read what the earlier Modules
+ * actually enabled, which is why they compose last.
  */
 export function source(options: Options = {}): ConfigObject[] {
   const isInEditor = options.isInEditor ?? isInEditorEnv()

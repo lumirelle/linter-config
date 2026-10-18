@@ -1,0 +1,51 @@
+import type { ModuleId } from '../types'
+import type { UnemittedRule } from './rule-map'
+import { source } from '../source'
+import { oxlintVersion } from './inventory'
+import { mapRules } from './rule-map'
+
+/**
+ * What the Oxlint Emission cannot implement, per Module.
+ *
+ * The report is computed from the default Source, so it is deterministic and tool-independent: a
+ * rule turns up here because Oxlint has no realization for it, not because of an option. It is
+ * committed as `coverage.json`, so a rule that stops being representable forces a review.
+ */
+export interface CoverageReport {
+  /** The Oxlint version the rule inventory — and so this report — was generated from. */
+  oxlintVersion: string
+  modules: Partial<Record<ModuleId, UnemittedRule[]>>
+}
+
+/**
+ * The rules the Oxlint Emission drops, grouped by Module.
+ *
+ * `eslint-only-domain` is the reason for the Modules Oxlint cannot read at all (data and markup
+ * Domains); the Adapter filters those out before mapping, so no rule of the first slice carries
+ * it yet.
+ */
+export function coverageReport(): CoverageReport {
+  const modules: CoverageReport['modules'] = {}
+
+  for (const config of source({ gitignore: false, isInEditor: false })) {
+    for (const rule of mapRules(config.rules).unemitted) {
+      const collected = modules[config.module] ?? []
+      if (!collected.some(entry => entry.key === rule.key && entry.reason === rule.reason)) {
+        collected.push(rule)
+      }
+      modules[config.module] = collected
+    }
+  }
+
+  return {
+    oxlintVersion,
+    modules: Object.fromEntries(
+      Object.entries(modules)
+        .sort(([left], [right]) => left.localeCompare(right))
+        .map(([module, rules]) => [
+          module,
+          [...rules].sort((left, right) => left.key.localeCompare(right.key)),
+        ]),
+    ) as CoverageReport['modules'],
+  }
+}

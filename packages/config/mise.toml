@@ -16,3 +16,9 @@ cache = { enabled = true }
 
 [tasks.start]
 run = "nub ./src/eslint.ts"
+
+[tasks.inventory]
+description = "Regenerate the Oxlint rule inventory from the installed Oxlint."
+run = "nub ./scripts/generate-inventory.ts"
+sources = ["@group:deps", "scripts"]
+outputs = ["src/oxlint/inventory.generated.ts"]

@@ -1,4 +1,5 @@
 import type { ESLint, Linter } from 'eslint'
+import stylistic from '@stylistic/eslint-plugin'
 import tsPlugin from '@typescript-eslint/eslint-plugin'
 import tsParser from '@typescript-eslint/parser'
 import vitestPlugin from '@vitest/eslint-plugin'
@@ -38,6 +39,7 @@ export const eslintPlugins: Record<string, ESLint.Plugin> = {
   'import': importLite as ESLint.Plugin,
   'jsdoc': jsdoc as unknown as ESLint.Plugin,
   'node': node as unknown as ESLint.Plugin,
+  'style': stylistic as unknown as ESLint.Plugin,
   'test': testPlugin,
   'ts': tsPlugin as unknown as ESLint.Plugin,
   'unicorn': unicorn as unknown as ESLint.Plugin,

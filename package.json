@@ -71,7 +71,13 @@
       "bundle": {
         "@typescript-eslint/eslint-plugin": "^8.68.0",
         "@typescript-eslint/parser": "^8.68.0",
+        "@vitest/eslint-plugin": "^1.6.27",
         "eslint-plugin-antfu": "^3.2.3",
+        "eslint-plugin-import-lite": "^0.6.0",
+        "eslint-plugin-jsdoc": "^64.3.2",
+        "eslint-plugin-n": "^18.3.0",
+        "eslint-plugin-no-only-tests": "^3.4.0",
+        "eslint-plugin-unicorn": "^74.0.0",
         "eslint-plugin-unused-imports": "^4.4.1"
       },
       "peer": {

@@ -23,12 +23,17 @@ describe('plugin bundles', () => {
   })
 
   it('carry no rule semantics of their own, only forwarded plugin objects', () => {
-    expect(Object.keys(eslintPlugins).sort()).toEqual(['antfu', 'ts', 'unused-imports'])
+    expect(Object.keys(eslintPlugins).sort()).toEqual(['antfu', 'import', 'jsdoc', 'node', 'test', 'ts', 'unicorn', 'unused-imports'])
     for (const plugin of Object.values(eslintPlugins)) {
       expect(plugin.rules).toBeTypeOf('object')
     }
     expect(jsPlugins).toEqual({})
     expect(builtinPlugins).toEqual([])
+  })
+
+  it('composes the merged test plugin', () => {
+    const rules = eslintPlugins.test?.rules ?? {}
+    expect(Object.keys(rules)).toEqual(expect.arrayContaining(['no-only-tests', 'consistent-test-it']))
   })
 
   it('forward the parser a Plugin id registers, separately from its plugin', () => {

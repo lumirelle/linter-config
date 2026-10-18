@@ -26,6 +26,144 @@
         "key": "no-undef-init",
         "reason": "unknown-rule"
       }
+    ],
+    "typescript": [
+      {
+        "key": "dot-notation",
+        "reason": "unknown-rule"
+      },
+      {
+        "key": "erasable-syntax-only/enums",
+        "reason": "no-oxlint-realization"
+      },
+      {
+        "key": "erasable-syntax-only/export-aliases",
+        "reason": "no-oxlint-realization"
+      },
+      {
+        "key": "erasable-syntax-only/import-aliases",
+        "reason": "no-oxlint-realization"
+      },
+      {
+        "key": "erasable-syntax-only/namespaces",
+        "reason": "no-oxlint-realization"
+      },
+      {
+        "key": "erasable-syntax-only/parameter-properties",
+        "reason": "no-oxlint-realization"
+      },
+      {
+        "key": "no-dupe-args",
+        "reason": "unknown-rule"
+      },
+      {
+        "key": "no-new-symbol",
+        "reason": "unknown-rule"
+      },
+      {
+        "key": "ts/await-thenable",
+        "reason": "type-aware"
+      },
+      {
+        "key": "ts/dot-notation",
+        "reason": "type-aware"
+      },
+      {
+        "key": "ts/no-array-constructor",
+        "reason": "unknown-rule"
+      },
+      {
+        "key": "ts/no-dupe-class-members",
+        "reason": "unknown-rule"
+      },
+      {
+        "key": "ts/no-floating-promises",
+        "reason": "type-aware"
+      },
+      {
+        "key": "ts/no-for-in-array",
+        "reason": "type-aware"
+      },
+      {
+        "key": "ts/no-implied-eval",
+        "reason": "type-aware"
+      },
+      {
+        "key": "ts/no-misused-promises",
+        "reason": "type-aware"
+      },
+      {
+        "key": "ts/no-redeclare",
+        "reason": "unknown-rule"
+      },
+      {
+        "key": "ts/no-unnecessary-type-assertion",
+        "reason": "type-aware"
+      },
+      {
+        "key": "ts/no-unsafe-argument",
+        "reason": "type-aware"
+      },
+      {
+        "key": "ts/no-unsafe-assignment",
+        "reason": "type-aware"
+      },
+      {
+        "key": "ts/no-unsafe-call",
+        "reason": "type-aware"
+      },
+      {
+        "key": "ts/no-unsafe-member-access",
+        "reason": "type-aware"
+      },
+      {
+        "key": "ts/no-unsafe-return",
+        "reason": "type-aware"
+      },
+      {
+        "key": "ts/no-unused-expressions",
+        "reason": "unknown-rule"
+      },
+      {
+        "key": "ts/no-unused-vars",
+        "reason": "unknown-rule"
+      },
+      {
+        "key": "ts/no-use-before-define",
+        "reason": "unknown-rule"
+      },
+      {
+        "key": "ts/no-useless-constructor",
+        "reason": "unknown-rule"
+      },
+      {
+        "key": "ts/promise-function-async",
+        "reason": "type-aware"
+      },
+      {
+        "key": "ts/restrict-plus-operands",
+        "reason": "type-aware"
+      },
+      {
+        "key": "ts/restrict-template-expressions",
+        "reason": "type-aware"
+      },
+      {
+        "key": "ts/return-await",
+        "reason": "type-aware"
+      },
+      {
+        "key": "ts/strict-boolean-expressions",
+        "reason": "type-aware"
+      },
+      {
+        "key": "ts/switch-exhaustiveness-check",
+        "reason": "type-aware"
+      },
+      {
+        "key": "ts/unbound-method",
+        "reason": "type-aware"
+      }
     ]
   }
 }

@@ -2,18 +2,20 @@ import type { OxlintConfig } from 'oxlint'
 import { describe, expect, it } from 'vitest'
 import { GLOB_EXCLUDE } from '../src/globs'
 import { oxlint } from '../src/oxlint'
+import { rulesFor } from './helpers/oxlint-emission'
 
 type OxlintOptions = Parameters<typeof oxlint>[0]
+
+const JS_EXTENSIONS = ['.js', '.jsx', '.cjs', '.mjs', '.cjsx', '.mjsx']
 
 /** The house Emission, with `.gitignore` reading turned off so the result does not depend on the cwd. */
 async function house(options: OxlintOptions = {}): Promise<OxlintConfig> {
   return oxlint({ gitignore: false, isInEditor: false, ...options })
 }
 
-/** Every rule the Emission sets, flattened across its overrides, the way Oxlint reads them. */
+/** Every rule the Emission sets for JavaScript files, the way Oxlint applies them. */
 async function rules(options: OxlintOptions = {}): Promise<Record<string, unknown>> {
-  const config = await house(options)
-  return Object.assign({}, ...(config.overrides ?? []).map(override => override.rules ?? {}))
+  return rulesFor(await house(options), JS_EXTENSIONS)
 }
 
 describe('oxlint() JavaScript rules', () => {

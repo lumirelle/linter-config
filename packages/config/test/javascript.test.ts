@@ -19,7 +19,8 @@ describe('eslint() javascript module', () => {
   it('emits the upstream setup and rules objects under stable names', async () => {
     const names = (await eslint({ gitignore: false })).map(config => config.name)
 
-    expect(names).toEqual(['lumirelle/ignores', 'lumirelle/javascript/setup', 'lumirelle/javascript/rules'])
+    // Later Modules append after this one; `typescript` owns the objects that follow here.
+    expect(names.slice(0, 3)).toEqual(['lumirelle/ignores', 'lumirelle/javascript/setup', 'lumirelle/javascript/rules'])
   })
 
   it('declares the language both objects share once, on the setup object', async () => {

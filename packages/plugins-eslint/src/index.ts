@@ -1,4 +1,6 @@
-import type { ESLint } from 'eslint'
+import type { ESLint, Linter } from 'eslint'
+import tsPlugin from '@typescript-eslint/eslint-plugin'
+import tsParser from '@typescript-eslint/parser'
 import antfu from 'eslint-plugin-antfu'
 import unusedImports from 'eslint-plugin-unused-imports'
 
@@ -11,5 +13,17 @@ import unusedImports from 'eslint-plugin-unused-imports'
  */
 export const eslintPlugins: Record<string, ESLint.Plugin> = {
   'antfu': antfu as ESLint.Plugin,
+  'ts': tsPlugin as unknown as ESLint.Plugin,
   'unused-imports': unusedImports as ESLint.Plugin,
+}
+
+/**
+ * ESLint parser modules, keyed by the Plugin id that needs them.
+ *
+ * A parser is not a plugin, so it lives in its own map: the registry names a parser per
+ * Plugin id (`ts` -> `@typescript-eslint/parser`), and the config package resolves the id
+ * here instead of importing a parser package from Source.
+ */
+export const eslintParsers: Record<string, Linter.LanguageOptions['parser']> = {
+  ts: tsParser as Linter.LanguageOptions['parser'],
 }

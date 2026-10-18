@@ -27,6 +27,7 @@ async function toEslintConfig(config: ConfigObject): Promise<Linter.Config> {
   const languageOptions = {
     ...tools?.eslint?.languageOptions,
     ...(globals ? { globals } : {}),
+    ...(tools?.eslint?.parser ? { parser: await loadParser(tools.eslint.parser) } : {}),
   } as Linter.LanguageOptions
   const eslintConfig = {
     ...shared,
@@ -58,7 +59,7 @@ async function resolvePlugins(plugins: NonNullable<ConfigObject['plugins']>): Pr
 async function loadPlugin(id: PluginId, ref: PluginRef): Promise<ESLint.Plugin> {
   const definition = pluginDefinition(id)
   if (definition.from === 'bundle') {
-    const plugin = (await loadBundledPlugins())[ref]
+    const plugin = (await loadBundle()).plugins[ref]
     if (!plugin) {
       throw new Error(
         `"${BUNDLE_PACKAGE}" does not provide the "${id}" plugin. `
@@ -80,21 +81,64 @@ async function loadPlugin(id: PluginId, ref: PluginRef): Promise<ESLint.Plugin> 
   }
 }
 
-let bundledPlugins: Promise<Record<string, ESLint.Plugin>> | undefined
+/**
+ * Resolves the parser a Config object asks the Plugin id for.
+ *
+ * A bundled id is served by the Bundle, the same way its plugin is; a peer id falls back to
+ * the consumer's own copy of the registry's parser package.
+ */
+async function loadParser(ref: PluginRef): Promise<NonNullable<Linter.LanguageOptions['parser']>> {
+  const id = ref as PluginId
+  const definition = pluginDefinition(id)
+  const packageName = definition.eslint.parser
+  if (!packageName) {
+    throw new Error(`The "${id}" plugin registers no parser, so a Config object cannot ask it for one.`)
+  }
 
-/** Loads the Bundle once; a failed resolution is retried on the next call. */
-function loadBundledPlugins(): Promise<Record<string, ESLint.Plugin>> {
-  bundledPlugins ??= importBundle()
-  return bundledPlugins
-}
+  if (definition.from === 'bundle') {
+    const parser = (await loadBundle()).parsers[id]
+    if (!parser) {
+      throw new Error(
+        `"${BUNDLE_PACKAGE}" does not provide the "${id}" parser. `
+        + `Install a Bundle version that covers it, or drop the module that needs it.`,
+      )
+    }
+    return parser
+  }
 
-async function importBundle(): Promise<Record<string, ESLint.Plugin>> {
   try {
-    const loaded = await import(BUNDLE_PACKAGE) as { eslintPlugins?: Record<string, ESLint.Plugin> }
-    return loaded.eslintPlugins ?? {}
+    return interopDefault(await import(packageName)) as NonNullable<Linter.LanguageOptions['parser']>
   }
   catch (cause) {
-    bundledPlugins = undefined
+    throw new Error(
+      `Cannot resolve "${packageName}", which the "${id}" plugin needs. `
+      + `Install it in your project.`,
+      { cause },
+    )
+  }
+}
+
+/** What the Plugin Bundle forwards: plugin objects and parser modules, both keyed by Plugin id. */
+interface Bundle {
+  plugins: Record<string, ESLint.Plugin>
+  parsers: Record<string, Linter.LanguageOptions['parser']>
+}
+
+let bundle: Promise<Bundle> | undefined
+
+/** Loads the Bundle once; a failed resolution is retried on the next call. */
+function loadBundle(): Promise<Bundle> {
+  bundle ??= importBundle()
+  return bundle
+}
+
+async function importBundle(): Promise<Bundle> {
+  try {
+    const loaded = await import(BUNDLE_PACKAGE) as { eslintPlugins?: Bundle['plugins'], eslintParsers?: Bundle['parsers'] }
+    return { plugins: loaded.eslintPlugins ?? {}, parsers: loaded.eslintParsers ?? {} }
+  }
+  catch (cause) {
+    bundle = undefined
     throw new Error(
       `Cannot resolve "${BUNDLE_PACKAGE}". Install it to use the bundled plugins: nub add -D ${BUNDLE_PACKAGE}`,
       { cause },

@@ -3,6 +3,8 @@ import { isInEditorEnv } from './editor'
 import { assertGlobVocabulary } from './globs'
 import { ignores } from './modules/ignores'
 import { javascript } from './modules/javascript'
+import { typescript } from './modules/typescript'
+import { isPackageInstalled } from './packages'
 
 /** Config object names are `lumirelle/<tail>`; anything else is a Module id. */
 const CONFIG_NAME_PREFIX = 'lumirelle/'
@@ -22,6 +24,7 @@ export function source(options: Options = {}): ConfigObject[] {
   const configs = applyOverrides([
     ...ignores(options),
     ...javascript({ isInEditor }),
+    ...isTypeScriptEnabled(options.typescript) ? typescript(options) : [],
   ], options.overrides)
 
   // Invariant: a glob must work in both tools, so Source rejects anything outside the
@@ -29,6 +32,17 @@ export function source(options: Options = {}): ConfigObject[] {
   assertGlobVocabulary(configs.flatMap(config => [...(config.files ?? []), ...(config.ignores ?? [])] as Glob[]))
 
   return configs
+}
+
+/**
+ * Upstream enables the TypeScript Module when the project has `typescript` — or its native
+ * preview — installed, since the Module is useless without one; an explicit flag wins either way.
+ */
+function isTypeScriptEnabled(option: Options['typescript']): boolean {
+  if (option !== undefined) {
+    return option !== false
+  }
+  return isPackageInstalled('typescript') || isPackageInstalled('@typescript/native-preview')
 }
 
 /**

@@ -71,6 +71,7 @@
     "@lumirelle/linter-plugins-oxlint": "workspace:*",
     "@lumirelle/tsconfig": "catalog:types",
     "eslint": "catalog:check",
+    "eslint-plugin-erasable-syntax-only": "catalog:peer",
     "fast-glob": "catalog:test",
     "minimatch": "catalog:test",
     "oxlint": "catalog:check",

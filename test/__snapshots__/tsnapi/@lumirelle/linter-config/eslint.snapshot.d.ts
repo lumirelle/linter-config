@@ -15,6 +15,7 @@ export interface ConfigObject {
   tools?: {
     eslint?: {
       language?: string;
+      parser?: PluginRef;
       languageOptions?: Record<string, unknown>;
       linterOptions?: Record<string, unknown>;
       processor?: unknown;

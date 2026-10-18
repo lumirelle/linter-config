@@ -1,4 +1,4 @@
-import type { RuleEntry, RuleKey } from '../src/types'
+import type { RuleEntry } from '../src/types'
 import { writeFileSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
 import e18ePlugin from '@e18e/eslint-plugin'
@@ -52,7 +52,8 @@ function render(table: Table): string {
   const entries = Object.entries(table.rules)
     .sort(([left], [right]) => left.localeCompare(right))
     .map(renderEntry)
-  return `/** ${table.source}. */\nexport const ${table.name}: Readonly<Partial<Record<RuleKey, RuleEntry>>> = {\n${entries.join('\n')}\n}\n`
+  // A line comment, not JSDoc: the plugin's package name would read as a JSDoc tag.
+  return `// ${table.source}.\nexport const ${table.name}: Readonly<Partial<Record<RuleKey, RuleEntry>>> = {\n${entries.join('\n')}\n}\n`
 }
 
 const header = [

@@ -1,6 +1,6 @@
 import type { ConfigObject } from '../types'
-import { pluginRef } from '../plugins'
 import { GLOB_ALL_SRC, GLOB_GRAPHQL, GLOB_JSONC, GLOB_MARKDOWN_CODE, GLOB_SRC, GLOB_TOML } from '../globs'
+import { pluginRef } from '../plugins'
 
 /**
  * Upstream's `configs/antislop.ts`: a curated `eslint-plugin-slop` set against filler prose and

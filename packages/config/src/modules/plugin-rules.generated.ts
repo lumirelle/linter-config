@@ -2,7 +2,7 @@
 // @e18e/eslint-plugin. Do not edit by hand: every table is the plugin's own `configs` output,
 // committed because Source imports no plugin package.
 import type { RuleEntry, RuleKey } from '../types'
-/** eslint-plugin-regexp `configs['flat/recommended']`. */
+// eslint-plugin-regexp `configs['flat/recommended']`.
 export const REGEXP_RECOMMENDED_RULES: Readonly<Partial<Record<RuleKey, RuleEntry>>> = {
   'no-control-regex': 'error',
   'no-empty-character-class': 'off',
@@ -73,7 +73,7 @@ export const REGEXP_RECOMMENDED_RULES: Readonly<Partial<Record<RuleKey, RuleEntr
   'regexp/use-ignore-case': 'error',
 }
 
-/** @e18e/eslint-plugin `configs.modernization`. */
+// @e18e/eslint-plugin `configs.modernization`.
 export const E18E_MODERNIZATION_RULES: Readonly<Partial<Record<RuleKey, RuleEntry>>> = {
   'e18e/prefer-array-at': 'error',
   'e18e/prefer-array-fill': 'error',
@@ -87,12 +87,12 @@ export const E18E_MODERNIZATION_RULES: Readonly<Partial<Record<RuleKey, RuleEntr
   'e18e/prefer-url-canparse': 'error',
 }
 
-/** @e18e/eslint-plugin `configs.moduleReplacements`. */
+// @e18e/eslint-plugin `configs.moduleReplacements`.
 export const E18E_MODULE_REPLACEMENTS_RULES: Readonly<Partial<Record<RuleKey, RuleEntry>>> = {
   'e18e/ban-dependencies': 'error',
 }
 
-/** @e18e/eslint-plugin `configs.performanceImprovements`. */
+// @e18e/eslint-plugin `configs.performanceImprovements`.
 export const E18E_PERFORMANCE_IMPROVEMENTS_RULES: Readonly<Partial<Record<RuleKey, RuleEntry>>> = {
   'e18e/prefer-array-from-map': 'error',
   'e18e/prefer-array-some': 'error',

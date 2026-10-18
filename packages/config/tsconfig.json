@@ -5,6 +5,6 @@
     "types": ["node"],
     "declaration": true
   },
-  "include": ["src/**/*", "test/**/*"],
+  "include": ["src/**/*", "scripts/**/*", "test/**/*"],
   "exclude": ["test/fixtures/**/*"]
 }

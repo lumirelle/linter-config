@@ -1,0 +1,31 @@
+{
+  "oxlintVersion": "1.88.0",
+  "modules": {
+    "javascript": [
+      {
+        "key": "dot-notation",
+        "reason": "unknown-rule"
+      },
+      {
+        "key": "no-dupe-args",
+        "reason": "unknown-rule"
+      },
+      {
+        "key": "no-octal",
+        "reason": "unknown-rule"
+      },
+      {
+        "key": "no-octal-escape",
+        "reason": "unknown-rule"
+      },
+      {
+        "key": "no-restricted-syntax",
+        "reason": "unknown-rule"
+      },
+      {
+        "key": "no-undef-init",
+        "reason": "unknown-rule"
+      }
+    ]
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "extends": "@lumirelle/tsconfig/ts",
+  "compilerOptions": {
+    "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.tsbuildinfo",
+    // The extension's sources run in a browser, so the DOM library is the one addition to the
+    // TypeScript preset: `document`, `location` and `URL` are the APIs they use.
+    "lib": ["ESNext", "DOM"]
+  },
+  "include": ["src/**/*"]
+}

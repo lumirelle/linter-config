@@ -1,17 +1,4 @@
 {
-  "entry": ["scripts/*.ts"],
-  "ignore": [
-    // Upstream source for reading and comparison; not part of this workspace
-    "upstream/**"
-  ],
-  "ignoreFiles": [
-    // Snapshots
-    "test/__snapshots__/**",
-    // Linted by the fixture test, never imported
-    "packages/config/test/fixtures/**",
-    // Loaded by taze at runtime; knip has no plugin for it
-    "taze.config.js"
-  ],
   "ignoreDependencies": [
     // Quality
     "@arethetypeswrong/cli",
@@ -33,6 +20,13 @@
     "eslint-plugin-svelte",
     "eslint-plugin-vuejs-accessibility",
     "svelte-eslint-parser",
+    // Runtime frameworks the examples simulate and deliberately do not install: an example's source
+    // tree is a consumer snapshot, so its entry file imports the framework the example leaves out.
+    // One entry per framework, so a later example adds only its own.
+    "next",
+    "react",
+    "react-dom",
+    "vue",
     // Referenced as an Oxlint jsPlugins specifier string, which knip cannot follow
     "@eslint-community/eslint-plugin-eslint-comments",
     // Peer packages loaded by a plugin's own resolution at runtime (eslint-plugin-jsx-a11y by
@@ -55,5 +49,41 @@
     "oxc-minify",
     "pinia",
     "uno.css"
-  ]
+  ],
+  "workspaces": {
+    // The root workspace is configured here because a `workspaces` block makes knip read every
+    // workspace, including the root one, from this mapping.
+    ".": {
+      "entry": ["scripts/*.ts", "playground/index.ts", "playground/examples.ts"],
+      "ignore": [
+        // Upstream source for reading and comparison; not part of this workspace
+        "upstream/**"
+      ],
+      "ignoreFiles": [
+        // Snapshots
+        "test/__snapshots__/**",
+        // Linted by the fixture test, never imported
+        "packages/config/test/fixtures/**",
+        // Loaded by taze at runtime; knip has no plugin for it
+        "taze.config.js"
+      ]
+    },
+    // An example is a consumer snapshot, not a library with a single index: its options module and
+    // the two config modules built from it are the whole program. Globbed, so a later example
+    // package needs no edit here; a declared peer is covered by the root `ignoreDependencies`
+    // above, which a workspace inherits. `packages/*/src/**/*` is a monorepo example's nested
+    // package sources, which the workspace glob does not make workspaces of their own.
+    "playground/*": {
+      "entry": [
+        // The paired lint configs and the framework config files an example keeps — the
+        // `uno.config.ts` a UnoCSS project needs before its plugin can order a class name. Nothing
+        // imports them, and they are part of the snapshot rather than dead code.
+        "*.config.{js,ts}",
+        "options.ts",
+        "src/**/*",
+        "app/**/*",
+        "packages/*/src/**/*"
+      ]
+    }
+  }
 }

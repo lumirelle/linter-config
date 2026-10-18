@@ -13,8 +13,8 @@
   "workspaces": {
     "packages": [
       "docs",
-      "playground",
-      "packages/*"
+      "packages/*",
+      "playground/*"
     ],
     "catalogs": {
       "dev": {

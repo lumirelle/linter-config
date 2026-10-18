@@ -1,0 +1,10 @@
+{
+  "extends": "@lumirelle/tsconfig/vue",
+  "compilerOptions": {
+    "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.tsbuildinfo"
+  },
+  // A real Nuxt project references the generated `.nuxt/tsconfig.*.json` project files instead,
+  // which only exist after `nuxt prepare`. The example runs neither, so it extends the Vue preset
+  // and keeps itself loadable.
+  "include": ["app/**/*"]
+}

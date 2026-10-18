@@ -91,6 +91,17 @@ eslint({
 
 `oxlint()` takes the same `overrides` keys, so a Module-level override lands in both Emissions. Only the ESLint side has the Bridge: `oxlint: true` (or its object form) appends it, and [`oxlintBridge()`][bridge] is exported so you can re-append it after appending your own configs.
 
+## Examples
+
+[`playground/`][playground] holds seven private example workspaces, one per kind of project this config is meant for: a Next.js application, a Nuxt application, a React and a Vue single-page application, a TypeScript library, a TypeScript monorepo and a browser extension. Each example keeps one options module that both its ESLint and Oxlint configs read, and its README maps the project's previous configuration onto that module, so a migration is a diff rather than a guess.
+
+```sh
+mise run play ts     # print both Emissions for one example
+mise run play --all  # print every example
+```
+
+See the [playground index][playground] for the table of examples and the options each one demonstrates.
+
 ## Coverage report and upstream comparison
 
 - The Coverage report — the rules the Oxlint Emission cannot implement, per Module, with the reason — is committed at [`packages/config/coverage.json`][coverage] and guarded by a snapshot test.
@@ -131,6 +142,7 @@ eslint({
 [adr-2]: https://github.com/lumirelle/linter-config/blob/main/docs/adr/0002-plugin-bundles.md
 [schema]: https://github.com/lumirelle/linter-config/blob/main/docs/design/source-schema.md
 [bridge]: https://github.com/lumirelle/linter-config/blob/main/packages/config/src/bridge.ts
+[playground]: https://github.com/lumirelle/linter-config/blob/main/playground/README.md
 [coverage]: https://github.com/lumirelle/linter-config/blob/main/packages/config/coverage.json
 [dogfood-eslint]: https://github.com/lumirelle/linter-config/blob/main/eslint.config.js
 [dogfood-oxlint]: https://github.com/lumirelle/linter-config/blob/main/oxlint.config.ts

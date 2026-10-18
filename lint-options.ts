@@ -21,6 +21,17 @@ export const options = {
     'packages/config/test/fixtures/**',
     // The Upstream submodule is a reading baseline, not part of this workspace.
     'upstream/antfu-eslint-config/**',
+    // An example simulates a consumer project, so its source tree is linted by that project's own
+    // Config objects, never by this repository's root config. The patterns name the source
+    // directories the examples use, including a monorepo example's nested package sources; the
+    // example's own lint configs, options module, manifest, tsconfig, README and framework config
+    // files sit at its root, where this repository's root config does lint them.
+    'playground/*/src/**',
+    'playground/*/app/**',
+    'playground/*/packages/*/src/**',
+    // The one framework config that does not survive this repository's own lint: `nuxt.config.ts`
+    // calls `defineNuxtConfig` from the Nuxt runtime the example deliberately does not install.
+    'playground/*/nuxt.config.ts',
   ],
   overrides: {
     // Two type-aware rules do not describe this repository, and turning them off here — in Source,

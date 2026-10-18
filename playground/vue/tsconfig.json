@@ -1,0 +1,7 @@
+{
+  "extends": "@lumirelle/tsconfig/vue",
+  "compilerOptions": {
+    "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.tsbuildinfo"
+  },
+  "include": ["src/**/*"]
+}

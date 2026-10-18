@@ -7,6 +7,9 @@ describe('the example registry', () => {
   })
 
   it('fails an unknown name and names the valid ones', async () => {
-    await expect(resolveExample('nope')).rejects.toThrow(/Unknown example "nope"\. Valid examples: ts/)
+    // The names come from the registry rather than a literal, so adding an example does not need
+    // this test edited: the message must list exactly what `listExamples()` returns.
+    const names = (await listExamples()).join(', ')
+    await expect(resolveExample('nope')).rejects.toThrow(new RegExp(`Unknown example "nope"\\. Valid examples: ${names}`))
   })
 })

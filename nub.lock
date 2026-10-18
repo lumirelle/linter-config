@@ -28,6 +28,9 @@ catalogs:
     '@vitest/eslint-plugin':
       specifier: ^1.6.27
       version: 1.6.27
+    eslint-merge-processors:
+      specifier: ^2.0.0
+      version: 2.0.0
     eslint-plugin-antfu:
       specifier: ^3.2.3
       version: 3.2.3
@@ -58,6 +61,15 @@ catalogs:
     eslint-plugin-unused-imports:
       specifier: ^4.4.1
       version: 4.4.1
+    eslint-plugin-vue:
+      specifier: ^10.10.0
+      version: 10.11.1
+    eslint-processor-vue-blocks:
+      specifier: ^2.0.0
+      version: 2.0.0
+    vue-eslint-parser:
+      specifier: ^10.3.0
+      version: 10.4.1
   check:
     '@antfu/eslint-config':
       specifier: 9.5.1
@@ -189,6 +201,9 @@ catalogs:
     eslint-plugin-svelte:
       specifier: ^3.23.1
       version: 3.23.1
+    eslint-plugin-vuejs-accessibility:
+      specifier: ^2.6.0
+      version: 2.6.2
     svelte-eslint-parser:
       specifier: ^1.9.0
       version: 1.9.0
@@ -437,6 +452,9 @@ importers:
       eslint-plugin-svelte:
         specifier: catalog:peer
         version: 3.23.1(@typescript-eslint/parser@8.71.2(eslint@10.12.0)(typescript@6.0.3-bridge.18.tsgo.7.0.2))(@typescript-eslint/types@8.71.2)(eslint@10.12.0)
+      eslint-plugin-vuejs-accessibility:
+        specifier: catalog:peer
+        version: 2.6.2(eslint@10.12.0)(globals@17.13.0)
       fast-glob:
         specifier: catalog:test
         version: 3.3.3
@@ -479,6 +497,9 @@ importers:
       '@vitest/eslint-plugin':
         specifier: catalog:bundle
         version: 1.6.27(@typescript-eslint/eslint-plugin@8.71.2(@typescript-eslint/parser@8.71.2(eslint@10.12.0)(typescript@6.0.3-bridge.18.tsgo.7.0.2))(eslint@10.12.0)(typescript@6.0.3-bridge.18.tsgo.7.0.2))(eslint@10.12.0)(vitest@5.0.4(@types/node@26.6.5)(@vitest/coverage-v8@5.0.4)(vite@8.3.4(@types/node@26.6.5)))
+      eslint-merge-processors:
+        specifier: catalog:bundle
+        version: 2.0.0(eslint@10.12.0)
       eslint-plugin-antfu:
         specifier: catalog:bundle
         version: 3.2.3(eslint@10.12.0)
@@ -509,6 +530,15 @@ importers:
       eslint-plugin-unused-imports:
         specifier: catalog:bundle
         version: 4.4.1(@typescript-eslint/eslint-plugin@8.71.2(@typescript-eslint/parser@8.71.2(eslint@10.12.0)(typescript@6.0.3-bridge.18.tsgo.7.0.2))(eslint@10.12.0)(typescript@6.0.3-bridge.18.tsgo.7.0.2))(eslint@10.12.0)
+      eslint-plugin-vue:
+        specifier: catalog:bundle
+        version: 10.11.1(@stylistic/eslint-plugin@5.10.0(eslint@10.12.0))(@typescript-eslint/parser@8.71.2(eslint@10.12.0)(typescript@6.0.3-bridge.18.tsgo.7.0.2))(eslint@10.12.0)(vue-eslint-parser@10.4.1(eslint@10.12.0))
+      eslint-processor-vue-blocks:
+        specifier: catalog:bundle
+        version: 2.0.0(@vue/compiler-sfc@3.5.44)(eslint@10.12.0)
+      vue-eslint-parser:
+        specifier: catalog:bundle
+        version: 10.4.1(eslint@10.12.0)
     devDependencies:
       '@lumirelle/tsconfig':
         specifier: catalog:types
@@ -3436,6 +3466,13 @@ packages:
         optional: true
       typescript:
         optional: true
+
+  eslint-plugin-vuejs-accessibility@2.6.2:
+    resolution: {integrity: sha512-3pZCg3khqRWa9eo2FAAoPG6oITcdjhnvieCp24z/XUns8KfO5OAru+D4CkMpHQ5hxJIF+74JsnRRzLggPIbj3Q==}
+    engines: {node: '>=16.0.0'}
+    peerDependencies:
+      eslint: ^5.0.0 || ^6.0.0 || ^7.0.0 || ^8.0.0 || ^9.0.0 || ^10.0.0
+      globals: '>= 13.12.1'
 
   eslint-plugin-yml@3.9.0:
     resolution: {integrity: sha512-o4ByMVFd/mGc0Q/vJmbG9pz7Kyg/BiKAGnWCzvMLqzpa2KMdpUrLgF5a6yYeL2mf1Br/9dckd0ADl3vw7uF+jA==}
@@ -7949,6 +7986,15 @@ snapshots:
       semver: 7.8.5
       vue-eslint-parser: 10.4.1(eslint@10.12.0)
       xml-name-validator: 5.0.0
+
+  eslint-plugin-vuejs-accessibility@2.6.2(eslint@10.12.0)(globals@17.13.0):
+    dependencies:
+      aria-query: 5.3.2
+      eslint: 10.12.0
+      globals: 17.13.0
+      vue-eslint-parser: 10.4.1(eslint@10.12.0)
+    transitivePeerDependencies:
+      - supports-color
 
   eslint-plugin-yml@3.9.0(eslint@10.12.0):
     dependencies:

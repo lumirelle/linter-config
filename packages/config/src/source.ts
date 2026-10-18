@@ -25,6 +25,7 @@ import { isTestEnabled, test, testOverrides } from './modules/test'
 import { typescript } from './modules/typescript'
 import { unicorn } from './modules/unicorn'
 import { unocss } from './modules/unocss'
+import { vue } from './modules/vue'
 import { isPackageInstalled } from './packages'
 import { enabledRuleKeys } from './rules'
 
@@ -43,6 +44,10 @@ type Override = NonNullable<Overrides[keyof Overrides]>
 export function source(options: Options = {}): ConfigObject[] {
   const isInEditor = options.isInEditor ?? isInEditorEnv()
   const stylisticSlices = isStylisticEnabled(options.stylistic)
+  const typescriptEnabled = isTypeScriptEnabled(options.typescript)
+  // Upstream treats `.vue` as one more component extension of the TypeScript Module, so the
+  // component parser's scripts are typed whenever `vue` is on.
+  const componentExts = [...options.componentExts ?? [], ...options.vue ? ['vue'] : []]
 
   // `test` and `disables` turn off rules owned by the Modules above them, and derive that table
   // from what those Modules actually emit, so they compose after them.
@@ -53,7 +58,7 @@ export function source(options: Options = {}): ConfigObject[] {
     ...command(),
     ...options.perfectionist === false ? [] : perfectionist(),
     ...options.jsx ? jsx() : [],
-    ...isTypeScriptEnabled(options.typescript) ? typescript(options) : [],
+    ...typescriptEnabled ? typescript({ ...options, componentExts }) : [],
     ...options.node === false ? [] : node(),
     ...options.jsdoc === false ? [] : jsdoc({ stylistic: stylisticSlices }),
     ...options.imports === false ? [] : imports({ stylistic: stylisticSlices }),
@@ -62,6 +67,7 @@ export function source(options: Options = {}): ConfigObject[] {
     ...options.antislop === true ? antislop() : [],
     ...isStylisticEnabled(options.stylistic) ? stylistic(stylisticOptions(options.stylistic)) : [],
     ...options.regexp === false ? [] : regexp(),
+    ...options.vue ? vue({ ...options, componentExts, typescript: typescriptEnabled }) : [],
     ...options.react ? react(options) : [],
     ...options.nextjs ? nextjs() : [],
     ...options.solid ? solid(options) : [],

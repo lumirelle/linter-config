@@ -122,17 +122,24 @@ async function loadParser(ref: PluginRef): Promise<NonNullable<Linter.LanguageOp
 /**
  * Resolves a processor Source named by Plugin id and registration name.
  *
- * A processor lives inside its plugin package rather than in a package of its own, so the plugin
- * the Config object already declares is what carries it.
+ * A processor usually lives inside its plugin package rather than in a package of its own, so the
+ * plugin the Config object already declares is what carries it. The rest are glue the Bundle builds
+ * from the plugin plus a companion package (Vue's SFC block handling), keyed by the same pair.
  */
 async function loadProcessor(ref: ProcessorRef): Promise<Linter.Config['processor']> {
   const id = ref.plugin as PluginId
   const plugin = await loadPlugin(id, ref.plugin)
   const processor = (plugin as { processors?: Record<string, Linter.Config['processor']> }).processors?.[ref.name]
-  if (!processor) {
-    throw new Error(`The "${id}" plugin registers no "${ref.name}" processor.`)
+  if (processor) {
+    return processor
   }
-  return processor
+
+  const glue = (await loadBundle()).processors[`${ref.plugin}/${ref.name}`]
+  if (glue) {
+    return glue(ref.options)
+  }
+
+  throw new Error(`The "${id}" plugin registers no "${ref.name}" processor.`)
 }
 
 /**
@@ -154,10 +161,11 @@ async function resolveNestedParser(languageOptions: Linter.LanguageOptions): Pro
   }
 }
 
-/** What the Plugin Bundle forwards: plugin objects and parser modules, both keyed by Plugin id. */
+/** What the Plugin Bundle forwards: plugin objects and parser modules, both keyed by Plugin id, plus processor glue. */
 interface Bundle {
   plugins: Record<string, ESLint.Plugin>
   parsers: Record<string, Linter.LanguageOptions['parser']>
+  processors: Record<string, (options?: Record<string, unknown>) => Linter.Config['processor']>
 }
 
 let bundle: Promise<Bundle> | undefined
@@ -170,8 +178,12 @@ function loadBundle(): Promise<Bundle> {
 
 async function importBundle(): Promise<Bundle> {
   try {
-    const loaded = await import(BUNDLE_PACKAGE) as { eslintPlugins?: Bundle['plugins'], eslintParsers?: Bundle['parsers'] }
-    return { plugins: loaded.eslintPlugins ?? {}, parsers: loaded.eslintParsers ?? {} }
+    const loaded = await import(BUNDLE_PACKAGE) as {
+      eslintPlugins?: Bundle['plugins']
+      eslintParsers?: Bundle['parsers']
+      eslintProcessors?: Bundle['processors']
+    }
+    return { plugins: loaded.eslintPlugins ?? {}, parsers: loaded.eslintParsers ?? {}, processors: loaded.eslintProcessors ?? {} }
   }
   catch (cause) {
     bundle = undefined

@@ -52,6 +52,7 @@ const WIDEST_SOURCE: Options = {
   type: 'lib',
   typescript: { erasableOnly: true, tsconfigPath: 'tsconfig.json' },
   unocss: true,
+  vue: { a11y: true },
 }
 
 /**

@@ -91,6 +91,7 @@
     "eslint-plugin-solid": "catalog:peer",
     "eslint-plugin-sonarjs": "catalog:peer",
     "eslint-plugin-svelte": "catalog:peer",
+    "eslint-plugin-vuejs-accessibility": "catalog:peer",
     "fast-glob": "catalog:test",
     "minimatch": "catalog:test",
     "oxlint": "catalog:check",

@@ -63,6 +63,8 @@ export interface PluginDefinition {
 export interface ProcessorRef {
   plugin: PluginRef
   name: string
+  /** Options for a processor the Bundle builds on demand (Vue's SFC block glue selects blocks this way). */
+  options?: Record<string, unknown>
 }
 
 declare const pluginRefBrand: unique symbol
@@ -186,7 +188,12 @@ export interface OxlintOptions {
  * drift by configuration. Fields mirror Upstream.
  */
 export interface Options {
-  vue?: boolean | { a11y?: boolean, vueVersion?: 2 | 3, sfcBlocks?: boolean }
+  vue?: boolean | {
+    a11y?: boolean
+    vueVersion?: 2 | 3
+    /** SFC block linting: `false` keeps only the Vue processor, an object narrows what it extracts. */
+    sfcBlocks?: boolean | Record<string, unknown>
+  }
   react?: boolean
   svelte?: boolean
   astro?: boolean

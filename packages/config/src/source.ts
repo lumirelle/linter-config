@@ -1,18 +1,87 @@
 import type { ConfigObject, Glob, Options } from './types'
+import { isInEditorEnv } from './editor'
 import { assertGlobVocabulary } from './globs'
+import { ignores } from './modules/ignores'
+import { javascript } from './modules/javascript'
+
+/** Config object names are `lumirelle/<tail>`; anything else is a Module id. */
+const CONFIG_NAME_PREFIX = 'lumirelle/'
+
+type Overrides = NonNullable<Options['overrides']>
+type Override = NonNullable<Overrides[keyof Overrides]>
 
 /**
  * Composes every Module into Source's Config objects; the only input to both Adapters.
  *
- * Modules (`src/modules/<module>.ts`) land in later tickets, so Source is empty for now
- * and both Emissions stay valid but rule-free.
+ * Modules (`src/modules/<module>.ts`) land ticket by ticket, so Source grows here while
+ * both Emissions stay valid.
  */
-export function source(_options: Options = {}): ConfigObject[] {
-  const configs: ConfigObject[] = []
+export function source(options: Options = {}): ConfigObject[] {
+  const isInEditor = options.isInEditor ?? isInEditorEnv()
+
+  const configs = applyOverrides([
+    ...ignores(options),
+    ...javascript({ isInEditor }),
+  ], options.overrides)
 
   // Invariant: a glob must work in both tools, so Source rejects anything outside the
   // shared vocabulary before an Adapter ever sees it.
   assertGlobVocabulary(configs.flatMap(config => [...(config.files ?? []), ...(config.ignores ?? [])] as Glob[]))
 
   return configs
+}
+
+/**
+ * Merges the caller's overrides into the Config objects they name.
+ *
+ * A key that is a Module id applies to every object of that Module, so a caller can change
+ * one rule without restating the module; a key that is a Config object name
+ * (`lumirelle/<tail>`) applies to exactly that object, and a name Source did not emit is an
+ * error rather than a silent no-op.
+ *
+ * `rules` merge over the object's rules, while `files` and `ignores` replace its scope when
+ * given, which is how a caller narrows or widens one module.
+ */
+function applyOverrides(configs: ConfigObject[], overrides: Options['overrides'] = {}): ConfigObject[] {
+  const entries = Object.entries(overrides).filter((entry): entry is [string, Override] => entry[1] !== undefined)
+  if (entries.length === 0) {
+    return configs
+  }
+
+  assertKnownConfigNames(configs, entries.map(([key]) => key))
+
+  return configs.map((config) => {
+    const matching = entries.filter(([key]) => key.startsWith(CONFIG_NAME_PREFIX)
+      ? config.name === key
+      : config.module === key)
+    if (matching.length === 0) {
+      return config
+    }
+
+    const overridden: ConfigObject = { ...config }
+    for (const [, override] of matching) {
+      if (override.files) {
+        overridden.files = override.files
+      }
+      if (override.ignores) {
+        overridden.ignores = override.ignores
+      }
+      if (override.rules) {
+        overridden.rules = { ...overridden.rules, ...override.rules }
+      }
+    }
+    return overridden
+  })
+}
+
+/** A Config object name in `overrides` must exist, because names are the public targeting key. */
+function assertKnownConfigNames(configs: ConfigObject[], keys: string[]): void {
+  const names = new Set(configs.map(config => config.name))
+  const unknown = keys.filter(key => key.startsWith(CONFIG_NAME_PREFIX) && !names.has(key))
+  if (unknown.length > 0) {
+    throw new Error(
+      `Unknown Config object in "overrides": ${unknown.map(key => `"${key}"`).join(', ')}. `
+      + `Source emits ${[...names].map(name => `"${name}"`).join(', ')}.`,
+    )
+  }
 }

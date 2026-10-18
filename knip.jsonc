@@ -2,6 +2,8 @@
   "ignoreFiles": [
     // Snapshots
     "test/__snapshots__/**",
+    // Linted by the fixture test, never imported
+    "packages/config/test/fixtures/**",
     // Loaded by taze at runtime; knip has no plugin for it
     "taze.config.js"
   ],

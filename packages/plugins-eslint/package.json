@@ -42,6 +42,10 @@
       "optional": true
     }
   },
+  "dependencies": {
+    "eslint-plugin-antfu": "catalog:bundle",
+    "eslint-plugin-unused-imports": "catalog:bundle"
+  },
   "devDependencies": {
     "@lumirelle/tsconfig": "catalog:types",
     "eslint": "catalog:check",

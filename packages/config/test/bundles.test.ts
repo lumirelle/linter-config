@@ -22,8 +22,11 @@ describe('plugin bundles', () => {
     }
   })
 
-  it('carry no rule semantics', () => {
-    expect(eslintPlugins).toEqual({})
+  it('carry no rule semantics of their own, only forwarded plugin objects', () => {
+    expect(Object.keys(eslintPlugins).sort()).toEqual(['antfu', 'unused-imports'])
+    for (const plugin of Object.values(eslintPlugins)) {
+      expect(plugin.rules).toBeTypeOf('object')
+    }
     expect(jsPlugins).toEqual({})
     expect(builtinPlugins).toEqual([])
   })

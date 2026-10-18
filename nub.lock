@@ -9,6 +9,13 @@ catalogs:
     tsdown:
       specifier: ^0.23.1
       version: 0.23.1
+  bundle:
+    eslint-plugin-antfu:
+      specifier: ^3.2.3
+      version: 3.2.3
+    eslint-plugin-unused-imports:
+      specifier: ^4.4.1
+      version: 4.4.1
   check:
     '@antfu/eslint-config':
       specifier: ^9.5.1
@@ -85,9 +92,15 @@ catalogs:
     '@oxlint-flat-config/composer':
       specifier: ^0.3.1
       version: 0.3.1
+    eslint-config-flat-gitignore:
+      specifier: ^2.4.0
+      version: 2.4.0
     eslint-flat-config-utils:
       specifier: ^3.2.0
       version: 3.2.0
+    globals:
+      specifier: ^17.13.0
+      version: 17.13.0
     oxlint-flat-config:
       specifier: ^0.4.0
       version: 0.4.0
@@ -248,9 +261,15 @@ importers:
       '@oxlint-flat-config/composer':
         specifier: catalog:lint
         version: 0.3.1(oxlint@1.88.0(oxlint-tsgolint@7.0.2004))(oxlint-flat-config@0.4.0(oxlint@1.88.0(oxlint-tsgolint@7.0.2004)))
+      eslint-config-flat-gitignore:
+        specifier: catalog:lint
+        version: 2.4.0(eslint@10.12.0)
       eslint-flat-config-utils:
         specifier: catalog:lint
         version: 3.2.0(eslint@10.12.0)
+      globals:
+        specifier: catalog:lint
+        version: 17.13.0
       oxlint-flat-config:
         specifier: catalog:lint
         version: 0.4.0(oxlint@1.88.0(oxlint-tsgolint@7.0.2004))
@@ -287,6 +306,13 @@ importers:
         version: 5.0.4(@types/node@26.6.5)(@vitest/coverage-v8@5.0.4)(vite@8.3.4(@types/node@26.6.5))
 
   packages/plugins-eslint:
+    dependencies:
+      eslint-plugin-antfu:
+        specifier: catalog:bundle
+        version: 3.2.3(eslint@10.12.0)
+      eslint-plugin-unused-imports:
+        specifier: catalog:bundle
+        version: 4.4.1(@typescript-eslint/eslint-plugin@8.71.2(@typescript-eslint/parser@8.71.2(eslint@10.12.0)(typescript@6.0.3-bridge.18.tsgo.7.0.2))(eslint@10.12.0)(typescript@6.0.3-bridge.18.tsgo.7.0.2))(eslint@10.12.0)
     devDependencies:
       '@lumirelle/tsconfig':
         specifier: catalog:types

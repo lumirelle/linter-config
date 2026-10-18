@@ -11,5 +11,5 @@
     "browser": true,
     "node": true
   },
-  "ignorePatterns": ["README.md", "test/__snapshots__/**"]
+  "ignorePatterns": ["README.md", "test/__snapshots__/**", "packages/config/test/fixtures/**"]
 }

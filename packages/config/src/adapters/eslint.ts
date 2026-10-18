@@ -1,6 +1,5 @@
 import type { ESLint, Linter } from 'eslint'
 import type { ConfigObject, Domain, Options, PluginId, PluginRef } from '../types'
-import { createRequire } from 'node:module'
 import { FlatConfigComposer } from 'eslint-flat-config-utils'
 import { pluginDefinition } from '../plugins'
 import { source } from '../source'
@@ -8,8 +7,6 @@ import { source } from '../source'
 const ESLINT_DOMAINS: readonly Domain[] = ['js', 'vue', 'svelte', 'astro', 'angular', 'data', 'markup']
 
 const BUNDLE_PACKAGE = '@lumirelle/linter-plugins-eslint'
-
-const require = createRequire(import.meta.url)
 
 /**
  * Turns Source into the ESLint Emission: filter by Domain, resolve Plugin ids to plugin
@@ -20,40 +17,48 @@ export function composeEslint(options: Options): FlatConfigComposer<Linter.Confi
   return new FlatConfigComposer<Linter.Config, string>(
     ...source(options)
       .filter(config => ESLINT_DOMAINS.includes(config.domain))
-      .map(config => toEslintConfig(config)),
+      .map(async config => toEslintConfig(config)),
   )
 }
 
-function toEslintConfig(config: ConfigObject): Linter.Config {
+async function toEslintConfig(config: ConfigObject): Promise<Linter.Config> {
   const { domain: _domain, module: _module, globals, plugins, tools, ...shared } = config
-  const languageOptions = { ...tools?.eslint?.languageOptions, ...globals } as Linter.LanguageOptions
+  // `globals` is `languageOptions.globals` in an ESLint config, not a language option of its own.
+  const languageOptions = {
+    ...tools?.eslint?.languageOptions,
+    ...(globals ? { globals } : {}),
+  } as Linter.LanguageOptions
   const eslintConfig = {
     ...shared,
     ...(tools?.eslint?.language ? { language: tools.eslint.language } : {}),
     ...(Object.keys(languageOptions).length > 0 ? { languageOptions } : {}),
     ...(tools?.eslint?.linterOptions ? { linterOptions: tools.eslint.linterOptions } : {}),
     ...(tools?.eslint?.processor === undefined ? {} : { processor: tools.eslint.processor as Linter.Config['processor'] }),
-    ...(plugins ? { plugins: resolvePlugins(plugins) } : {}),
+    ...(plugins ? { plugins: await resolvePlugins(plugins) } : {}),
   } as Linter.Config
 
   return eslintConfig
 }
 
-function resolvePlugins(plugins: NonNullable<ConfigObject['plugins']>): Record<string, ESLint.Plugin> {
+async function resolvePlugins(plugins: NonNullable<ConfigObject['plugins']>): Promise<Record<string, ESLint.Plugin>> {
   const resolved: Record<string, ESLint.Plugin> = {}
   for (const id of Object.keys(plugins) as PluginId[]) {
     const ref = plugins[id]
     if (ref) {
-      resolved[ref] = loadPlugin(id, ref)
+      resolved[ref] = await loadPlugin(id, ref)
     }
   }
   return resolved
 }
 
-function loadPlugin(id: PluginId, ref: PluginRef): ESLint.Plugin {
+/**
+ * Plugin packages are loaded with a dynamic `import` because the Bundle is ESM and only
+ * peer plugins may be CommonJS; both shapes resolve through the namespace's default export.
+ */
+async function loadPlugin(id: PluginId, ref: PluginRef): Promise<ESLint.Plugin> {
   const definition = pluginDefinition(id)
   if (definition.from === 'bundle') {
-    const plugin = loadBundledPlugins()[ref]
+    const plugin = (await loadBundledPlugins())[ref]
     if (!plugin) {
       throw new Error(
         `"${BUNDLE_PACKAGE}" does not provide the "${id}" plugin. `
@@ -64,7 +69,7 @@ function loadPlugin(id: PluginId, ref: PluginRef): ESLint.Plugin {
   }
 
   try {
-    return interopDefault(require(definition.eslint.plugin)) as ESLint.Plugin
+    return interopDefault(await import(definition.eslint.plugin)) as ESLint.Plugin
   }
   catch (cause) {
     throw new Error(
@@ -75,19 +80,21 @@ function loadPlugin(id: PluginId, ref: PluginRef): ESLint.Plugin {
   }
 }
 
-let bundledPlugins: Record<string, ESLint.Plugin> | undefined
+let bundledPlugins: Promise<Record<string, ESLint.Plugin>> | undefined
 
-function loadBundledPlugins(): Record<string, ESLint.Plugin> {
-  if (bundledPlugins) {
-    return bundledPlugins
-  }
+/** Loads the Bundle once; a failed resolution is retried on the next call. */
+function loadBundledPlugins(): Promise<Record<string, ESLint.Plugin>> {
+  bundledPlugins ??= importBundle()
+  return bundledPlugins
+}
 
+async function importBundle(): Promise<Record<string, ESLint.Plugin>> {
   try {
-    const loaded = require(BUNDLE_PACKAGE) as { eslintPlugins?: Record<string, ESLint.Plugin> }
-    bundledPlugins = loaded.eslintPlugins ?? {}
-    return bundledPlugins
+    const loaded = await import(BUNDLE_PACKAGE) as { eslintPlugins?: Record<string, ESLint.Plugin> }
+    return loaded.eslintPlugins ?? {}
   }
   catch (cause) {
+    bundledPlugins = undefined
     throw new Error(
       `Cannot resolve "${BUNDLE_PACKAGE}". Install it to use the bundled plugins: nub add -D ${BUNDLE_PACKAGE}`,
       { cause },

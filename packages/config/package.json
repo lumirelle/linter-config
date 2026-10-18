@@ -61,7 +61,9 @@
   },
   "dependencies": {
     "@oxlint-flat-config/composer": "catalog:lint",
+    "eslint-config-flat-gitignore": "catalog:lint",
     "eslint-flat-config-utils": "catalog:lint",
+    "globals": "catalog:lint",
     "oxlint-flat-config": "catalog:lint"
   },
   "devDependencies": {

@@ -20,12 +20,20 @@ describe('eslint()', () => {
     expect(typeof composer.remove).toBe('function')
   })
 
-  it('resolves to an empty flat config', async () => {
-    await expect(eslint()).resolves.toEqual([])
+  it('resolves to a flat config whose objects all carry a lumirelle name', async () => {
+    const configs = await eslint({ gitignore: false })
+
+    expect(Array.isArray(configs)).toBe(true)
+    expect(configs.length).toBeGreaterThan(0)
+    for (const config of configs) {
+      expect(config.name).toMatch(/^lumirelle\/\S+/)
+    }
   })
 
-  it('accepts options without changing the empty emission yet', async () => {
-    await expect(eslint({ type: 'lib' })).resolves.toEqual([])
+  it('keeps the names unique, so override and remove stay addressable', async () => {
+    const names = (await eslint({ gitignore: false })).map(config => config.name)
+
+    expect(new Set(names).size).toBe(names.length)
   })
 })
 
@@ -39,17 +47,23 @@ describe('oxlint()', () => {
     expect(typeof composer.remove).toBe('function')
   })
 
-  it('resolves to a valid Oxlint config that configures no rules', async () => {
+  it('resolves to a valid Oxlint config', async () => {
     const config = await oxlint()
 
     expect(Array.isArray(config)).toBe(false)
     expect(Object.keys(config).filter(key => !OXLINT_ROOT_FIELDS.includes(key))).toEqual([])
-    expect(config.rules).toBeUndefined()
-    expect(config.overrides).toBeUndefined()
-    expect(config.ignorePatterns).toBeUndefined()
   })
 
-  it('accepts options without changing the empty emission yet', async () => {
-    await expect(oxlint({ type: 'lib' })).resolves.toEqual(await oxlint())
+  it('carries the js-domain module into this Emission too', async () => {
+    const config = await oxlint({ gitignore: false })
+    const overrides = config.overrides ?? []
+    const rules = overrides.flatMap(override => Object.keys(override.rules ?? {}))
+
+    expect(rules).toContain('antfu/no-top-level-await')
+    expect(rules).toContain('eqeqeq')
+  })
+
+  it('accepts the options the ESLint factory takes', async () => {
+    await expect(oxlint({ type: 'lib', gitignore: false })).resolves.toBeTypeOf('object')
   })
 })

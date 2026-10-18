@@ -30,6 +30,9 @@
     "eslint-plugin-perfectionist",
     "eslint-plugin-slop",
     "eslint-plugin-sonarjs",
+    // Runtime frameworks the examples simulate and deliberately do not install: an example's entry
+    // file imports one to show the tree is a real application, which knip reads as unlisted
+    "vue",
     // Node.js dependencies manager
     "taze",
     // Node.js releasing tools
@@ -65,11 +68,14 @@
     // the two config modules built from it are the whole program. Globbed, so a later example
     // package needs no edit here; a declared peer is covered by the root `ignoreDependencies`
     // above, which a workspace inherits. `packages/*/src/**/*` is a monorepo example's nested
-    // package sources, which the workspace glob does not make workspaces of their own.
+    // package sources, which the workspace glob does not make workspaces of their own. The
+    // framework build configs are entries too: nothing imports them, and they are part of the
+    // snapshot rather than dead code.
     "playground/*": {
       "entry": [
         "eslint.config.{js,ts}",
         "options.ts",
+        "*.config.{js,ts}",
         "src/**/*",
         "app/**/*",
         "entrypoints/**/*",

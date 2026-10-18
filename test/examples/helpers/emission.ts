@@ -33,3 +33,17 @@ export function configNames(configs: readonly Linter.Config[]): string[] {
 export function objectsOfModule(configs: readonly Linter.Config[], module: ModuleId): string[] {
   return configNames(configs).filter(name => name.startsWith(`lumirelle/${module}/`))
 }
+
+/**
+ * The Config object an ESLint Emission carries under `name`.
+ *
+ * Some assertions read what a Module put inside one object — the rule table an option extends, the
+ * plugins it declares — which the name list `configNames` returns cannot answer.
+ */
+export function configNamed(configs: readonly Linter.Config[], name: string): Linter.Config {
+  const config = configs.find(candidate => candidate.name === name)
+  if (!config) {
+    throw new Error(`This Emission has no Config object named "${name}".`)
+  }
+  return config
+}

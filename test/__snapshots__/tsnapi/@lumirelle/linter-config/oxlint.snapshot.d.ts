@@ -18,7 +18,7 @@ export interface ConfigObject {
       parser?: PluginRef;
       languageOptions?: Record<string, unknown>;
       linterOptions?: Record<string, unknown>;
-      processor?: unknown;
+      processor?: ProcessorRef;
     };
     oxlint?: false | {
       env?: Record<string, boolean>;
@@ -90,6 +90,10 @@ export interface PluginDefinition {
     jsPlugin?: string;
     alias?: string;
   };
+}
+export interface ProcessorRef {
+  plugin: PluginRef;
+  name: string;
 }
 export interface StylisticOptions {
   braceStyle?: '1tbs' | 'stroustrup' | 'allman';

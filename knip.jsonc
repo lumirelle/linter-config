@@ -16,8 +16,21 @@
     // Quality
     "@arethetypeswrong/cli",
     "publint",
-    // Optional peers the ESLint Adapter imports by their registry name, so knip sees no import
+    // Optional peers the ESLint Adapter imports by their registry name, so knip sees no import;
+    // the framework peers are also only reachable through `isPackageInstalled` and the registry
+    "@angular-eslint/eslint-plugin",
+    "@angular-eslint/eslint-plugin-template",
+    "@angular-eslint/template-parser",
+    "@eslint-react/eslint-plugin",
+    "@next/eslint-plugin-next",
+    "@unocss/eslint-plugin",
+    "astro-eslint-parser",
+    "eslint-plugin-astro",
     "eslint-plugin-erasable-syntax-only",
+    "eslint-plugin-react-refresh",
+    "eslint-plugin-solid",
+    "eslint-plugin-svelte",
+    "svelte-eslint-parser",
     // Referenced as an Oxlint jsPlugins specifier string, which knip cannot follow
     "@eslint-community/eslint-plugin-eslint-comments",
     "eslint-plugin-command",

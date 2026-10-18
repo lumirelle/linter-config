@@ -1,7 +1,9 @@
 import type { ConfigObject, Glob, Options, StylisticOptions } from './types'
 import { isInEditorEnv } from './editor'
 import { assertGlobVocabulary } from './globs'
+import { angular } from './modules/angular'
 import { antislop } from './modules/antislop'
+import { astro } from './modules/astro'
 import { command } from './modules/command'
 import { disables } from './modules/disables'
 import { e18e } from './modules/e18e'
@@ -10,13 +12,19 @@ import { ignores } from './modules/ignores'
 import { imports } from './modules/imports'
 import { javascript } from './modules/javascript'
 import { jsdoc } from './modules/jsdoc'
+import { jsx } from './modules/jsx'
+import { nextjs } from './modules/nextjs'
 import { node } from './modules/node'
 import { perfectionist } from './modules/perfectionist'
+import { react } from './modules/react'
 import { regexp } from './modules/regexp'
+import { solid } from './modules/solid'
 import { stylistic } from './modules/stylistic'
+import { svelte } from './modules/svelte'
 import { isTestEnabled, test, testOverrides } from './modules/test'
 import { typescript } from './modules/typescript'
 import { unicorn } from './modules/unicorn'
+import { unocss } from './modules/unocss'
 import { isPackageInstalled } from './packages'
 import { enabledRuleKeys } from './rules'
 
@@ -44,6 +52,7 @@ export function source(options: Options = {}): ConfigObject[] {
     ...eslintComments(),
     ...command(),
     ...options.perfectionist === false ? [] : perfectionist(),
+    ...options.jsx ? jsx() : [],
     ...isTypeScriptEnabled(options.typescript) ? typescript(options) : [],
     ...options.node === false ? [] : node(),
     ...options.jsdoc === false ? [] : jsdoc({ stylistic: stylisticSlices }),
@@ -53,6 +62,13 @@ export function source(options: Options = {}): ConfigObject[] {
     ...options.antislop === true ? antislop() : [],
     ...isStylisticEnabled(options.stylistic) ? stylistic(stylisticOptions(options.stylistic)) : [],
     ...options.regexp === false ? [] : regexp(),
+    ...options.react ? react(options) : [],
+    ...options.nextjs ? nextjs() : [],
+    ...options.solid ? solid(options) : [],
+    ...options.svelte ? svelte({ ...options, stylistic: isStylisticEnabled(options.stylistic) }) : [],
+    ...options.unocss ? unocss() : [],
+    ...options.astro ? astro({ stylistic: isStylisticEnabled(options.stylistic) }) : [],
+    ...options.angular ? angular() : [],
   ]
 
   if (isTestEnabled(options.test)) {

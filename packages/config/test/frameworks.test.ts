@@ -3,7 +3,7 @@ import { eslint } from '../src/eslint'
 import { oxlint } from '../src/oxlint'
 import { eslintObject, houseOptions, jsPluginsOf, rulesOf } from './helpers/emission'
 
-const FRAMEWORK_TAGS = ['jsx', 'react', 'nextjs', 'solid', 'unocss', 'svelte', 'astro', 'angular']
+const FRAMEWORK_TAGS = ['jsx', 'vue', 'react', 'nextjs', 'solid', 'unocss', 'svelte', 'astro', 'angular']
 
 /** The names of the Config objects an Emission emitted. */
 async function names(options = {}): Promise<string[]> {

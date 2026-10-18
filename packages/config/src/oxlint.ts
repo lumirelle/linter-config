@@ -12,6 +12,11 @@ export type * from './types'
  * Oxlint cannot implement is left out of the Emission and recorded in the committed Coverage
  * report (`coverage.json`) with the reason, so a gap is never silent.
  *
+ * The `stylistic` Module is **off by default**, exactly as it is on the ESLint side: this project
+ * formats with `oxfmt` (`objectWrap: 'preserve'`), so `@stylistic` would rewrap object literals the
+ * formatter keeps. When a caller turns it on, `@stylistic/eslint-plugin` is loaded through
+ * `jsPlugins` under the `style` alias, so its rule keys read the same in both tools.
+ *
  * The returned composer is thenable, so `oxlint.config.ts` can `export default oxlint()`
  * and Oxlint resolves it without a top-level `await`, the same way it works on the ESLint
  * side.

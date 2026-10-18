@@ -16,6 +16,12 @@ export type * from './types'
  * files. Autofixable rules report as warnings inside an editor, which {@link Options.isInEditor}
  * detects or overrides.
  *
+ * The `stylistic` Module is the one Module that is **off by default**: this project formats with
+ * `oxfmt`, whose `objectWrap: 'preserve'` keeps object literals on one line where the author put
+ * them, while `@stylistic` would rewrap them — the two would fight over the same characters.
+ * Turning it on is opt-in: `stylistic: true`, or its object form for the module's `customize()`
+ * options.
+ *
  * The returned composer is thenable, so `eslint.config.js` can export it directly
  * without a top-level `await`, and it supports `append` / `override` / `remove` by
  * Config object name.

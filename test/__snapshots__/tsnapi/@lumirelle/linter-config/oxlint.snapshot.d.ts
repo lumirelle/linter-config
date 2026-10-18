@@ -91,6 +91,16 @@ export interface PluginDefinition {
     alias?: string;
   };
 }
+export interface StylisticOptions {
+  braceStyle?: '1tbs' | 'stroustrup' | 'allman';
+  experimental?: boolean;
+  indent?: StylisticIndent;
+  jsx?: boolean;
+  quotes?: 'single' | 'double' | 'backtick';
+  semi?: boolean;
+  lessOpinionated?: boolean;
+  overrides?: ConfigObject['rules'];
+}
 // #endregion
 
 // #region Types
@@ -105,7 +115,7 @@ export type PluginRef = string & {
 export type RuleEntry = RuleSeverity | [RuleSeverity, ...unknown[]];
 export type RuleKey = `${PluginId}/${string}` | (string & Record<never, never>);
 export type RuleSeverity = Linter.RuleSeverity;
-export type StylisticOptions = Record<string, unknown>;
+export type StylisticIndent = number | 'tab' | [number | 'tab', Record<string, unknown>];
 // #endregion
 
 // #region Functions

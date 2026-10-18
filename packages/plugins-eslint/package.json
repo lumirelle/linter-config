@@ -43,6 +43,7 @@
     }
   },
   "dependencies": {
+    "@stylistic/eslint-plugin": "catalog:bundle",
     "@typescript-eslint/eslint-plugin": "catalog:bundle",
     "@typescript-eslint/parser": "catalog:bundle",
     "@vitest/eslint-plugin": "catalog:bundle",

@@ -22,3 +22,9 @@ description = "Regenerate the Oxlint rule inventory from the installed Oxlint."
 run = "nub ./scripts/generate-inventory.ts"
 sources = ["@group:deps", "scripts"]
 outputs = ["src/oxlint/inventory.generated.ts"]
+
+[tasks.stylistic]
+description = "Regenerate the stylistic rule table and its option patches from the installed plugin."
+run = "nub ./scripts/generate-stylistic-rules.ts"
+sources = ["@group:deps", "scripts"]
+outputs = ["src/modules/stylistic-rules.generated.ts"]

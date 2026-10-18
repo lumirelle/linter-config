@@ -163,6 +163,7 @@ export interface Options {
   solid?: boolean
   angular?: boolean
   nextjs?: boolean
+  node?: boolean
   test?: boolean
   jsonc?: boolean
   yaml?: boolean

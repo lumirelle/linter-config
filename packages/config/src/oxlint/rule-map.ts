@@ -11,12 +11,15 @@ import { findOxlintRule } from './inventory'
  * - `type-aware`: the rule only runs in Oxlint's type-aware mode, which the caller did not turn on.
  * - `no-oxlint-realization`: the Plugin id has neither a built-in scope nor a `jsPlugins` entry.
  * - `eslint-only-domain`: the rule belongs to a Domain Oxlint cannot read (no parser, no processor).
+ * - `incompatible-options`: Oxlint implements the rule but rejects the options Source gives it, so
+ *   emitting it would make the whole Oxlint config unloadable.
  */
 type CoverageReason
   = | 'unknown-rule'
     | 'type-aware'
     | 'no-oxlint-realization'
     | 'eslint-only-domain'
+    | 'incompatible-options'
 
 /** A rule key the Oxlint Emission had to leave out, with the reason it did. */
 export interface UnemittedRule {
@@ -30,6 +33,18 @@ export interface RuleMapping {
   /** The rules that did not, in Source order; the Coverage report derives from this. */
   unemitted: UnemittedRule[]
 }
+
+/**
+ * Source rules whose options Oxlint's own schema rejects.
+ *
+ * `eslint-plugin-import-lite` spells the option of `consistent-type-specifier-style` `top-level`,
+ * while Oxlint's forked schema only accepts `prefer-top-level` / `prefer-inline`. Oxlint refuses
+ * the whole config over one unknown option value, so the rule is left to ESLint and recorded in
+ * the Coverage report instead of making the Emission unloadable.
+ */
+const INCOMPATIBLE_OPTIONS: ReadonlySet<RuleKey> = new Set<RuleKey>([
+  'import/consistent-type-specifier-style',
+])
 
 /**
  * Maps Source rule keys onto the keys Oxlint reads.
@@ -54,6 +69,11 @@ export function mapRules(
     }
 
     const id = pluginIdOfRuleKey(key)
+    if (INCOMPATIBLE_OPTIONS.has(key)) {
+      unemitted.push({ key, reason: 'incompatible-options' })
+      continue
+    }
+
     if (!id) {
       if (findOxlintRule('eslint', key)) {
         mapped[key] = entry

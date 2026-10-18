@@ -80,6 +80,10 @@ function linkPlugin(directory: string, entry: JsPluginEntry): void {
     throw new Error(`Cannot find "${specifier}" to link into the Oxlint fixture project; install it in the workspace.`)
   }
   const link = join(directory, 'node_modules', specifier)
+  // The same package may be declared by several Config objects, each with its own alias.
+  if (existsSync(link)) {
+    return
+  }
   mkdirSync(dirname(link), { recursive: true })
   symlinkSync(target, link)
 }

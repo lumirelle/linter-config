@@ -2,6 +2,7 @@ import type { ConfigObject, Glob, Options } from './types'
 import { isInEditorEnv } from './editor'
 import { assertGlobVocabulary } from './globs'
 import { ignores } from './modules/ignores'
+import { imports } from './modules/imports'
 import { javascript } from './modules/javascript'
 import { typescript } from './modules/typescript'
 import { isPackageInstalled } from './packages'
@@ -20,11 +21,13 @@ type Override = NonNullable<Overrides[keyof Overrides]>
  */
 export function source(options: Options = {}): ConfigObject[] {
   const isInEditor = options.isInEditor ?? isInEditorEnv()
+  const stylistic = isStylisticEnabled(options.stylistic)
 
   const configs = applyOverrides([
     ...ignores(options),
     ...javascript({ isInEditor }),
     ...isTypeScriptEnabled(options.typescript) ? typescript(options) : [],
+    ...options.imports === false ? [] : imports({ stylistic }),
   ], options.overrides)
 
   // Invariant: a glob must work in both tools, so Source rejects anything outside the
@@ -32,6 +35,16 @@ export function source(options: Options = {}): ConfigObject[] {
   assertGlobVocabulary(configs.flatMap(config => [...(config.files ?? []), ...(config.ignores ?? [])] as Glob[]))
 
   return configs
+}
+
+/**
+ * Whether the stylistic slices of otherwise-useful Modules are on.
+ *
+ * Upstream enables them by default; the house turns them off ({@link Options.stylistic}), so a
+ * Module asks this instead of its own default.
+ */
+function isStylisticEnabled(option: Options['stylistic']): boolean {
+  return option !== undefined && option !== false
 }
 
 /**

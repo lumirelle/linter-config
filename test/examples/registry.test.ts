@@ -7,6 +7,12 @@ describe('the example registry', () => {
   })
 
   it('fails an unknown name and names the valid ones', async () => {
-    await expect(resolveExample('nope')).rejects.toThrow(/Unknown example "nope"\. Valid examples: ts/)
+    const failure = await resolveExample('nope').then(() => undefined, (error: Error) => error)
+
+    expect(failure?.message).toMatch(/^Unknown example "nope"\. Valid examples: /)
+    // The list is every example the directory holds, so a later example needs no edit here.
+    for (const name of await listExamples()) {
+      expect(failure?.message).toContain(name)
+    }
   })
 })

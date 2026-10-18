@@ -149,5 +149,8 @@ mise.local.toml
 .mise/*.local.toml
 mise/*.local.toml
 
+# Local tooling output
+reports/
+
 # https://mise.jdx.dev/configuration.html#tool-versions
 #.tool-versions

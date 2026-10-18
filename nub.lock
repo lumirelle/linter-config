@@ -18,7 +18,7 @@ catalogs:
       version: 4.4.1
   check:
     '@antfu/eslint-config':
-      specifier: ^9.5.1
+      specifier: 9.5.1
       version: 9.5.1
     '@arethetypeswrong/cli':
       specifier: ^0.18.5
@@ -156,6 +156,9 @@ importers:
       '@arethetypeswrong/cli':
         specifier: catalog:check
         version: 0.18.5
+      '@lumirelle/linter-config':
+        specifier: workspace:*
+        version: link:packages/config
       '@lumirelle/oxlint-config':
         specifier: catalog:check
         version: 0.14.0(@antfu/eslint-config@9.5.1(eslint@10.12.0))(@typescript-eslint/types@8.71.2)(@typescript-eslint/typescript-estree@8.71.2(typescript@6.0.3-bridge.18.tsgo.7.0.2))(@typescript-eslint/utils@8.71.2(eslint@10.12.0)(typescript@6.0.3-bridge.18.tsgo.7.0.2))(@vue/compiler-sfc@3.5.44)(eslint-plugin-oxlint@1.88.0(oxlint@1.88.0(oxlint-tsgolint@7.0.2004)))(oxlint@1.88.0(oxlint-tsgolint@7.0.2004))(oxlint-tsgolint@7.0.2004)(typescript@6.0.3-bridge.18.tsgo.7.0.2)(vitest@5.0.4(@types/node@26.6.5)(@vitest/coverage-v8@5.0.4)(vite@8.3.4(@types/node@26.6.5)))

@@ -1,4 +1,9 @@
 {
+  "entry": ["scripts/*.ts"],
+  "ignore": [
+    // Upstream source for reading and comparison; not part of this workspace
+    "upstream/**"
+  ],
   "ignoreFiles": [
     // Snapshots
     "test/__snapshots__/**",

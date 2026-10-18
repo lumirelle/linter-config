@@ -51,7 +51,7 @@
         "vue": "^3.5.44"
       },
       "check": {
-        "@antfu/eslint-config": "^9.5.1",
+        "@antfu/eslint-config": "9.5.1",
         "@arethetypeswrong/cli": "^0.18.5",
         "@lumirelle/oxlint-config": "^0.14.0",
         "eslint": "^10.12.0",
@@ -82,6 +82,7 @@
   "devDependencies": {
     "@antfu/eslint-config": "catalog:check",
     "@arethetypeswrong/cli": "catalog:check",
+    "@lumirelle/linter-config": "workspace:*",
     "@lumirelle/oxlint-config": "catalog:check",
     "@lumirelle/tsconfig": "catalog:types",
     "@types/node": "catalog:types",

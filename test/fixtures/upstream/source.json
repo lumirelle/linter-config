@@ -1,0 +1,24 @@
+[
+  {
+    "name": "lumirelle/ignores",
+    "ignores": ["**/dist/**"]
+  },
+  {
+    "name": "lumirelle/javascript/setup",
+    "languageOptions": {
+      "ecmaVersion": "latest"
+    }
+  },
+  {
+    "name": "lumirelle/javascript/rules",
+    "plugins": {
+      "antfu": "antfu"
+    },
+    "rules": {
+      "antfu/no-top-level-await": "error",
+      "eqeqeq": "off",
+      "no-console": "error",
+      "ts/no-explicit-any": "error"
+    }
+  }
+]

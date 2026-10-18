@@ -4,6 +4,7 @@ import { assertGlobVocabulary } from './globs'
 import { ignores } from './modules/ignores'
 import { imports } from './modules/imports'
 import { javascript } from './modules/javascript'
+import { jsdoc } from './modules/jsdoc'
 import { node } from './modules/node'
 import { typescript } from './modules/typescript'
 import { unicorn } from './modules/unicorn'
@@ -30,6 +31,7 @@ export function source(options: Options = {}): ConfigObject[] {
     ...javascript({ isInEditor }),
     ...isTypeScriptEnabled(options.typescript) ? typescript(options) : [],
     ...options.node === false ? [] : node(),
+    ...options.jsdoc === false ? [] : jsdoc({ stylistic }),
     ...options.imports === false ? [] : imports({ stylistic }),
     ...options.unicorn === false ? [] : unicorn(),
   ], options.overrides)

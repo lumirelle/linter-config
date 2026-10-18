@@ -20,6 +20,12 @@
     "eslint-plugin-svelte",
     "eslint-plugin-vuejs-accessibility",
     "svelte-eslint-parser",
+    // Runtime frameworks the `react` and `next` examples simulate and deliberately do not install:
+    // an example's source tree is a consumer snapshot, so it imports the framework the example
+    // leaves out. One entry per framework, so a later example adds only its own.
+    "next",
+    "react",
+    "react-dom",
     // Referenced as an Oxlint jsPlugins specifier string, which knip cannot follow
     "@eslint-community/eslint-plugin-eslint-comments",
     // Peer packages loaded by a plugin's own resolution at runtime (eslint-plugin-jsx-a11y by
@@ -68,7 +74,9 @@
     // package sources, which the workspace glob does not make workspaces of their own.
     "playground/*": {
       "entry": [
-        "eslint.config.{js,ts}",
+        // The paired lint configs and the framework config files an example keeps, e.g. the
+        // `uno.config.ts` a UnoCSS project needs before its plugin can order a class name.
+        "*.config.{js,ts}",
         "options.ts",
         "src/**/*",
         "app/**/*",

@@ -9,6 +9,8 @@ the same way a consumer's config files do.
 | --- | --- | --- | --- |
 | [`ts`](./ts/README.md) | [`antfu/starter-ts`](https://github.com/antfu/starter-ts) — a TypeScript library | `type: 'lib'`, `typescript.tsconfigPath`, type-aware Oxlint, and the `test` Module | [`playground/ts`](./ts/README.md) |
 | [`ts-monorepo`](./ts-monorepo/README.md) | [`lumirelle/starter-ts-monorepo`](https://github.com/lumirelle/starter-ts-monorepo) — a TypeScript monorepo | the `ts` options across several packages, plus a per-package `overrides` entry | [`playground/ts-monorepo`](./ts-monorepo/README.md) |
+| [`react`](./react/README.md) | A Vite-style React single-page application — canonical consumer, no starter counterpart | `react`, `jsx` and `unocss` at `type: 'app'`, with the `test` Module | [`playground/react`](./react/README.md) |
+| [`next`](./next/README.md) | A Next.js App Router project — canonical consumer, no starter counterpart | `react` and `nextjs` at `type: 'app'`, with the `test` Module | [`playground/next`](./next/README.md) |
 
 ## Running an example
 

@@ -1,0 +1,49 @@
+# linter-config
+
+Lumirelle's shared linter configuration: one hand-maintained function graph that derives ESLint and Oxlint artifacts.
+
+## Language
+
+**Source**:
+The hand-maintained function graph in this repo, aligned with upstream modules; it takes options, produces Config objects, and is the only input to the adapters.
+_Avoid_: config, ruleset, preset
+
+**Config object**:
+One ESLint-flat-config-shaped item produced by Source, carrying Module metadata and referencing plugins by Plugin id; the shared input of both Adapters.
+_Avoid_: block, item, entry
+
+**Module**:
+A grouping unit in Source that maps one-to-one to an upstream `configs/*` file; it is both the key for upstream comparison and the key for consumer options.
+_Avoid_: section, category
+
+**Domain**:
+The file domain of a Config object; it decides which Adapters can consume it.
+_Avoid_: target, platform
+
+**Adapter**:
+A pure function that turns a sequence of Config objects into one tool's Emission; both sides are exposed as Composers.
+_Avoid_: generator, builder, bridge
+
+**Emission**:
+An Adapter's output — ESLint flat config, or an Oxlint config object.
+_Avoid_: output config, compiled config
+
+**Plugin Bundle**:
+A package that only forwards third-party lint dependencies (plugins, parsers, processor glue) and contains no rule semantics.
+_Avoid_: plugin package, dependency bundle
+
+**Plugin id**:
+The canonical identifier used for rule prefixes and plugin references in Source, decoupled from npm package names.
+_Avoid_: scope, namespace
+
+**Bridge**:
+A set of Config objects on the ESLint side that turns off rules already handled by Oxlint, generated with the same file scopes.
+_Avoid_: interop, disable list
+
+**Coverage report**:
+The per-Module list of rules a tool's Emission cannot implement; it changes when upstream changes.
+_Avoid_: unsupported list, gap report
+
+**Upstream**:
+`@antfu/eslint-config`, used as the comparison baseline.
+_Avoid_: base config, parent config

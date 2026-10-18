@@ -1,5 +1,5 @@
 import type { ESLint, Linter } from 'eslint'
-import type { ConfigObject, Domain, Options, PluginId, PluginRef } from '../types'
+import type { ConfigObject, Domain, Options, PluginId, PluginRef, ProcessorRef } from '../types'
 import { FlatConfigComposer } from 'eslint-flat-config-utils'
 import { pluginDefinition } from '../plugins'
 import { source } from '../source'
@@ -29,12 +29,13 @@ async function toEslintConfig(config: ConfigObject): Promise<Linter.Config> {
     ...(globals ? { globals } : {}),
     ...(tools?.eslint?.parser ? { parser: await loadParser(tools.eslint.parser) } : {}),
   } as Linter.LanguageOptions
+  const nestedParser = await resolveNestedParser(languageOptions)
   const eslintConfig = {
     ...shared,
     ...(tools?.eslint?.language ? { language: tools.eslint.language } : {}),
-    ...(Object.keys(languageOptions).length > 0 ? { languageOptions } : {}),
+    ...(Object.keys(languageOptions).length > 0 ? { languageOptions: nestedParser } : {}),
     ...(tools?.eslint?.linterOptions ? { linterOptions: tools.eslint.linterOptions } : {}),
-    ...(tools?.eslint?.processor === undefined ? {} : { processor: tools.eslint.processor as Linter.Config['processor'] }),
+    ...(tools?.eslint?.processor ? { processor: await loadProcessor(tools.eslint.processor) } : {}),
     ...(plugins ? { plugins: await resolvePlugins(plugins) } : {}),
   } as Linter.Config
 
@@ -115,6 +116,41 @@ async function loadParser(ref: PluginRef): Promise<NonNullable<Linter.LanguageOp
       + `Install it in your project.`,
       { cause },
     )
+  }
+}
+
+/**
+ * Resolves a processor Source named by Plugin id and registration name.
+ *
+ * A processor lives inside its plugin package rather than in a package of its own, so the plugin
+ * the Config object already declares is what carries it.
+ */
+async function loadProcessor(ref: ProcessorRef): Promise<Linter.Config['processor']> {
+  const id = ref.plugin as PluginId
+  const plugin = await loadPlugin(id, ref.plugin)
+  const processor = (plugin as { processors?: Record<string, Linter.Config['processor']> }).processors?.[ref.name]
+  if (!processor) {
+    throw new Error(`The "${id}" plugin registers no "${ref.name}" processor.`)
+  }
+  return processor
+}
+
+/**
+ * Resolves the `parserOptions.parser` a component parser delegates its scripts to.
+ *
+ * `svelte-eslint-parser` and `astro-eslint-parser` read the script parser from that option, and
+ * Source can only name it as a Plugin id, so the Adapter swaps the id for the parser object.
+ */
+async function resolveNestedParser(languageOptions: Linter.LanguageOptions): Promise<Linter.LanguageOptions> {
+  const parserOptions = languageOptions.parserOptions
+  const nested = parserOptions?.parser
+  if (typeof nested !== 'string') {
+    return languageOptions
+  }
+
+  return {
+    ...languageOptions,
+    parserOptions: { ...parserOptions, parser: await loadParser(nested as PluginRef) },
   }
 }
 

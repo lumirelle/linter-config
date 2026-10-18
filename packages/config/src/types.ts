@@ -54,6 +54,17 @@ export interface PluginDefinition {
   }
 }
 
+/**
+ * A processor, named as the Plugin id that registers it plus the name it registers it under.
+ *
+ * Source never imports a plugin package, so it cannot hold the processor object itself; the
+ * ESLint Adapter resolves the pair through the plugin it already loads.
+ */
+export interface ProcessorRef {
+  plugin: PluginRef
+  name: string
+}
+
 declare const pluginRefBrand: unique symbol
 
 /** A branded Plugin id; the runtime value is the id itself. */
@@ -127,7 +138,8 @@ export interface ConfigObject {
       parser?: PluginRef
       languageOptions?: Record<string, unknown>
       linterOptions?: Record<string, unknown>
-      processor?: unknown
+      /** ESLint-only: the processor that turns a component into lintable scripts. */
+      processor?: ProcessorRef
     }
     /** `false` marks this object as ESLint-only; the object form carries Oxlint-only fields. */
     oxlint?: false | {

@@ -70,6 +70,7 @@
     "@lumirelle/linter-plugins-eslint": "workspace:*",
     "@lumirelle/linter-plugins-oxlint": "workspace:*",
     "@lumirelle/tsconfig": "catalog:types",
+    "@stylistic/eslint-plugin": "catalog:bundle",
     "eslint": "catalog:check",
     "eslint-plugin-erasable-syntax-only": "catalog:peer",
     "fast-glob": "catalog:test",

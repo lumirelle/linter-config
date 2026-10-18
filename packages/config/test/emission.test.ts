@@ -48,6 +48,10 @@ describe('eslint() emission', () => {
   it('emits the editor config', async () => {
     expect(normalize(await eslint({ gitignore: false, isInEditor: true }))).toMatchSnapshot()
   })
+
+  it('emits the stylistic config when the caller turns it on', async () => {
+    expect(normalize(await eslint({ gitignore: false, isInEditor: false, stylistic: true }))).toMatchSnapshot()
+  })
 })
 
 describe('oxlint() emission', () => {
@@ -58,5 +62,9 @@ describe('oxlint() emission', () => {
   it('emits the root options a type-aware consumer asks for', async () => {
     expect(sortKeys(await oxlint({ gitignore: false, isInEditor: false, oxlint: { typeAware: true, typeCheck: true } })))
       .toMatchSnapshot()
+  })
+
+  it('emits the stylistic config when the caller turns it on', async () => {
+    expect(sortKeys(await oxlint({ gitignore: false, isInEditor: false, stylistic: true }))).toMatchSnapshot()
   })
 })

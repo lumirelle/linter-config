@@ -1,4 +1,4 @@
-import type { ConfigObject, Glob, Options } from './types'
+import type { ConfigObject, Glob, Options, StylisticOptions } from './types'
 import { isInEditorEnv } from './editor'
 import { assertGlobVocabulary } from './globs'
 import { disables } from './modules/disables'
@@ -7,6 +7,7 @@ import { imports } from './modules/imports'
 import { javascript } from './modules/javascript'
 import { jsdoc } from './modules/jsdoc'
 import { node } from './modules/node'
+import { stylistic } from './modules/stylistic'
 import { isTestEnabled, test, testOverrides } from './modules/test'
 import { typescript } from './modules/typescript'
 import { unicorn } from './modules/unicorn'
@@ -27,7 +28,7 @@ type Override = NonNullable<Overrides[keyof Overrides]>
  */
 export function source(options: Options = {}): ConfigObject[] {
   const isInEditor = options.isInEditor ?? isInEditorEnv()
-  const stylistic = isStylisticEnabled(options.stylistic)
+  const stylisticSlices = isStylisticEnabled(options.stylistic)
 
   // `test` and `disables` turn off rules owned by the Modules above them, and derive that table
   // from what those Modules actually emit, so they compose after them.
@@ -36,9 +37,10 @@ export function source(options: Options = {}): ConfigObject[] {
     ...javascript({ isInEditor }),
     ...isTypeScriptEnabled(options.typescript) ? typescript(options) : [],
     ...options.node === false ? [] : node(),
-    ...options.jsdoc === false ? [] : jsdoc({ stylistic }),
-    ...options.imports === false ? [] : imports({ stylistic }),
+    ...options.jsdoc === false ? [] : jsdoc({ stylistic: stylisticSlices }),
+    ...options.imports === false ? [] : imports({ stylistic: stylisticSlices }),
     ...options.unicorn === false ? [] : unicorn(),
+    ...isStylisticEnabled(options.stylistic) ? stylistic(stylisticOptions(options.stylistic)) : [],
   ]
 
   if (isTestEnabled(options.test)) {
@@ -62,6 +64,11 @@ export function source(options: Options = {}): ConfigObject[] {
  */
 function isStylisticEnabled(option: Options['stylistic']): boolean {
   return option !== undefined && option !== false
+}
+
+/** The object form of the `stylistic` option carries the Module's options; every other form is enablement. */
+function stylisticOptions(option: Options['stylistic']): StylisticOptions {
+  return typeof option === 'object' && option !== null ? option : {}
 }
 
 /**

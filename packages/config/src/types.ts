@@ -140,8 +140,26 @@ export interface ConfigObject {
 /** Options for the `formatters` module; its concrete shape lands with that module. */
 export type FormattersOptions = Record<string, unknown>
 
-/** Options for the `stylistic` module; its concrete shape lands with that module. */
-export type StylisticOptions = Record<string, unknown>
+/**
+ * The `indent` option of `@stylistic/eslint-plugin`'s `customize()`: a level, or a level plus the rule
+ * options that replace the plugin's own (a plain level keeps them).
+ */
+export type StylisticIndent = number | 'tab' | [number | 'tab', Record<string, unknown>]
+
+/**
+ * Options for the `stylistic` Module: Upstream's `StylisticConfig` (the `customize()` knobs), its
+ * `lessOpinionated` switch and this Source's rule overrides.
+ */
+export interface StylisticOptions {
+  braceStyle?: '1tbs' | 'stroustrup' | 'allman'
+  experimental?: boolean
+  indent?: StylisticIndent
+  jsx?: boolean
+  quotes?: 'single' | 'double' | 'backtick'
+  semi?: boolean
+  lessOpinionated?: boolean
+  overrides?: ConfigObject['rules']
+}
 
 /** Options for the `.gitignore` handling; `eslint-config-flat-gitignore` owns the shape. */
 export type { FlatGitignoreOptions }

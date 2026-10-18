@@ -13,6 +13,7 @@ the same way a consumer's config files do.
 | [`ts`](./ts/README.md) | [`antfu/starter-ts`](https://github.com/antfu/starter-ts) — a TypeScript library | `type: 'lib'`, `typescript.tsconfigPath`, type-aware Oxlint, and the `test` Module | [`playground/ts`](./ts/README.md) |
 | [`ts-monorepo`](./ts-monorepo/README.md) | [`lumirelle/starter-ts-monorepo`](https://github.com/lumirelle/starter-ts-monorepo) — a TypeScript monorepo | the `ts` options across several packages, plus a per-package `overrides` entry | [`playground/ts-monorepo`](./ts-monorepo/README.md) |
 | [`vue`](./vue/README.md) | A Vite-style Vue single-page application — no starter counterpart | The Vue Module's `a11y` sub-option, the peer it requires, and UnoCSS | [`playground/vue`](./vue/README.md) |
+| [`webext`](./webext/README.md) | [`lumirelle/starter-webext`](https://github.com/lumirelle/starter-webext) — a browser extension | `type: 'app'`, build-output `ignores`, and the `test` Module | [`playground/webext`](./webext/README.md) |
 
 ## Running an example
 

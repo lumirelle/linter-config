@@ -1,1 +1,1 @@
-/home/lumirelle/.cache/degit/github/lumirelle/starter-ts-monorepo/extract-slYYwR/packages/pkg-placeholder/README.md
+packages/config/README.md

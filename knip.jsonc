@@ -27,6 +27,7 @@
     "astro-eslint-parser",
     "eslint-plugin-astro",
     "eslint-plugin-erasable-syntax-only",
+    "eslint-plugin-format",
     "eslint-plugin-react-refresh",
     "eslint-plugin-solid",
     "eslint-plugin-svelte",

@@ -61,7 +61,10 @@ function factoryResults(directory: string): Record<Case, string> {
     }
     console.log(JSON.stringify(results))
   `
-  const result = spawnSync(process.execPath, ['--input-type=module', '-e', script], { cwd: directory, encoding: 'utf8' })
+  // `NODE_PATH` would let `require.resolve` see this repository's own store, so the fixture would
+  // look as if the peers were installed while the ESM `import()` that loads them cannot find them.
+  const { NODE_PATH: _nodePath, ...env } = process.env
+  const result = spawnSync(process.execPath, ['--input-type=module', '-e', script], { cwd: directory, encoding: 'utf8', env })
   if (result.error || result.status !== 0) {
     throw new Error(`the Emission could not run in the fixture workspace: ${result.stderr}`)
   }

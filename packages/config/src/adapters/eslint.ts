@@ -1,6 +1,8 @@
 import type { ESLint, Linter } from 'eslint'
 import type { ConfigObject, Domain, Options, PluginId, PluginRef, ProcessorRef } from '../types'
 import { FlatConfigComposer } from 'eslint-flat-config-utils'
+import { mergeProcessors, processorPassThrough } from 'eslint-merge-processors'
+import { GLOB_MARKDOWN } from '../globs'
 import { pluginDefinition } from '../plugins'
 import { source } from '../source'
 
@@ -14,11 +16,19 @@ const BUNDLE_PACKAGE = '@lumirelle/linter-plugins-eslint'
  * hand the result to a `FlatConfigComposer`.
  */
 export function composeEslint(options: Options): FlatConfigComposer<Linter.Config, string> {
-  return new FlatConfigComposer<Linter.Config, string>(
+  const composer = new FlatConfigComposer<Linter.Config, string>(
     ...source(options)
       .filter(config => ESLINT_DOMAINS.includes(config.domain))
       .map(async config => toEslintConfig(config)),
   )
+
+  // Markdown has its own `SourceCode`, which lacks the JS-only methods (`getAllComments`, ...) that
+  // an unscoped rule can call; Upstream keeps every such rule off `.md` files the same way.
+  if (options.markdown !== false) {
+    return composer.setDefaultIgnores(previous => [...previous, GLOB_MARKDOWN])
+  }
+
+  return composer
 }
 
 async function toEslintConfig(config: ConfigObject): Promise<Linter.Config> {
@@ -132,7 +142,11 @@ async function loadProcessor(ref: ProcessorRef): Promise<Linter.Config['processo
   if (!processor) {
     throw new Error(`The "${id}" plugin registers no "${ref.name}" processor.`)
   }
-  return processor
+  if (!ref.passThrough) {
+    return processor
+  }
+  // The pass-through half is an object processor; the pair merges into one object as well.
+  return mergeProcessors([processor as Exclude<typeof processor, string>, processorPassThrough])
 }
 
 /**

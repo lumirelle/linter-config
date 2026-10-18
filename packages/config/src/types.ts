@@ -63,6 +63,11 @@ export interface PluginDefinition {
 export interface ProcessorRef {
   plugin: PluginRef
   name: string
+  /**
+   * Merge the processor with a pass-through, so the document itself is linted as well as the
+   * blocks the processor extracts. The Markdown Module needs both halves.
+   */
+  passThrough?: boolean
 }
 
 declare const pluginRefBrand: unique symbol
@@ -149,8 +154,36 @@ export interface ConfigObject {
   }
 }
 
-/** Options for the `formatters` module; its concrete shape lands with that module. */
-export type FormattersOptions = Record<string, unknown>
+/** Options for the `formatters` Module, mirroring Upstream's `OptionsFormatters`. */
+export interface FormattersOptions {
+  css?: 'prettier' | boolean
+  html?: 'prettier' | boolean
+  xml?: 'prettier' | boolean
+  svg?: 'prettier' | boolean
+  markdown?: 'prettier' | 'dprint' | boolean
+  graphql?: 'prettier' | boolean
+  astro?: 'prettier' | boolean
+  /** Whether the Slidev `slides.md` file is formatted, and with which files. */
+  slidev?: boolean | { files?: string[] }
+  prettierOptions?: Record<string, unknown>
+  dprintOptions?: Record<string, unknown>
+}
+
+/** Options for the `pnpm` Module, mirroring Upstream's `OptionsPnpm`. */
+export interface PnpmOptions {
+  /** Whether `pnpm/json-enforce-catalog` runs; defaults to whether the workspace declares catalogs. */
+  catalogs?: boolean
+  /** In an editor the Module stops autofixing, like Upstream. */
+  isInEditor?: boolean
+  /** The `package.json` objects. */
+  json?: boolean
+  /** The `yaml/sort-keys` object for `pnpm-workspace.yaml`. */
+  sort?: boolean
+  /** The stylistic slice of the YAML objects. */
+  stylistic?: boolean
+  /** The `pnpm-workspace.yaml` objects. */
+  yaml?: boolean
+}
 
 /**
  * The `indent` option of `@stylistic/eslint-plugin`'s `customize()`: a level, or a level plus the rule
@@ -207,7 +240,14 @@ export interface Options {
   imports?: boolean
   unicorn?: boolean
   perfectionist?: boolean
-  pnpm?: boolean
+  /**
+   * The `pnpm` Module, for `package.json` and `pnpm-workspace.yaml`.
+   *
+   * @default detected: on when the project has a `pnpm-workspace.yaml`, like Upstream; the object
+   * form carries the Module's own options, and `catalogs` defaults to whether that file declares
+   * a `catalog:` block
+   */
+  pnpm?: boolean | PnpmOptions
   e18e?: boolean
   antislop?: boolean
   sonarjs?: boolean

@@ -63,6 +63,7 @@
     "@oxlint-flat-config/composer": "catalog:lint",
     "eslint-config-flat-gitignore": "catalog:lint",
     "eslint-flat-config-utils": "catalog:lint",
+    "eslint-merge-processors": "catalog:lint",
     "globals": "catalog:lint",
     "oxlint-flat-config": "catalog:lint"
   },
@@ -84,6 +85,7 @@
     "eslint-plugin-astro": "catalog:peer",
     "eslint-plugin-command": "catalog:bundle",
     "eslint-plugin-erasable-syntax-only": "catalog:peer",
+    "eslint-plugin-format": "catalog:peer",
     "eslint-plugin-perfectionist": "catalog:bundle",
     "eslint-plugin-react-refresh": "catalog:peer",
     "eslint-plugin-regexp": "catalog:bundle",

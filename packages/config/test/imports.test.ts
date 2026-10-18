@@ -8,7 +8,9 @@ describe('eslint() imports module', () => {
 
     expect(Object.keys(rules.plugins ?? {}).sort()).toEqual(['antfu', 'import'])
     expect(rules.files).toBeUndefined()
-    expect(rules.ignores).toBeUndefined()
+    // The one ignore is the Markdown default: Markdown's `SourceCode` lacks the JS-only methods
+    // these rules call, so an unscoped rule set stays off `.md` files (as in Upstream).
+    expect(rules.ignores).toEqual(['**/*.md'])
   })
 
   it('carries the import and antfu rules Upstream enables', async () => {

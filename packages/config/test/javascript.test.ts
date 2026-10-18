@@ -68,7 +68,9 @@ describe('eslint() javascript module', () => {
     const rules = await objectNamed('lumirelle/javascript/rules')
 
     expect(rules.files).toBeUndefined()
-    expect(rules.ignores).toBeUndefined()
+    // The one ignore is the Markdown default: Markdown's `SourceCode` lacks the JS-only methods
+    // these rules call, so an unscoped rule set stays off `.md` files (as in Upstream).
+    expect(rules.ignores).toEqual(['**/*.md'])
   })
 })
 

@@ -4,12 +4,13 @@ import { GLOB_ASTRO_TS, GLOB_MARKDOWN, GLOB_TS, GLOB_TSX } from '../globs'
 import { pluginRef } from '../plugins'
 
 /**
- * Upstream's `configs/typescript.ts`: the TypeScript parser, then the house TypeScript rules.
+ * The two `@typescript-eslint/eslint-plugin` presets Upstream composes: `configs['eslint-recommended']`
+ * overrides first, then `configs.strict`, both with `@typescript-eslint/` renamed to `ts/`.
  *
- * Upstream composes two `@typescript-eslint/eslint-plugin` presets (`configs['eslint-recommended']`
- * overrides and `configs.strict`) and renames their `@typescript-eslint/` prefix to `ts/`. Source
- * imports no plugin package, so the composition is transcribed as data from the version the Plugin
- * Bundle pins (`@typescript-eslint/eslint-plugin` 8.71.2, the `bundle` catalog).
+ * Source imports no plugin package, so the composition is transcribed as data from the version the
+ * Plugin Bundle pins (`@typescript-eslint/eslint-plugin` 8.71.2, the `bundle` catalog). The Oxlint
+ * Coverage report fails the build if a rule here stops being representable, but a preset change in
+ * the Bundle's plugin only shows up as an `upstream:diff` against the pinned Upstream.
  */
 const PRESET_RULES: Record<RuleKey, RuleEntry> = {
   'constructor-super': 'off',
@@ -148,10 +149,12 @@ const ERASABLE_RULES: Record<RuleKey, RuleEntry> = {
 }
 
 /**
- * The TypeScript Module.
+ * Upstream's `configs/typescript.ts`: the TypeScript parser, then the house TypeScript rules.
  *
  * Upstream scopes the parser and the TypeScript rules to TypeScript files, so `.js` files keep
- * ESLint's default parser; `componentExts` widens that scope to single-file components.
+ * ESLint's default parser; `componentExts` widens that scope to single-file components. The
+ * type-aware parser and rule block exist only when the caller supplies a `tsconfigPath`, because
+ * type information is what makes them runnable.
  */
 export function typescript(options: Pick<Options, 'componentExts' | 'type' | 'typescript'> = {}): ConfigObject[] {
   const { componentExts = [], type = 'app' } = options

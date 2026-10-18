@@ -640,17 +640,32 @@ importers:
         specifier: npm:typescript-native-bridge@^6.0.3-bridge.18.tsgo.7.0.2
         version: 6.0.3-bridge.18.tsgo.7.0.2
 
-  playground:
+  playground/ts:
     devDependencies:
       '@lumirelle/linter-config':
         specifier: workspace:*
-        version: link:../packages/config
+        version: link:../../packages/config
+      '@lumirelle/linter-plugins-eslint':
+        specifier: workspace:*
+        version: link:../../packages/plugins-eslint
+      '@lumirelle/linter-plugins-oxlint':
+        specifier: workspace:*
+        version: link:../../packages/plugins-oxlint
       '@lumirelle/tsconfig':
         specifier: catalog:types
         version: 0.1.6(typescript@6.0.3-bridge.18.tsgo.7.0.2)
+      eslint:
+        specifier: catalog:check
+        version: 10.12.0
+      oxlint:
+        specifier: catalog:check
+        version: 1.88.0(oxlint-tsgolint@7.0.2004)
       typescript:
         specifier: npm:typescript-native-bridge@^6.0.3-bridge.18.tsgo.7.0.2
         version: 6.0.3-bridge.18.tsgo.7.0.2
+      vitest:
+        specifier: catalog:test
+        version: 5.0.4(@types/node@26.6.5)(@vitest/coverage-v8@5.0.4)(vite@8.3.4(@types/node@26.6.5))
 
 packages:
 

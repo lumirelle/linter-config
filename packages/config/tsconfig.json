@@ -5,6 +5,6 @@
     "types": ["node"],
     "declaration": true
   },
-  "include": ["src/**/*", "scripts/**/*", "test/**/*"],
+  "include": ["src/**/*", "scripts/**/*", "test/**/*", "*.config.ts"],
   "exclude": ["test/fixtures/**/*"]
 }

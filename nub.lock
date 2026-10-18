@@ -98,15 +98,9 @@ catalogs:
     '@arethetypeswrong/cli':
       specifier: ^0.18.5
       version: 0.18.5
-    '@lumirelle/oxlint-config':
-      specifier: ^0.14.0
-      version: 0.14.0
     eslint:
       specifier: ^10.12.0
       version: 10.12.0
-    eslint-plugin-oxlint:
-      specifier: ^1.88.0
-      version: 1.88.0
     knip:
       specifier: ^6.41.0
       version: 6.41.0
@@ -286,12 +280,12 @@ importers:
       '@arethetypeswrong/cli':
         specifier: catalog:check
         version: 0.18.5
+      '@e18e/eslint-plugin':
+        specifier: catalog:bundle
+        version: 0.8.1(eslint@10.12.0)(oxlint@1.88.0(oxlint-tsgolint@7.0.2004))
       '@lumirelle/linter-config':
         specifier: workspace:*
         version: link:packages/config
-      '@lumirelle/oxlint-config':
-        specifier: catalog:check
-        version: 0.14.0(@antfu/eslint-config@9.5.1(eslint@10.12.0))(@typescript-eslint/types@8.71.2)(@typescript-eslint/typescript-estree@8.71.2(typescript@6.0.3-bridge.18.tsgo.7.0.2))(@typescript-eslint/utils@8.71.2(eslint@10.12.0)(typescript@6.0.3-bridge.18.tsgo.7.0.2))(@vue/compiler-sfc@3.5.44)(eslint-plugin-oxlint@1.88.0(oxlint@1.88.0(oxlint-tsgolint@7.0.2004)))(oxlint@1.88.0(oxlint-tsgolint@7.0.2004))(oxlint-tsgolint@7.0.2004)(typescript@6.0.3-bridge.18.tsgo.7.0.2)(vitest@5.0.4(@types/node@26.6.5)(@vitest/coverage-v8@5.0.4)(vite@8.3.4(@types/node@26.6.5)))
       '@lumirelle/tsconfig':
         specifier: catalog:types
         version: 0.1.6(typescript@6.0.3-bridge.18.tsgo.7.0.2)
@@ -310,9 +304,21 @@ importers:
       eslint:
         specifier: catalog:check
         version: 10.12.0
-      eslint-plugin-oxlint:
-        specifier: catalog:check
-        version: 1.88.0(oxlint@1.88.0(oxlint-tsgolint@7.0.2004))
+      eslint-plugin-antfu:
+        specifier: catalog:bundle
+        version: 3.2.3(eslint@10.12.0)
+      eslint-plugin-command:
+        specifier: catalog:bundle
+        version: 4.0.0(@typescript-eslint/typescript-estree@8.71.2(typescript@6.0.3-bridge.18.tsgo.7.0.2))(@typescript-eslint/utils@8.71.2(eslint@10.12.0)(typescript@6.0.3-bridge.18.tsgo.7.0.2))(eslint@10.12.0)
+      eslint-plugin-perfectionist:
+        specifier: catalog:bundle
+        version: 5.12.1(@typescript-eslint/types@8.71.2)(eslint@10.12.0)(typescript@6.0.3-bridge.18.tsgo.7.0.2)
+      eslint-plugin-regexp:
+        specifier: catalog:bundle
+        version: 3.3.1(eslint@10.12.0)
+      eslint-plugin-unused-imports:
+        specifier: catalog:bundle
+        version: 4.4.1(@typescript-eslint/eslint-plugin@8.71.2(@typescript-eslint/parser@8.71.2(eslint@10.12.0)(typescript@6.0.3-bridge.18.tsgo.7.0.2))(eslint@10.12.0)(typescript@6.0.3-bridge.18.tsgo.7.0.2))(eslint@10.12.0)
       knip:
         specifier: catalog:check
         version: 6.41.0
@@ -1186,22 +1192,6 @@ packages:
 
   '@loaderkit/resolve@1.0.6':
     resolution: {integrity: sha512-G8FdIoF5CypfwmD9rl8BXod5HDn8JqB0CCNBXDTaRZ+yRYhARrrSToX1zg1zy9jX3zLqigsELwhT4gNtkdQAUg==}
-
-  '@lumirelle/oxlint-config@0.14.0':
-    resolution: {integrity: sha512-kgr2XnhHRYtZf109JY9h/kPCtw2RnAWROQqQir/QCzL4i+/O8au1mLPgMGQ5HTXwAyPliZLo1ywMt++WWd9Jpw==}
-    engines: {bun: '>1', node: '>22'}
-    peerDependencies:
-      '@antfu/eslint-config': '>=9.1.0'
-      eslint-plugin-oxlint: '>=1.80.0'
-      oxlint: '>=1.80.0'
-      oxlint-tsgolint: '>=0.23.0'
-    peerDependenciesMeta:
-      '@antfu/eslint-config':
-        optional: true
-      eslint-plugin-oxlint:
-        optional: true
-      oxlint-tsgolint:
-        optional: true
 
   '@lumirelle/tsconfig@0.1.6':
     resolution: {integrity: sha512-DoLCGBi7qB5plBEkhuFsOc1NbgwNlHPPSwTaP2pFeIHdWJCT+UulcWOuylRdS7npxlqXDsm98DC4CL9oWW4kJg==}
@@ -3490,11 +3480,6 @@ packages:
   eslint-plugin-no-only-tests@3.4.0:
     resolution: {integrity: sha512-4S3/9Nb7A2tiMcpzEQE9bQSlpeOz6WJkgryBuou/SA8W2x2c8Zf4j0NvTKBjv6qNhF9T79tmkecm/0CHqV0UGg==}
     engines: {node: '>=5.0.0'}
-
-  eslint-plugin-oxlint@1.88.0:
-    resolution: {integrity: sha512-5njQn7i07e3mTMzoj4acolSZZXqnd3H1S3JcV8lUJfpavoB2UvRKNiq9fZXYFLY4iHvsckUK2yQxnJn44ImjnA==}
-    peerDependencies:
-      oxlint: ~1.88.0
 
   eslint-plugin-perfectionist@5.12.1:
     resolution: {integrity: sha512-krdSE7Dz+TCtcVr2+rfNhlOIFFBJcUdoRvjaN7JQnsaVnxJw+BZh9wMkY3MSLCJat+yW+UPTQLKS82Epc7MGZA==}
@@ -6205,13 +6190,6 @@ snapshots:
     dependencies:
       '@braidai/lang': 1.1.2
 
-  '@lumirelle/oxlint-config@0.14.0(@antfu/eslint-config@9.5.1(eslint@10.12.0))(@typescript-eslint/types@8.71.2)(@typescript-eslint/typescript-estree@8.71.2(typescript@6.0.3-bridge.18.tsgo.7.0.2))(@typescript-eslint/utils@8.71.2(eslint@10.12.0)(typescript@6.0.3-bridge.18.tsgo.7.0.2))(@vue/compiler-sfc@3.5.44)(eslint-plugin-oxlint@1.88.0(oxlint@1.88.0(oxlint-tsgolint@7.0.2004)))(oxlint@1.88.0(oxlint-tsgolint@7.0.2004))(oxlint-tsgolint@7.0.2004)(typescript@6.0.3-bridge.18.tsgo.7.0.2)(vitest@5.0.4(@types/node@26.6.5)(@vitest/coverage-v8@5.0.4)(vite@8.3.4(@types/node@26.6.5)))':
-    dependencies:
-      '@antfu/eslint-config': 9.5.1(@typescript-eslint/types@8.71.2)(@typescript-eslint/typescript-estree@8.71.2(typescript@6.0.3-bridge.18.tsgo.7.0.2))(@typescript-eslint/utils@8.71.2(eslint@10.12.0)(typescript@6.0.3-bridge.18.tsgo.7.0.2))(@vue/compiler-sfc@3.5.44)(eslint@10.12.0)(oxlint@1.88.0(oxlint-tsgolint@7.0.2004))(typescript@6.0.3-bridge.18.tsgo.7.0.2)(vitest@5.0.4(@types/node@26.6.5)(@vitest/coverage-v8@5.0.4)(vite@8.3.4(@types/node@26.6.5)))
-      eslint-plugin-oxlint: 1.88.0(oxlint@1.88.0(oxlint-tsgolint@7.0.2004))
-      oxlint: 1.88.0(oxlint-tsgolint@7.0.2004)
-      oxlint-tsgolint: 7.0.2004
-
   '@lumirelle/tsconfig@0.1.6(typescript@6.0.3-bridge.18.tsgo.7.0.2)':
     dependencies:
       typescript: 6.0.3-bridge.18.tsgo.7.0.2
@@ -8024,11 +8002,6 @@ snapshots:
       semver: 7.8.5
 
   eslint-plugin-no-only-tests@3.4.0: {}
-
-  eslint-plugin-oxlint@1.88.0(oxlint@1.88.0(oxlint-tsgolint@7.0.2004)):
-    dependencies:
-      jsonc-parser: 3.3.1
-      oxlint: 1.88.0(oxlint-tsgolint@7.0.2004)
 
   eslint-plugin-perfectionist@5.12.1(@typescript-eslint/types@8.71.2)(eslint@10.12.0)(typescript@6.0.3-bridge.18.tsgo.7.0.2):
     dependencies:

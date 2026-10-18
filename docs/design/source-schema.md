@@ -63,6 +63,8 @@ interface ConfigObject {
   settings?: Record<string, unknown>
   tools?: {
     eslint?: {
+      /** ESLint-only: the Plugin id whose registered parser becomes `languageOptions.parser` */
+      parser?: PluginRef
       languageOptions?: Record<string, unknown>
       linterOptions?: Record<string, unknown>
       processor?: unknown
@@ -176,7 +178,8 @@ export function pluginRef(id: PluginId): PluginRef
 
 1. `source(options)` -> `ConfigObject[]`
 2. Filter `domain ∈ {js, vue, svelte, astro, angular, data, markup}`
-3. Resolve each `plugins` entry through the registry: `bundle` -> Bundle object, `peer` -> consumer's copy
+3. Resolve each `plugins` entry through the registry: `bundle` -> Bundle object, `peer` -> consumer's copy;
+   resolve `tools.eslint.parser` the same way into `languageOptions.parser`
 4. `globals` -> `languageOptions.globals`
 5. Merge `tools.eslint`
 6. `new FlatConfigComposer(configs)`; when `options.oxlint` is set, append the Bridge

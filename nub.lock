@@ -10,6 +10,12 @@ catalogs:
       specifier: ^0.23.1
       version: 0.23.1
   bundle:
+    '@typescript-eslint/eslint-plugin':
+      specifier: ^8.68.0
+      version: 8.71.2
+    '@typescript-eslint/parser':
+      specifier: ^8.68.0
+      version: 8.71.2
     eslint-plugin-antfu:
       specifier: ^3.2.3
       version: 3.2.3
@@ -104,6 +110,10 @@ catalogs:
     oxlint-flat-config:
       specifier: ^0.4.0
       version: 0.4.0
+  peer:
+    eslint-plugin-erasable-syntax-only:
+      specifier: ^0.7.1
+      version: 0.7.2
   release:
     bumpp:
       specifier: ^12.3.0
@@ -289,6 +299,9 @@ importers:
       eslint:
         specifier: catalog:check
         version: 10.12.0
+      eslint-plugin-erasable-syntax-only:
+        specifier: catalog:peer
+        version: 0.7.2(@typescript-eslint/parser@8.71.2(eslint@10.12.0)(typescript@6.0.3-bridge.18.tsgo.7.0.2))(eslint@10.12.0)(typescript@6.0.3-bridge.18.tsgo.7.0.2)
       fast-glob:
         specifier: catalog:test
         version: 3.3.3
@@ -310,6 +323,12 @@ importers:
 
   packages/plugins-eslint:
     dependencies:
+      '@typescript-eslint/eslint-plugin':
+        specifier: catalog:bundle
+        version: 8.71.2(@typescript-eslint/parser@8.71.2(eslint@10.12.0)(typescript@6.0.3-bridge.18.tsgo.7.0.2))(eslint@10.12.0)(typescript@6.0.3-bridge.18.tsgo.7.0.2)
+      '@typescript-eslint/parser':
+        specifier: catalog:bundle
+        version: 8.71.2(eslint@10.12.0)(typescript@6.0.3-bridge.18.tsgo.7.0.2)
       eslint-plugin-antfu:
         specifier: catalog:bundle
         version: 3.2.3(eslint@10.12.0)
@@ -2379,6 +2398,10 @@ packages:
   cacheable@2.5.0:
     resolution: {integrity: sha512-60cyAOytib/OzBw1JNSoSV/boK1AtHryDIjvVBk7XbN4ugfkM3+Sry7fEjNgPMGgOjuaZPAp8ruZ0Cxafwyq9g==}
 
+  cached-factory@0.3.0:
+    resolution: {integrity: sha512-8PWf78SYJg9kGpUNlqOlg2iE4nu/iW7FidBVdvEZPy0GJRUyN91X7q0VzX/oyJE6bGrgr/bR0VhcGF87vgeQaw==}
+    engines: {node: '>=18'}
+
   caniuse-lite@1.0.30001816:
     resolution: {integrity: sha512-+8Yx7BXCoqk6IF8yTicjfUR6D/ldJzdlsodlEOiOSPmhK844WIgk67/zIQaGAOxNkZyyvBlrRFnLvqKIoqbAFw==}
 
@@ -2729,6 +2752,14 @@ packages:
       '@typescript-eslint/typescript-estree': '*'
       '@typescript-eslint/utils': '*'
       eslint: '*'
+
+  eslint-plugin-erasable-syntax-only@0.7.2:
+    resolution: {integrity: sha512-kRVdC8J08K+10AAtL0SMNUbiMaKeEEFlpVJ7CAAixgOTfpfKlz1Y59b9E5emCaDBGu7qXOGOfowGHUaFzwzToA==}
+    engines: {node: '>=20.18.0'}
+    peerDependencies:
+      '@typescript-eslint/parser': '>=8'
+      eslint: '>=9'
+      typescript: '>=5'
 
   eslint-plugin-es-x@7.8.0:
     resolution: {integrity: sha512-7Ds8+wAAoV3T+LAKeu39Y5BzXCrGKrcISfgKEqTS4BDN8SFEDQd0S43jiQ8vIa3wUKD07qitZdfzlenSi8/0qQ==}
@@ -6347,6 +6378,8 @@ snapshots:
       keyv: 5.6.0
       qified: 0.10.1
 
+  cached-factory@0.3.0: {}
+
   caniuse-lite@1.0.30001816: {}
 
   ccount@2.0.1: {}
@@ -6648,6 +6681,17 @@ snapshots:
       '@typescript-eslint/utils': 8.71.2(eslint@10.12.0)(typescript@6.0.3-bridge.18.tsgo.7.0.2)
       eslint: 10.12.0
     transitivePeerDependencies:
+      - typescript
+
+  eslint-plugin-erasable-syntax-only@0.7.2(@typescript-eslint/parser@8.71.2(eslint@10.12.0)(typescript@6.0.3-bridge.18.tsgo.7.0.2))(eslint@10.12.0)(typescript@6.0.3-bridge.18.tsgo.7.0.2):
+    dependencies:
+      '@typescript-eslint/parser': 8.71.2(eslint@10.12.0)(typescript@6.0.3-bridge.18.tsgo.7.0.2)
+      '@typescript-eslint/utils': 8.71.2(eslint@10.12.0)(typescript@6.0.3-bridge.18.tsgo.7.0.2)
+      cached-factory: 0.3.0
+      eslint: 10.12.0
+      typescript: 6.0.3-bridge.18.tsgo.7.0.2
+    transitivePeerDependencies:
+      - supports-color
       - typescript
 
   eslint-plugin-es-x@7.8.0(eslint@10.12.0):

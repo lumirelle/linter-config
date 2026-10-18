@@ -1,6 +1,6 @@
 import { readFileSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
-import { eslintPlugins } from '@lumirelle/linter-plugins-eslint'
+import { eslintParsers, eslintPlugins } from '@lumirelle/linter-plugins-eslint'
 import { builtinPlugins, jsPlugins } from '@lumirelle/linter-plugins-oxlint'
 import { describe, expect, it } from 'vitest'
 import { isPluginId } from '../src/plugins'
@@ -23,7 +23,7 @@ describe('plugin bundles', () => {
   })
 
   it('carry no rule semantics of their own, only forwarded plugin objects', () => {
-    expect(Object.keys(eslintPlugins).sort()).toEqual(['antfu', 'unused-imports'])
+    expect(Object.keys(eslintPlugins).sort()).toEqual(['antfu', 'ts', 'unused-imports'])
     for (const plugin of Object.values(eslintPlugins)) {
       expect(plugin.rules).toBeTypeOf('object')
     }
@@ -31,8 +31,14 @@ describe('plugin bundles', () => {
     expect(builtinPlugins).toEqual([])
   })
 
+  it('forward the parser a Plugin id registers, separately from its plugin', () => {
+    expect(Object.keys(eslintParsers).sort()).toEqual(['ts'])
+    expect(eslintParsers.ts).toMatchObject({ meta: { name: 'typescript-eslint/parser' } })
+  })
+
   it('keys every entry by a registered Plugin id', () => {
-    const unregistered = [...Object.keys(eslintPlugins), ...Object.keys(jsPlugins)].filter(id => !isPluginId(id))
+    const unregistered = [...Object.keys(eslintPlugins), ...Object.keys(eslintParsers), ...Object.keys(jsPlugins)]
+      .filter(id => !isPluginId(id))
 
     expect(unregistered).toEqual([])
   })

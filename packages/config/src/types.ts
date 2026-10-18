@@ -118,6 +118,13 @@ export interface ConfigObject {
     eslint?: {
       /** ESLint-only: the language a parser declares (`jsonc/x`, `markdown/gfm`); Oxlint has no parsers. */
       language?: string
+      /**
+       * ESLint-only: the Plugin id whose registered parser becomes `languageOptions.parser`.
+       *
+       * Source names an id rather than importing a parser package, so the ESLint Adapter is the
+       * one that resolves it: from the Plugin Bundle, or from the consumer's copy for a peer id.
+       */
+      parser?: PluginRef
       languageOptions?: Record<string, unknown>
       linterOptions?: Record<string, unknown>
       processor?: unknown

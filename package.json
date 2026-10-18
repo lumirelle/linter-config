@@ -69,8 +69,13 @@
         "vitest": "^5.0.4"
       },
       "bundle": {
+        "@typescript-eslint/eslint-plugin": "^8.68.0",
+        "@typescript-eslint/parser": "^8.68.0",
         "eslint-plugin-antfu": "^3.2.3",
         "eslint-plugin-unused-imports": "^4.4.1"
+      },
+      "peer": {
+        "eslint-plugin-erasable-syntax-only": "^0.7.1"
       },
       "release": {
         "bumpp": "^12.3.0",

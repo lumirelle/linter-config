@@ -105,7 +105,11 @@ function severity(entry: unknown): unknown {
 
 /** Rules by Config object name, so a doubled object collapses into the same entry. */
 function rulesByName(configs: readonly Linter.Config[]): Record<string, unknown> {
-  return Object.fromEntries(configs.map(config => [config.name, config.rules ?? {}]))
+  const byName: Record<string, unknown> = {}
+  for (const config of configs) {
+    Object.assign(byName, { [config.name ?? '(unnamed)']: config.rules ?? {} })
+  }
+  return byName
 }
 
 describe('oxlintBridge()', () => {

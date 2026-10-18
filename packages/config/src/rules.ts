@@ -31,6 +31,6 @@ export function rulesEnabledBy(
   rules: NonNullable<ConfigObject['rules']>,
   enabled: ReadonlySet<RuleKey>,
 ): NonNullable<ConfigObject['rules']> {
-  const kept = Object.entries(rules).filter(([key]) => enabled.has(key as RuleKey))
-  return Object.fromEntries(kept) as NonNullable<ConfigObject['rules']>
+  const kept = Object.entries(rules).filter(([key]) => enabled.has(key))
+  return Object.fromEntries(kept)
 }

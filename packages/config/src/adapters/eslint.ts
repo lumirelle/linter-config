@@ -146,7 +146,8 @@ async function loadParser(ref: PluginRef): Promise<NonNullable<Linter.LanguageOp
 async function loadProcessor(ref: ProcessorRef): Promise<Linter.Config['processor']> {
   const id = ref.plugin as PluginId
   const plugin = await loadPlugin(id, ref.plugin)
-  const processor = (plugin as { processors?: Record<string, Linter.Config['processor']> }).processors?.[ref.name]
+  const processor: Linter.Config['processor'] | undefined
+    = (plugin as { processors?: Record<string, Linter.Config['processor']> }).processors?.[ref.name]
   if (!processor) {
     const glue = (await loadBundle()).processors[`${ref.plugin}/${ref.name}`]
     if (glue) {
@@ -171,7 +172,7 @@ async function loadProcessor(ref: ProcessorRef): Promise<Linter.Config['processo
  */
 async function resolveNestedParser(languageOptions: Linter.LanguageOptions): Promise<Linter.LanguageOptions> {
   const parserOptions = languageOptions.parserOptions
-  const nested = parserOptions?.parser
+  const nested: unknown = parserOptions?.parser
   if (typeof nested !== 'string') {
     return languageOptions
   }
@@ -192,7 +193,7 @@ interface Bundle {
 let bundle: Promise<Bundle> | undefined
 
 /** Loads the Bundle once; a failed resolution is retried on the next call. */
-function loadBundle(): Promise<Bundle> {
+async function loadBundle(): Promise<Bundle> {
   bundle ??= importBundle()
   return bundle
 }
@@ -218,7 +219,7 @@ async function importBundle(): Promise<Bundle> {
 /** Plugin packages may be ESM namespaces or CJS modules; both expose the plugin as the default export. */
 function interopDefault(module: unknown): unknown {
   if (typeof module === 'object' && module !== null && 'default' in module) {
-    return (module as { default: unknown }).default
+    return module.default
   }
   return module
 }

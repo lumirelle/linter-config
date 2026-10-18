@@ -14,7 +14,7 @@ import jsdoc from 'eslint-plugin-jsdoc'
 import jsonc from 'eslint-plugin-jsonc'
 import node from 'eslint-plugin-n'
 // @ts-expect-error -- the package ships no type declarations.
-import noOnlyTests from 'eslint-plugin-no-only-tests'
+import noOnlyTestsModule from 'eslint-plugin-no-only-tests'
 import perfectionist from 'eslint-plugin-perfectionist'
 import pnpm from 'eslint-plugin-pnpm'
 import regexp from 'eslint-plugin-regexp'
@@ -30,6 +30,9 @@ import * as yamlParser from 'yaml-eslint-parser'
 
 type Processor = Extract<Linter.Config['processor'], object>
 
+/** `eslint-plugin-no-only-tests` ships no declarations, so its shape is named once, here. */
+const noOnlyTests = noOnlyTestsModule as { rules: NonNullable<ESLint.Plugin['rules']> }
+
 /**
  * The plugin Upstream calls `test`: `@vitest/eslint-plugin` with `eslint-plugin-no-only-tests`
  * rules merged on top, because the `test` rule prefix spans both packages.
@@ -43,7 +46,7 @@ const testPlugin: ESLint.Plugin = {
     ...vitestPlugin.rules,
     ...noOnlyTests.rules,
   },
-} as unknown as ESLint.Plugin
+}
 
 /**
  * ESLint plugin objects, keyed by Plugin id.
@@ -53,26 +56,26 @@ const testPlugin: ESLint.Plugin = {
  * This bundle contains no rule semantics: it only forwards plugin objects.
  */
 export const eslintPlugins: Record<string, ESLint.Plugin> = {
-  'antfu': antfu as ESLint.Plugin,
-  'command': command as unknown as ESLint.Plugin,
-  'e18e': e18e as unknown as ESLint.Plugin,
-  'eslint-comments': eslintComments as unknown as ESLint.Plugin,
-  'import': importLite as ESLint.Plugin,
-  'jsdoc': jsdoc as unknown as ESLint.Plugin,
-  'jsonc': jsonc as unknown as ESLint.Plugin,
-  'md': markdown as unknown as ESLint.Plugin,
-  'node': node as unknown as ESLint.Plugin,
-  'perfectionist': perfectionist as unknown as ESLint.Plugin,
-  'pnpm': pnpm as unknown as ESLint.Plugin,
-  'regexp': regexp as unknown as ESLint.Plugin,
-  'style': stylistic as unknown as ESLint.Plugin,
+  'antfu': antfu,
+  'command': command,
+  'e18e': e18e,
+  'eslint-comments': eslintComments,
+  'import': importLite,
+  'jsdoc': jsdoc,
+  'jsonc': jsonc,
+  'md': markdown,
+  'node': node,
+  'perfectionist': perfectionist,
+  'pnpm': pnpm,
+  'regexp': regexp,
+  'style': stylistic,
   'test': testPlugin,
-  'toml': toml as unknown as ESLint.Plugin,
+  'toml': toml,
   'ts': tsPlugin as unknown as ESLint.Plugin,
-  'unicorn': unicorn as unknown as ESLint.Plugin,
-  'unused-imports': unusedImports as ESLint.Plugin,
-  'vue': vuePlugin as unknown as ESLint.Plugin,
-  'yaml': yaml as unknown as ESLint.Plugin,
+  'unicorn': unicorn,
+  'unused-imports': unusedImports,
+  'vue': vuePlugin,
+  'yaml': yaml,
 }
 
 /**
@@ -83,10 +86,10 @@ export const eslintPlugins: Record<string, ESLint.Plugin> = {
  * here instead of importing a parser package from Source.
  */
 export const eslintParsers: Record<string, Linter.LanguageOptions['parser']> = {
-  toml: tomlParser as unknown as Linter.LanguageOptions['parser'],
-  ts: tsParser as Linter.LanguageOptions['parser'],
-  vue: vueParser as unknown as Linter.LanguageOptions['parser'],
-  yaml: yamlParser as unknown as Linter.LanguageOptions['parser'],
+  toml: tomlParser,
+  ts: tsParser,
+  vue: vueParser,
+  yaml: yamlParser,
 }
 
 /**
@@ -101,6 +104,6 @@ export const eslintParsers: Record<string, Linter.LanguageOptions['parser']> = {
 export const eslintProcessors: Record<string, (options?: Record<string, unknown>) => Linter.Config['processor']> = {
   'vue/vue-blocks': (options) => {
     const { processors } = vuePlugin as unknown as { processors: Record<string, Processor> }
-    return mergeProcessors([processors['.vue']!, processorVueBlocks(options ?? {}) as unknown as Processor])
+    return mergeProcessors([processors['.vue']!, processorVueBlocks(options ?? {})])
   },
 }

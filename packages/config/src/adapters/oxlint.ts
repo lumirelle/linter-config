@@ -68,7 +68,7 @@ function toOxlintConfig(config: ConfigObject, { rules }: RuleMapping): FlatConfi
   if (config.ignores) {
     fields.ignores = config.ignores
   }
-  return fields as FlatConfigItem
+  return fields
 }
 
 /**

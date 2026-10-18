@@ -171,7 +171,7 @@ export function normalizeRuleKey(key: string): string {
 
 /** ESLint accepts `off`/`warn`/`error` and `0`/`1`/`2`; both spellings normalize to a name. */
 export function normalizeSeverity(entry: unknown): Severity {
-  const severity = Array.isArray(entry) ? entry[0] : entry
+  const severity: unknown = Array.isArray(entry) ? entry[0] : entry
   switch (severity) {
     case 0:
     case 'off':
@@ -486,8 +486,8 @@ export interface OptionPointDefinition {
 export function optionPoints(fullOn: Readonly<object>, fullOff: Readonly<object>): OptionPointDefinition[] {
   return [
     { id: 'defaults', options: { stylistic: false, isInEditor: false } },
-    { id: 'full-on', options: { ...fullOn, isInEditor: false } as Record<string, unknown> },
-    { id: 'full-off', options: { ...fullOff, isInEditor: false } as Record<string, unknown> },
+    { id: 'full-on', options: { ...fullOn, isInEditor: false } },
+    { id: 'full-off', options: { ...fullOff, isInEditor: false } },
   ]
 }
 
@@ -528,7 +528,7 @@ export async function main(argv: readonly string[] = process.argv.slice(2)): Pro
     const upstreamOptions = gateUpstreamOptions(point.options, implementedModules)
 
     try {
-      const upstreamConfigs = await antfu(upstreamOptions as Parameters<typeof antfu>[0]) as ComparableConfig[]
+      const upstreamConfigs = await antfu(upstreamOptions) as ComparableConfig[]
       points.push({ id: point.id, sourceOptions: point.options, upstreamOptions, sourceConfigs, upstreamConfigs })
     }
     catch (error) {

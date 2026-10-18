@@ -75,7 +75,7 @@ export function coverageReport(): CoverageReport {
     // ESLint-only for the reason of the Domain rather than of the rule.
     const unemitted = isOxlintDomain(config.domain)
       ? mapRules(config.rules).unemitted
-      : Object.keys(config.rules ?? {}).map(key => ({ key: key as UnemittedRule['key'], reason: 'eslint-only-domain' as const }))
+      : Object.keys(config.rules ?? {}).map(key => ({ key, reason: 'eslint-only-domain' as const }))
 
     for (const rule of unemitted) {
       const collected = modules[config.module] ?? []
@@ -102,6 +102,6 @@ export function coverageReport(): CoverageReport {
           module,
           [...rules].sort((left, right) => left.key.localeCompare(right.key)),
         ]),
-    ) as CoverageReport['modules'],
+    ),
   }
 }

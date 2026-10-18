@@ -273,6 +273,9 @@ function inlineValue(value: unknown): string {
   throw new TypeError(`Cannot serialize ${typeof value} into the generated stylistic table`)
 }
 
+/** The identifier form an object key needs no quotes for. */
+const IDENTIFIER_KEY = /^[A-Za-z_$][\w$]*$/u
+
 function keyLiteral(key: string): string {
-  return /^[A-Za-z_$][\w$]*$/u.test(key) ? key : `'${key}'`
+  return IDENTIFIER_KEY.test(key) ? key : `'${key}'`
 }

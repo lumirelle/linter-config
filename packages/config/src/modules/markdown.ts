@@ -159,7 +159,7 @@ export function markdown(options: {
       rules: {
         ...rulesEnabledBy(CODE_BLOCK_RULES, enabled),
         ...overrides,
-      } as ConfigObject['rules'],
+      },
     },
   ]
 }

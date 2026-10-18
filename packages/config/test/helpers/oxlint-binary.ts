@@ -13,6 +13,12 @@ const OXLINT_BIN = join(dirname(createRequire(import.meta.url).resolve('oxlint/p
 /** Where this repository keeps the packages a consumer would install for `jsPlugins`. */
 const PLUGIN_ROOTS = [REPO_ROOT, join(REPO_ROOT, 'packages/plugins-eslint')]
 
+/** Diagnostic filenames are relative to the project, with an optional leading `./`. */
+const LEADING_DOT_SLASH = /^\.?\//u
+
+/** `eslint(eqeqeq)` / `antfu(no-top-level-await)`: a scope and the rule name inside it. */
+const DIAGNOSTIC_CODE = /^([^(]+)\((.*)\)$/u
+
 export interface Diagnostic {
   file: string
   ruleId: string
@@ -139,7 +145,7 @@ export function lint(directory: string, patterns: string[] = ['fixtures']): { di
       .map((diagnostic) => {
         const label = diagnostic.labels?.[0]?.span
         return {
-          file: diagnostic.filename.replace(/^\.?\//u, ''),
+          file: diagnostic.filename.replace(LEADING_DOT_SLASH, ''),
           ruleId: ruleIdOf(diagnostic.code),
           severity: diagnostic.severity,
           line: label?.line ?? 0,
@@ -156,7 +162,7 @@ export function lint(directory: string, patterns: string[] = ['fixtures']): { di
 
 /** `eslint(eqeqeq)` -> `eqeqeq`, `antfu(no-top-level-await)` -> `antfu/no-top-level-await`. */
 function ruleIdOf(code: string): string {
-  const match = /^([^(]+)\((.*)\)$/u.exec(code)
+  const match = DIAGNOSTIC_CODE.exec(code)
   if (!match) {
     throw new Error(`Oxlint reported an unexpected diagnostic code "${code}".`)
   }

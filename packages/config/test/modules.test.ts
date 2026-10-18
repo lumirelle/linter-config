@@ -47,7 +47,8 @@ describe('the options that gate the new Modules', () => {
 
   it('rejects a name Source did not emit, such as a row the derivation dropped', async () => {
     // The `bin` row exists only while the imports Module turns its rules on.
-    expect(() => eslint({ gitignore: false, imports: false, overrides: { 'lumirelle/disables/bin': { files: ['**/*.js'] } } }))
-      .toThrow(/lumirelle\/disables\/bin/)
+    expect(() => {
+      void eslint({ gitignore: false, imports: false, overrides: { 'lumirelle/disables/bin': { files: ['**/*.js'] } } })
+    }).toThrow(/lumirelle\/disables\/bin/)
   })
 })

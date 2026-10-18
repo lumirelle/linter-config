@@ -81,22 +81,22 @@ function applyIndent(
 /** Replaces the level placeholder the generated patches carry with the caller's numeric level. */
 function withIndentLevel(patches: StylisticIndentPatches, level: number): StylisticIndentPatches {
   return {
-    withJsx: substituteLevel(patches.withJsx, level),
-    withoutJsx: substituteLevel(patches.withoutJsx, level),
+    withJsx: substituteLevel(patches.withJsx, level) as StylisticIndentPatches['withJsx'],
+    withoutJsx: substituteLevel(patches.withoutJsx, level) as StylisticIndentPatches['withoutJsx'],
   }
 }
 
-function substituteLevel<T>(value: T, level: number): T {
-  if ((value as unknown) === STYLISTIC_INDENT_LEVEL) {
-    return level as unknown as T
+function substituteLevel(value: unknown, level: number): unknown {
+  if (value === STYLISTIC_INDENT_LEVEL) {
+    return level
   }
   if (Array.isArray(value)) {
-    return value.map(item => substituteLevel(item, level)) as T
+    return value.map(item => substituteLevel(item, level))
   }
   if (typeof value === 'object' && value !== null) {
     return Object.fromEntries(
       Object.entries(value).map(([key, entry]) => [key, substituteLevel(entry, level)]),
-    ) as T
+    )
   }
   return value
 }

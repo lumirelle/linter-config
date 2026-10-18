@@ -136,7 +136,8 @@ describe('oxlint() vue module', () => {
 
   it('keeps the Vue globals', async () => {
     const config = await oxlint(houseOptions({ vue: true }))
-    const globals = Object.assign({}, ...(config.overrides ?? []).map(override => override.globals ?? {}))
+    const globals: Record<string, string> = {}
+    Object.assign(globals, ...(config.overrides ?? []).map(override => override.globals ?? {}))
 
     expect(globals).toMatchObject({ ref: 'readonly', defineProps: 'readonly' })
   })

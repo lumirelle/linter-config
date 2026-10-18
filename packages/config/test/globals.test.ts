@@ -15,7 +15,10 @@ async function eslintConfig(name: string): Promise<Linter.Config> {
 
 /** Every `globals` table the Oxlint Emission declares, merged as Oxlint merges them. */
 async function oxlintGlobals(): Promise<Record<string, string>> {
-  return Object.assign({}, ...(await oxlint({ gitignore: false, isInEditor: false })).overrides?.map(override => override.globals ?? {}) ?? [])
+  const tables = (await oxlint({ gitignore: false, isInEditor: false })).overrides?.map(override => override.globals ?? {}) ?? []
+  const merged: Record<string, string> = {}
+  Object.assign(merged, ...tables)
+  return merged
 }
 
 describe('globals read-only versus writable', () => {

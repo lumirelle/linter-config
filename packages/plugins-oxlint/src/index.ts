@@ -34,6 +34,7 @@ export const jsPlugins: Readonly<Record<string, string>> = {
   'eslint-comments': '@eslint-community/eslint-plugin-eslint-comments',
   'perfectionist': 'eslint-plugin-perfectionist',
   'regexp': 'eslint-plugin-regexp',
+  'slop': 'eslint-plugin-slop',
   'solid': 'eslint-plugin-solid',
   'sonar': 'eslint-plugin-sonarjs',
   'style': '@stylistic/eslint-plugin',

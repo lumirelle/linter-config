@@ -31,6 +31,8 @@ const EXPECTATIONS: Record<string, { eslint: Reported[], oxlint: Reported[] }> =
   },
   unicorn: {
     eslint: [
+      // The `e18e` Module reports the same `indexOf` comparison as `unicorn`; both are house rules.
+      { file: 'violations.js', ruleId: 'e18e/prefer-includes', line: 2 },
       { file: 'violations.js', ruleId: 'unicorn/prefer-includes', line: 2 },
       { file: 'violations.js', ruleId: 'node/no-deprecated-api', line: 6 },
       { file: 'violations.js', ruleId: 'node/prefer-global/buffer', line: 6 },
@@ -38,6 +40,7 @@ const EXPECTATIONS: Record<string, { eslint: Reported[], oxlint: Reported[] }> =
     ],
     // `node/no-deprecated-api` and `node/prefer-global/buffer` are in `coverage.json`.
     oxlint: [
+      { file: 'violations.js', ruleId: 'e18e/prefer-includes', line: 2 },
       { file: 'violations.js', ruleId: 'unicorn/prefer-includes', line: 2 },
       { file: 'violations.js', ruleId: 'unicorn/no-new-buffer', line: 6 },
     ],

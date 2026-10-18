@@ -2,7 +2,13 @@
   "oxlintVersion": "1.88.0",
   "jsPlugins": [
     "antfu",
+    "command",
+    "e18e",
+    "perfectionist",
+    "regexp",
+    "slop",
     "solid",
+    "sonar",
     "style",
     "unocss",
     "unused-imports"
@@ -156,8 +162,35 @@
     ],
     "disables": [
       {
+        "key": "eslint-comments/no-unlimited-disable",
+        "reason": "blacklisted-plugin",
+        "plugin": "eslint-comments"
+      },
+      {
         "key": "no-restricted-syntax",
         "reason": "unknown-rule"
+      }
+    ],
+    "eslint-comments": [
+      {
+        "key": "eslint-comments/no-aggregating-enable",
+        "reason": "blacklisted-plugin",
+        "plugin": "eslint-comments"
+      },
+      {
+        "key": "eslint-comments/no-duplicate-disable",
+        "reason": "blacklisted-plugin",
+        "plugin": "eslint-comments"
+      },
+      {
+        "key": "eslint-comments/no-unlimited-disable",
+        "reason": "blacklisted-plugin",
+        "plugin": "eslint-comments"
+      },
+      {
+        "key": "eslint-comments/no-unused-enable",
+        "reason": "blacklisted-plugin",
+        "plugin": "eslint-comments"
       }
     ],
     "imports": [

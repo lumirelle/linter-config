@@ -5,6 +5,7 @@ import { describe, expect, it } from 'vitest'
 import { eslint } from '../src/eslint'
 import { oxlint } from '../src/oxlint'
 import { coverageReport } from '../src/oxlint/report'
+import { source } from '../src/source'
 import { eslintObject, houseOptions } from './helpers/emission'
 
 const FIXTURES = fileURLToPath(new URL('./fixtures/data-markup/', import.meta.url))
@@ -105,7 +106,7 @@ describe('the data and markup Modules', () => {
     const processor = (await eslintObject('lumirelle/markdown/processor')).processor as { meta?: { name?: string } }
 
     expect(processor).toBeDefined()
-    expect(await processor.meta?.name).toBeTypeOf('string')
+    expect(processor.meta?.name).toBeTypeOf('string')
   })
 
   it('keep the two house TOML overrides', async () => {
@@ -147,7 +148,7 @@ describe('the Coverage report', () => {
 describe('the pnpm Module', () => {
   it('is off without a pnpm-workspace.yaml, and on when asked for', async () => {
     // The repository root has no `pnpm-workspace.yaml`, which is what Upstream detects.
-    expect((await eslint(houseOptions())).some(config => config.module === 'pnpm')).toBe(false)
+    expect(source(houseOptions()).some(config => config.module === 'pnpm')).toBe(false)
 
     const names = (await eslint(houseOptions({ pnpm: true }))).map(config => config.name)
     expect(names).toContain('lumirelle/pnpm/package-json')
@@ -158,7 +159,7 @@ describe('the pnpm Module', () => {
 
 describe('the formatters Module', () => {
   it('is off by default and emits the plugin-free formatters when asked for', async () => {
-    expect((await eslint(houseOptions())).some(config => config.module === 'formatters')).toBe(false)
+    expect(source(houseOptions()).some(config => config.module === 'formatters')).toBe(false)
 
     const configs = await eslint(houseOptions({ formatters: true }))
     expect(configs.map(config => config.name).filter(name => name?.startsWith('lumirelle/formatter'))).toEqual([

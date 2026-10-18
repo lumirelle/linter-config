@@ -3,6 +3,169 @@ import { GLOB_JSON } from '../globs'
 import { pluginRef } from '../plugins'
 
 /**
+ * The `pnpm-workspace.yaml` keys Upstream orders, as `pathPattern: '^$'` scopes them to the root map.
+ * Transcribed from Upstream's `configs/pnpm.ts`, whose groups carry the reading order pnpm documents.
+ */
+const WORKSPACE_YAML_ORDER: readonly string[] = [
+  'dedupeInjectedDeps',
+  'disallowWorkspaceCycles',
+  'failIfNoMatch',
+  'ignoreWorkspaceCycles',
+  'ignoreWorkspaceRootCheck',
+  'includeWorkspaceRoot',
+  'injectWorkspacePackages',
+  'legacyDirFiltering',
+  'linkWorkspacePackages',
+  'preferWorkspacePackages',
+  'saveWorkspaceProtocol',
+  'sharedWorkspaceLockfile',
+  'syncInjectedDepsAfterScripts',
+  'catalogMode',
+  'catalogPrune',
+  'cleanupUnusedCatalogs',
+  'allowedDeprecatedVersions',
+  'blockExoticSubdeps',
+  'ignoredOptionalDependencies',
+  'minimumReleaseAge',
+  'minimumReleaseAgeIgnoreMissingTime',
+  'minimumReleaseAgeStrict',
+  'minimumReleaseAgeExcludePrune',
+  'minimumReleaseAgeExclude',
+  'registrySupportsTimeField',
+  'resolutionMode',
+  'supportedArchitectures',
+  'trustLockfile',
+  'trustPolicy',
+  'trustPolicyIgnoreAfter',
+  'trustPolicyExclude',
+  'update',
+  'autoInstallPeers',
+  'dedupePeerDependents',
+  'dedupePeers',
+  'peerDependencyRules',
+  'resolvePeersFromWorkspaceRoot',
+  'strictPeerDependencies',
+  'fetchMinSpeedKiBps',
+  'fetchRetries',
+  'fetchRetryFactor',
+  'fetchRetryMaxtimeout',
+  'fetchRetryMintimeout',
+  'fetchTimeout',
+  'fetchWarnTimeoutMs',
+  'gitShallowHosts',
+  'httpProxy',
+  'httpsProxy',
+  'localAddress',
+  'maxsockets',
+  'namedRegistries',
+  'networkConcurrency',
+  'noProxy',
+  'registries',
+  'registry',
+  'strictSsl',
+  'dlxCacheMaxAge',
+  'enableGlobalVirtualStore',
+  'enableModulesDir',
+  'extendNodePath',
+  'modulesCacheMaxAge',
+  'modulesDir',
+  'nodeExperimentalPackageMap',
+  'nodeLinker',
+  'nodePackageMapType',
+  'packageImportMethod',
+  'preferSymlinkedExecutables',
+  'symlink',
+  'virtualStoreDir',
+  'virtualStoreDirMaxLength',
+  'virtualStoreOnly',
+  'virtualStoreType',
+  'hoist',
+  'hoistingLimits',
+  'hoistPattern',
+  'hoistWorkspacePackages',
+  'publicHoistPattern',
+  'shamefullyHoist',
+  'frozenStore',
+  'storeDir',
+  'strictStorePkgContentCheck',
+  'useRunningStoreServer',
+  'verifyStoreIntegrity',
+  'gitBranchLockfile',
+  'lockfile',
+  'lockfileIncludeTarballUrl',
+  'mergeGitBranchLockfilesBranchPattern',
+  'peersSuffixMaxLength',
+  'preferFrozenLockfile',
+  'childConcurrency',
+  'dangerouslyAllowAllBuilds',
+  'enablePrePostScripts',
+  'ignoreDepScripts',
+  'ignoreScripts',
+  'nodeOptions',
+  'requiredScripts',
+  'scriptShell',
+  'shellEmulator',
+  'sideEffectsCache',
+  'sideEffectsCacheReadonly',
+  'strictDepBuilds',
+  'unsafePerm',
+  'verifyDepsBeforeRun',
+  'managePackageManagerVersions',
+  'nodeDownloadMirrors',
+  'nodeVersion',
+  'packageManagerStrict',
+  'packageManagerStrictVersion',
+  'pmOnFail',
+  'runtimeOnFail',
+  'ci',
+  'color',
+  'engineStrict',
+  'loglevel',
+  'npmPath',
+  'recursiveInstall',
+  'updateNotifier',
+  'useBetaCli',
+  'useStderr',
+  'cacheDir',
+  'globalBinDir',
+  'globalDir',
+  'globalPnpmfile',
+  'globalShims',
+  'ignorePnpmfile',
+  'npmrcAuthFile',
+  'pnpmfile',
+  'stateDir',
+  'audit',
+  'versioning',
+  'allowNonAppliedPatches',
+  'dedupeDirectDeps',
+  'deployAllFiles',
+  'ignoreCompatibilityDb',
+  'initAuthorEmail',
+  'initAuthorName',
+  'initAuthorUrl',
+  'initLicense',
+  'initVersion',
+  'optimisticRepeatInstall',
+  'saveExact',
+  'savePrefix',
+  'tag',
+  'packages',
+  'packageConfigs',
+  'overrides',
+  'packageExtensions',
+  'patchedDependencies',
+  'configDependencies',
+  'allowBuilds',
+  'ignoredBuiltDependencies',
+  'neverBuiltDependencies',
+  'onlyBuiltDependencies',
+  'onlyBuiltDependenciesFile',
+  'catalog',
+  'catalogs',
+]
+
+/**
  * Upstream's `configs/pnpm.ts`: `eslint-plugin-pnpm` keeps `package.json` and `pnpm-workspace.yaml`
  * in the shape pnpm expects.
  *
@@ -10,8 +173,8 @@ import { pluginRef } from '../plugins'
  * project has a `pnpm-workspace.yaml` (see {@link Options.pnpm}), and `catalogs` additionally
  * gates `pnpm/json-enforce-catalog` on the workspace actually declaring catalogs.
  *
- * `package.json` is read through the `jsonc` Module's `jsonc/x` language, so the plugin has to
- * register nothing of its own for it; the YAML objects carry `yaml-eslint-parser`.
+ * `package.json` is read through the `jsonc` Module's `jsonc/x` language, which the plugin needs
+ * and does not register itself; the YAML objects carry the `yaml` Plugin's parser.
  */
 export function pnpm(options: {
   catalogs?: boolean
@@ -48,7 +211,7 @@ export function pnpm(options: {
         ...catalogs
           ? {
               'pnpm/json-enforce-catalog': [
-                'error' as const,
+                'error',
                 { autofix: !isInEditor, ignores: ['@types/vscode'] },
               ],
             }
@@ -118,216 +281,8 @@ export function pnpm(options: {
           'yaml/sort-keys': [
             'error',
             {
-              order: [
-                // Workspace
-                // @keep-sorted
-
-                // Build approvals
-                'allowBuilds',
-
-                // Dependency resolution
-                'allowedDeprecatedVersions',
-
-                // Misc
-                // @keep-sorted
-                'allowNonAppliedPatches',
-
-                // Audit and versioning
-                // @keep-sorted
-                'audit',
-
-                // Peer dependencies
-                // @keep-sorted
-                'autoInstallPeers',
-                'blockExoticSubdeps',
-
-                // Directories and pnpmfile
-                // @keep-sorted
-                'cacheDir',
-
-                // Catalogs, usually the largest blocks
-                'catalog',
-
-                // Catalogs
-                // @keep-sorted
-                'catalogMode',
-                'catalogPrune',
-                'catalogs',
-
-                // Scripts and builds
-                // @keep-sorted
-                'childConcurrency',
-
-                // CLI and output
-                // @keep-sorted
-                'ci',
-                'cleanupUnusedCatalogs',
-                'color',
-                'configDependencies',
-                'dangerouslyAllowAllBuilds',
-                'dedupeDirectDeps',
-                'dedupeInjectedDeps',
-                'dedupePeerDependents',
-                'dedupePeers',
-                'deployAllFiles',
-                'disallowWorkspaceCycles',
-
-                // node_modules
-                // @keep-sorted
-                'dlxCacheMaxAge',
-                'enableGlobalVirtualStore',
-                'enableModulesDir',
-                'enablePrePostScripts',
-                'engineStrict',
-                'extendNodePath',
-                'failIfNoMatch',
-
-                // Registry and network
-                // @keep-sorted
-                'fetchMinSpeedKiBps',
-                'fetchRetries',
-                'fetchRetryFactor',
-                'fetchRetryMaxtimeout',
-                'fetchRetryMintimeout',
-                'fetchTimeout',
-                'fetchWarnTimeoutMs',
-
-                // Store
-                // @keep-sorted
-                'frozenStore',
-
-                // Lockfile
-                // @keep-sorted
-                'gitBranchLockfile',
-                'gitShallowHosts',
-                'globalBinDir',
-                'globalDir',
-                'globalPnpmfile',
-                'globalShims',
-
-                // Hoisting
-                // @keep-sorted
-                'hoist',
-                'hoistingLimits',
-                'hoistPattern',
-                'hoistWorkspacePackages',
-                'httpProxy',
-                'httpsProxy',
-                'ignoreCompatibilityDb',
-                // Superseded by `allowBuilds` in pnpm v11
-                // @keep-sorted
-                'ignoredBuiltDependencies',
-                'ignoreDepScripts',
-                'ignoredOptionalDependencies',
-                'ignorePnpmfile',
-                'ignoreScripts',
-                'ignoreWorkspaceCycles',
-                'ignoreWorkspaceRootCheck',
-                'includeWorkspaceRoot',
-                'initAuthorEmail',
-                'initAuthorName',
-                'initAuthorUrl',
-                'initLicense',
-                'initVersion',
-                'injectWorkspacePackages',
-                'legacyDirFiltering',
-                'linkWorkspacePackages',
-                'localAddress',
-                'lockfile',
-                'lockfileIncludeTarballUrl',
-                'loglevel',
-
-                // Node.js and package manager versions
-                // @keep-sorted
-                'managePackageManagerVersions',
-                'maxsockets',
-                'mergeGitBranchLockfilesBranchPattern',
-                'minimumReleaseAge',
-                'minimumReleaseAgeExclude',
-                'minimumReleaseAgeExcludePrune',
-                'minimumReleaseAgeIgnoreMissingTime',
-                'minimumReleaseAgeStrict',
-                'modulesCacheMaxAge',
-                'modulesDir',
-                'namedRegistries',
-                'networkConcurrency',
-                'neverBuiltDependencies',
-                'nodeDownloadMirrors',
-                'nodeExperimentalPackageMap',
-                'nodeLinker',
-                'nodeOptions',
-                'nodePackageMapType',
-                'nodeVersion',
-                'noProxy',
-                'npmPath',
-                'npmrcAuthFile',
-                'onlyBuiltDependencies',
-                'onlyBuiltDependenciesFile',
-                'optimisticRepeatInstall',
-                'overrides',
-                'packageConfigs',
-                'packageExtensions',
-                'packageImportMethod',
-                'packageManagerStrict',
-                'packageManagerStrictVersion',
-
-                // Workspace layout and dependency declarations, ordered by how
-                // a `pnpm-workspace.yaml` usually reads top to bottom
-                'packages',
-                'patchedDependencies',
-                'peerDependencyRules',
-                'peersSuffixMaxLength',
-                'pmOnFail',
-                'pnpmfile',
-                'preferFrozenLockfile',
-                'preferSymlinkedExecutables',
-                'preferWorkspacePackages',
-                'publicHoistPattern',
-                'recursiveInstall',
-                'registries',
-                'registry',
-                'registrySupportsTimeField',
-                'requiredScripts',
-                'resolutionMode',
-                'resolvePeersFromWorkspaceRoot',
-                'runtimeOnFail',
-                'saveExact',
-                'savePrefix',
-                'saveWorkspaceProtocol',
-                'scriptShell',
-                'shamefullyHoist',
-                'sharedWorkspaceLockfile',
-                'shellEmulator',
-                'sideEffectsCache',
-                'sideEffectsCacheReadonly',
-                'stateDir',
-                'storeDir',
-                'strictDepBuilds',
-                'strictPeerDependencies',
-                'strictSsl',
-                'strictStorePkgContentCheck',
-                'supportedArchitectures',
-                'symlink',
-                'syncInjectedDepsAfterScripts',
-                'tag',
-                'trustLockfile',
-                'trustPolicy',
-                'trustPolicyExclude',
-                'trustPolicyIgnoreAfter',
-                'unsafePerm',
-                'update',
-                'updateNotifier',
-                'useBetaCli',
-                'useRunningStoreServer',
-                'useStderr',
-                'verifyDepsBeforeRun',
-                'verifyStoreIntegrity',
-                'versioning',
-                'virtualStoreDir',
-                'virtualStoreDirMaxLength',
-                'virtualStoreOnly',
-                'virtualStoreType',
-              ],
+              order: WORKSPACE_YAML_ORDER,
+              pathPattern: '^$',
             },
             {
               order: { type: 'asc' },

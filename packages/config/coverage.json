@@ -2,7 +2,9 @@
   "oxlintVersion": "1.88.0",
   "jsPlugins": [
     "antfu",
+    "solid",
     "style",
+    "unocss",
     "unused-imports"
   ],
   "blacklist": [
@@ -12,6 +14,146 @@
     }
   ],
   "modules": {
+    "angular": [
+      {
+        "key": "angular-template/banana-in-box",
+        "reason": "eslint-only-domain"
+      },
+      {
+        "key": "angular-template/eqeqeq",
+        "reason": "eslint-only-domain"
+      },
+      {
+        "key": "angular-template/no-negated-async",
+        "reason": "eslint-only-domain"
+      },
+      {
+        "key": "angular-template/prefer-control-flow",
+        "reason": "eslint-only-domain"
+      },
+      {
+        "key": "angular/contextual-lifecycle",
+        "reason": "eslint-only-domain"
+      },
+      {
+        "key": "angular/no-empty-lifecycle-method",
+        "reason": "eslint-only-domain"
+      },
+      {
+        "key": "angular/no-input-rename",
+        "reason": "eslint-only-domain"
+      },
+      {
+        "key": "angular/no-inputs-metadata-property",
+        "reason": "eslint-only-domain"
+      },
+      {
+        "key": "angular/no-output-native",
+        "reason": "eslint-only-domain"
+      },
+      {
+        "key": "angular/no-output-on-prefix",
+        "reason": "eslint-only-domain"
+      },
+      {
+        "key": "angular/no-output-rename",
+        "reason": "eslint-only-domain"
+      },
+      {
+        "key": "angular/no-outputs-metadata-property",
+        "reason": "eslint-only-domain"
+      },
+      {
+        "key": "angular/prefer-inject",
+        "reason": "eslint-only-domain"
+      },
+      {
+        "key": "angular/prefer-standalone",
+        "reason": "eslint-only-domain"
+      },
+      {
+        "key": "angular/use-lifecycle-interface",
+        "reason": "eslint-only-domain"
+      },
+      {
+        "key": "angular/use-pipe-transform-interface",
+        "reason": "eslint-only-domain"
+      },
+      {
+        "key": "style/indent",
+        "reason": "eslint-only-domain"
+      },
+      {
+        "key": "style/no-multiple-empty-lines",
+        "reason": "eslint-only-domain"
+      },
+      {
+        "key": "style/no-trailing-spaces",
+        "reason": "eslint-only-domain"
+      }
+    ],
+    "astro": [
+      {
+        "key": "antfu/no-top-level-await",
+        "reason": "eslint-only-domain"
+      },
+      {
+        "key": "astro/missing-client-only-directive-value",
+        "reason": "eslint-only-domain"
+      },
+      {
+        "key": "astro/no-conflict-set-directives",
+        "reason": "eslint-only-domain"
+      },
+      {
+        "key": "astro/no-deprecated-astro-canonicalurl",
+        "reason": "eslint-only-domain"
+      },
+      {
+        "key": "astro/no-deprecated-astro-fetchcontent",
+        "reason": "eslint-only-domain"
+      },
+      {
+        "key": "astro/no-deprecated-astro-resolve",
+        "reason": "eslint-only-domain"
+      },
+      {
+        "key": "astro/no-deprecated-getentrybyslug",
+        "reason": "eslint-only-domain"
+      },
+      {
+        "key": "astro/no-set-html-directive",
+        "reason": "eslint-only-domain"
+      },
+      {
+        "key": "astro/no-unused-define-vars-in-style",
+        "reason": "eslint-only-domain"
+      },
+      {
+        "key": "astro/semi",
+        "reason": "eslint-only-domain"
+      },
+      {
+        "key": "astro/valid-compile",
+        "reason": "eslint-only-domain"
+      },
+      {
+        "key": "style/indent",
+        "reason": "eslint-only-domain"
+      },
+      {
+        "key": "style/jsx-closing-tag-location",
+        "reason": "eslint-only-domain"
+      },
+      {
+        "key": "style/jsx-one-expression-per-line",
+        "reason": "eslint-only-domain"
+      },
+      {
+        "key": "style/no-multiple-empty-lines",
+        "reason": "eslint-only-domain"
+      }
+    ],
     "disables": [
       {
         "key": "no-restricted-syntax",
@@ -80,6 +222,12 @@
         "reason": "unknown-rule"
       }
     ],
+    "nextjs": [
+      {
+        "key": "next/no-location-assign-relative-destination",
+        "reason": "unknown-rule"
+      }
+    ],
     "node": [
       {
         "key": "node/no-deprecated-api",
@@ -96,6 +244,442 @@
       {
         "key": "node/process-exit-as-throw",
         "reason": "unknown-rule"
+      }
+    ],
+    "react": [
+      {
+        "key": "react-refresh/only-export-components",
+        "reason": "no-oxlint-realization"
+      },
+      {
+        "key": "react/dom-no-dangerously-set-innerhtml",
+        "reason": "unknown-rule"
+      },
+      {
+        "key": "react/dom-no-dangerously-set-innerhtml-with-children",
+        "reason": "unknown-rule"
+      },
+      {
+        "key": "react/dom-no-find-dom-node",
+        "reason": "unknown-rule"
+      },
+      {
+        "key": "react/dom-no-flush-sync",
+        "reason": "unknown-rule"
+      },
+      {
+        "key": "react/dom-no-hydrate",
+        "reason": "unknown-rule"
+      },
+      {
+        "key": "react/dom-no-render",
+        "reason": "unknown-rule"
+      },
+      {
+        "key": "react/dom-no-render-return-value",
+        "reason": "unknown-rule"
+      },
+      {
+        "key": "react/dom-no-script-url",
+        "reason": "unknown-rule"
+      },
+      {
+        "key": "react/dom-no-string-style-prop",
+        "reason": "unknown-rule"
+      },
+      {
+        "key": "react/dom-no-unknown-property",
+        "reason": "unknown-rule"
+      },
+      {
+        "key": "react/dom-no-unsafe-iframe-sandbox",
+        "reason": "unknown-rule"
+      },
+      {
+        "key": "react/dom-no-use-form-state",
+        "reason": "unknown-rule"
+      },
+      {
+        "key": "react/dom-no-void-elements-with-children",
+        "reason": "unknown-rule"
+      },
+      {
+        "key": "react/jsx-no-children-prop",
+        "reason": "unknown-rule"
+      },
+      {
+        "key": "react/jsx-no-children-prop-with-children",
+        "reason": "unknown-rule"
+      },
+      {
+        "key": "react/jsx-no-key-after-spread",
+        "reason": "unknown-rule"
+      },
+      {
+        "key": "react/jsx-no-leaked-dollar",
+        "reason": "unknown-rule"
+      },
+      {
+        "key": "react/jsx-no-leaked-semicolon",
+        "reason": "unknown-rule"
+      },
+      {
+        "key": "react/jsx-no-namespace",
+        "reason": "unknown-rule"
+      },
+      {
+        "key": "react/naming-convention-context-name",
+        "reason": "unknown-rule"
+      },
+      {
+        "key": "react/naming-convention-id-name",
+        "reason": "unknown-rule"
+      },
+      {
+        "key": "react/naming-convention-ref-name",
+        "reason": "unknown-rule"
+      },
+      {
+        "key": "react/no-access-state-in-setstate",
+        "reason": "unknown-rule"
+      },
+      {
+        "key": "react/no-children-count",
+        "reason": "unknown-rule"
+      },
+      {
+        "key": "react/no-children-for-each",
+        "reason": "unknown-rule"
+      },
+      {
+        "key": "react/no-children-map",
+        "reason": "unknown-rule"
+      },
+      {
+        "key": "react/no-children-only",
+        "reason": "unknown-rule"
+      },
+      {
+        "key": "react/no-children-to-array",
+        "reason": "unknown-rule"
+      },
+      {
+        "key": "react/no-component-will-mount",
+        "reason": "unknown-rule"
+      },
+      {
+        "key": "react/no-component-will-receive-props",
+        "reason": "unknown-rule"
+      },
+      {
+        "key": "react/no-component-will-update",
+        "reason": "unknown-rule"
+      },
+      {
+        "key": "react/no-context-provider",
+        "reason": "unknown-rule"
+      },
+      {
+        "key": "react/no-create-ref",
+        "reason": "unknown-rule"
+      },
+      {
+        "key": "react/no-forward-ref",
+        "reason": "unknown-rule"
+      },
+      {
+        "key": "react/no-leaked-conditional-rendering",
+        "reason": "unknown-rule"
+      },
+      {
+        "key": "react/no-missing-key",
+        "reason": "unknown-rule"
+      },
+      {
+        "key": "react/no-nested-component-definitions",
+        "reason": "unknown-rule"
+      },
+      {
+        "key": "react/no-nested-lazy-component-declarations",
+        "reason": "unknown-rule"
+      },
+      {
+        "key": "react/no-set-state-in-component-did-mount",
+        "reason": "unknown-rule"
+      },
+      {
+        "key": "react/no-set-state-in-component-did-update",
+        "reason": "unknown-rule"
+      },
+      {
+        "key": "react/no-set-state-in-component-will-update",
+        "reason": "unknown-rule"
+      },
+      {
+        "key": "react/no-unnecessary-use-prefix",
+        "reason": "unknown-rule"
+      },
+      {
+        "key": "react/no-unsafe-component-will-mount",
+        "reason": "unknown-rule"
+      },
+      {
+        "key": "react/no-unsafe-component-will-receive-props",
+        "reason": "unknown-rule"
+      },
+      {
+        "key": "react/no-unsafe-component-will-update",
+        "reason": "unknown-rule"
+      },
+      {
+        "key": "react/no-unused-class-component-members",
+        "reason": "unknown-rule"
+      },
+      {
+        "key": "react/no-use-context",
+        "reason": "unknown-rule"
+      },
+      {
+        "key": "react/rsc-function-definition",
+        "reason": "unknown-rule"
+      },
+      {
+        "key": "react/use-state",
+        "reason": "unknown-rule"
+      },
+      {
+        "key": "react/web-api-no-leaked-event-listener",
+        "reason": "unknown-rule"
+      },
+      {
+        "key": "react/web-api-no-leaked-fetch",
+        "reason": "unknown-rule"
+      },
+      {
+        "key": "react/web-api-no-leaked-intersection-observer",
+        "reason": "unknown-rule"
+      },
+      {
+        "key": "react/web-api-no-leaked-interval",
+        "reason": "unknown-rule"
+      },
+      {
+        "key": "react/web-api-no-leaked-resize-observer",
+        "reason": "unknown-rule"
+      },
+      {
+        "key": "react/web-api-no-leaked-timeout",
+        "reason": "unknown-rule"
+      }
+    ],
+    "svelte": [
+      {
+        "key": "no-inner-declarations",
+        "reason": "eslint-only-domain"
+      },
+      {
+        "key": "no-self-assign",
+        "reason": "eslint-only-domain"
+      },
+      {
+        "key": "no-undef",
+        "reason": "eslint-only-domain"
+      },
+      {
+        "key": "no-unused-vars",
+        "reason": "eslint-only-domain"
+      },
+      {
+        "key": "style/indent",
+        "reason": "eslint-only-domain"
+      },
+      {
+        "key": "style/no-trailing-spaces",
+        "reason": "eslint-only-domain"
+      },
+      {
+        "key": "svelte/comment-directive",
+        "reason": "eslint-only-domain"
+      },
+      {
+        "key": "svelte/derived-has-same-inputs-outputs",
+        "reason": "eslint-only-domain"
+      },
+      {
+        "key": "svelte/html-closing-bracket-spacing",
+        "reason": "eslint-only-domain"
+      },
+      {
+        "key": "svelte/html-quotes",
+        "reason": "eslint-only-domain"
+      },
+      {
+        "key": "svelte/indent",
+        "reason": "eslint-only-domain"
+      },
+      {
+        "key": "svelte/infinite-reactive-loop",
+        "reason": "eslint-only-domain"
+      },
+      {
+        "key": "svelte/mustache-spacing",
+        "reason": "eslint-only-domain"
+      },
+      {
+        "key": "svelte/no-at-debug-tags",
+        "reason": "eslint-only-domain"
+      },
+      {
+        "key": "svelte/no-at-html-tags",
+        "reason": "eslint-only-domain"
+      },
+      {
+        "key": "svelte/no-dom-manipulating",
+        "reason": "eslint-only-domain"
+      },
+      {
+        "key": "svelte/no-dupe-else-if-blocks",
+        "reason": "eslint-only-domain"
+      },
+      {
+        "key": "svelte/no-dupe-on-directives",
+        "reason": "eslint-only-domain"
+      },
+      {
+        "key": "svelte/no-dupe-style-properties",
+        "reason": "eslint-only-domain"
+      },
+      {
+        "key": "svelte/no-dupe-use-directives",
+        "reason": "eslint-only-domain"
+      },
+      {
+        "key": "svelte/no-export-load-in-svelte-module-in-kit-pages",
+        "reason": "eslint-only-domain"
+      },
+      {
+        "key": "svelte/no-immutable-reactive-statements",
+        "reason": "eslint-only-domain"
+      },
+      {
+        "key": "svelte/no-inner-declarations",
+        "reason": "eslint-only-domain"
+      },
+      {
+        "key": "svelte/no-inspect",
+        "reason": "eslint-only-domain"
+      },
+      {
+        "key": "svelte/no-navigation-without-resolve",
+        "reason": "eslint-only-domain"
+      },
+      {
+        "key": "svelte/no-not-function-handler",
+        "reason": "eslint-only-domain"
+      },
+      {
+        "key": "svelte/no-object-in-text-mustaches",
+        "reason": "eslint-only-domain"
+      },
+      {
+        "key": "svelte/no-raw-special-elements",
+        "reason": "eslint-only-domain"
+      },
+      {
+        "key": "svelte/no-reactive-functions",
+        "reason": "eslint-only-domain"
+      },
+      {
+        "key": "svelte/no-reactive-literals",
+        "reason": "eslint-only-domain"
+      },
+      {
+        "key": "svelte/no-reactive-reassign",
+        "reason": "eslint-only-domain"
+      },
+      {
+        "key": "svelte/no-shorthand-style-property-overrides",
+        "reason": "eslint-only-domain"
+      },
+      {
+        "key": "svelte/no-spaces-around-equal-signs-in-attribute",
+        "reason": "eslint-only-domain"
+      },
+      {
+        "key": "svelte/no-store-async",
+        "reason": "eslint-only-domain"
+      },
+      {
+        "key": "svelte/no-svelte-internal",
+        "reason": "eslint-only-domain"
+      },
+      {
+        "key": "svelte/no-trailing-spaces",
+        "reason": "eslint-only-domain"
+      },
+      {
+        "key": "svelte/no-unknown-style-directive-property",
+        "reason": "eslint-only-domain"
+      },
+      {
+        "key": "svelte/no-unnecessary-state-wrap",
+        "reason": "eslint-only-domain"
+      },
+      {
+        "key": "svelte/no-unused-props",
+        "reason": "eslint-only-domain"
+      },
+      {
+        "key": "svelte/no-unused-svelte-ignore",
+        "reason": "eslint-only-domain"
+      },
+      {
+        "key": "svelte/no-useless-children-snippet",
+        "reason": "eslint-only-domain"
+      },
+      {
+        "key": "svelte/no-useless-mustaches",
+        "reason": "eslint-only-domain"
+      },
+      {
+        "key": "svelte/prefer-svelte-reactivity",
+        "reason": "eslint-only-domain"
+      },
+      {
+        "key": "svelte/prefer-writable-derived",
+        "reason": "eslint-only-domain"
+      },
+      {
+        "key": "svelte/require-each-key",
+        "reason": "eslint-only-domain"
+      },
+      {
+        "key": "svelte/require-event-dispatcher-types",
+        "reason": "eslint-only-domain"
+      },
+      {
+        "key": "svelte/require-store-reactive-access",
+        "reason": "eslint-only-domain"
+      },
+      {
+        "key": "svelte/spaced-html-comment",
+        "reason": "eslint-only-domain"
+      },
+      {
+        "key": "svelte/system",
+        "reason": "eslint-only-domain"
+      },
+      {
+        "key": "svelte/valid-each-key",
+        "reason": "eslint-only-domain"
+      },
+      {
+        "key": "svelte/valid-prop-names-in-kit-pages",
+        "reason": "eslint-only-domain"
+      },
+      {
+        "key": "unused-imports/no-unused-vars",
+        "reason": "eslint-only-domain"
       }
     ],
     "test": [

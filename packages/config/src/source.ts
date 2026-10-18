@@ -1,16 +1,24 @@
 import type { ConfigObject, Glob, Options, StylisticOptions } from './types'
 import { isInEditorEnv } from './editor'
 import { assertGlobVocabulary } from './globs'
+import { angular } from './modules/angular'
+import { astro } from './modules/astro'
 import { disables } from './modules/disables'
 import { ignores } from './modules/ignores'
 import { imports } from './modules/imports'
 import { javascript } from './modules/javascript'
 import { jsdoc } from './modules/jsdoc'
+import { jsx } from './modules/jsx'
+import { nextjs } from './modules/nextjs'
 import { node } from './modules/node'
+import { react } from './modules/react'
+import { solid } from './modules/solid'
 import { stylistic } from './modules/stylistic'
+import { svelte } from './modules/svelte'
 import { isTestEnabled, test, testOverrides } from './modules/test'
 import { typescript } from './modules/typescript'
 import { unicorn } from './modules/unicorn'
+import { unocss } from './modules/unocss'
 import { isPackageInstalled } from './packages'
 import { enabledRuleKeys } from './rules'
 
@@ -35,12 +43,20 @@ export function source(options: Options = {}): ConfigObject[] {
   const composed: ConfigObject[] = [
     ...ignores(options),
     ...javascript({ isInEditor }),
+    ...options.jsx ? jsx() : [],
     ...isTypeScriptEnabled(options.typescript) ? typescript(options) : [],
     ...options.node === false ? [] : node(),
     ...options.jsdoc === false ? [] : jsdoc({ stylistic: stylisticSlices }),
     ...options.imports === false ? [] : imports({ stylistic: stylisticSlices }),
     ...options.unicorn === false ? [] : unicorn(),
     ...isStylisticEnabled(options.stylistic) ? stylistic(stylisticOptions(options.stylistic)) : [],
+    ...options.react ? react(options) : [],
+    ...options.nextjs ? nextjs() : [],
+    ...options.solid ? solid(options) : [],
+    ...options.svelte ? svelte({ ...options, stylistic: isStylisticEnabled(options.stylistic) }) : [],
+    ...options.unocss ? unocss() : [],
+    ...options.astro ? astro({ stylistic: isStylisticEnabled(options.stylistic) }) : [],
+    ...options.angular ? angular() : [],
   ]
 
   if (isTestEnabled(options.test)) {

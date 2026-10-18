@@ -8,6 +8,7 @@ the same way a consumer's config files do.
 | Example | Simulates | Options it demonstrates | Guide |
 | --- | --- | --- | --- |
 | [`ts`](./ts/README.md) | [`antfu/starter-ts`](https://github.com/antfu/starter-ts) — a TypeScript library | `type: 'lib'`, `typescript.tsconfigPath`, type-aware Oxlint, and the `test` Module | [`playground/ts`](./ts/README.md) |
+| [`ts-monorepo`](./ts-monorepo/README.md) | [`lumirelle/starter-ts-monorepo`](https://github.com/lumirelle/starter-ts-monorepo) — a TypeScript monorepo | the `ts` options across several packages, plus a per-package `overrides` entry | [`playground/ts-monorepo`](./ts-monorepo/README.md) |
 
 ## Running an example
 
@@ -31,6 +32,10 @@ or a missing parser fails here. An unknown name exits non-zero after listing the
 - `tsconfig.json` — the example's project file, documentation rather than part of this repository's
   type check;
 - a minimal representative source tree and a README mapping the predecessor configuration.
+
+A monorepo example adds `packages/*` beneath its root. Those nested directories are sources and
+manifests, not workspace packages: the workspace glob is `playground/*`, so only the example itself
+is installed.
 
 [`examples.ts`](./examples.ts) is the registry: it discovers examples by reading
 `playground/*/package.json` and resolves one by importing its options and config modules. Adding an

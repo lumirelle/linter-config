@@ -1,0 +1,5 @@
+{
+  "name": "@lumirelle/example-ts-monorepo-core",
+  "type": "module",
+  "private": true
+}

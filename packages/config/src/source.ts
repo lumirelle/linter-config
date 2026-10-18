@@ -1,14 +1,17 @@
 import type { ConfigObject, Glob, Options } from './types'
 import { isInEditorEnv } from './editor'
 import { assertGlobVocabulary } from './globs'
+import { disables } from './modules/disables'
 import { ignores } from './modules/ignores'
 import { imports } from './modules/imports'
 import { javascript } from './modules/javascript'
 import { jsdoc } from './modules/jsdoc'
 import { node } from './modules/node'
+import { isTestEnabled, test, testOverrides } from './modules/test'
 import { typescript } from './modules/typescript'
 import { unicorn } from './modules/unicorn'
 import { isPackageInstalled } from './packages'
+import { enabledRuleKeys } from './rules'
 
 /** Config object names are `lumirelle/<tail>`; anything else is a Module id. */
 const CONFIG_NAME_PREFIX = 'lumirelle/'
@@ -26,7 +29,9 @@ export function source(options: Options = {}): ConfigObject[] {
   const isInEditor = options.isInEditor ?? isInEditorEnv()
   const stylistic = isStylisticEnabled(options.stylistic)
 
-  const configs = applyOverrides([
+  // `test` and `disables` turn off rules owned by the Modules above them, and derive that table
+  // from what those Modules actually emit, so they compose after them.
+  const composed: ConfigObject[] = [
     ...ignores(options),
     ...javascript({ isInEditor }),
     ...isTypeScriptEnabled(options.typescript) ? typescript(options) : [],
@@ -34,7 +39,13 @@ export function source(options: Options = {}): ConfigObject[] {
     ...options.jsdoc === false ? [] : jsdoc({ stylistic }),
     ...options.imports === false ? [] : imports({ stylistic }),
     ...options.unicorn === false ? [] : unicorn(),
-  ], options.overrides)
+  ]
+
+  if (isTestEnabled(options.test)) {
+    composed.push(...test({ enabled: enabledRuleKeys(composed), isInEditor, overrides: testOverrides(options.test) }))
+  }
+
+  const configs = applyOverrides([...composed, ...disables(composed)], options.overrides)
 
   // Invariant: a glob must work in both tools, so Source rejects anything outside the
   // shared vocabulary before an Adapter ever sees it.

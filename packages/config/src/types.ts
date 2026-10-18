@@ -164,7 +164,11 @@ export interface Options {
   angular?: boolean
   nextjs?: boolean
   node?: boolean
-  test?: boolean
+  /**
+   * The `test` Module. Upstream accepts the flag or an object carrying this Module's rule
+   * overrides; `overrides.test` reaches the same rules through the shared override map.
+   */
+  test?: boolean | { overrides?: ConfigObject['rules'] }
   jsonc?: boolean
   yaml?: boolean
   toml?: boolean

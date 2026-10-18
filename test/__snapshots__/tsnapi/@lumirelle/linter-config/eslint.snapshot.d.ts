@@ -147,6 +147,7 @@ export type StylisticIndent = number | 'tab' | [number | 'tab', Record<string, u
 
 // #region Functions
 export declare function eslint(_?: Options): FlatConfigComposer<Linter.Config, string>;
+export declare function oxlintBridge(_?: Options): Linter.Config[];
 // #endregion
 
 // #region Other

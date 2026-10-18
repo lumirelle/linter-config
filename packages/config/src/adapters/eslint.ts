@@ -2,6 +2,7 @@ import type { ESLint, Linter } from 'eslint'
 import type { ConfigObject, Domain, Options, PluginId, PluginRef, ProcessorRef } from '../types'
 import { FlatConfigComposer } from 'eslint-flat-config-utils'
 import { mergeProcessors, processorPassThrough } from 'eslint-merge-processors'
+import { bridgeObjects, isBridgeEnabled } from '../bridge'
 import { GLOB_MARKDOWN } from '../globs'
 import { pluginDefinition } from '../plugins'
 import { source } from '../source'
@@ -14,12 +15,18 @@ const BUNDLE_PACKAGE = '@lumirelle/linter-plugins-eslint'
  * Turns Source into the ESLint Emission: filter by Domain, resolve Plugin ids to plugin
  * objects, fold shared fields into `languageOptions` / `linterOptions` / `processor`, and
  * hand the result to a `FlatConfigComposer`.
+ *
+ * With {@link Options.oxlint} set, the Bridge closes the Emission: it turns off the rules the
+ * Oxlint Emission reports, computed from the same Config objects and appended last, so its `off`
+ * entries win over every Module's severity in the same scope.
  */
 export function composeEslint(options: Options): FlatConfigComposer<Linter.Config, string> {
+  const configs = source(options)
   const composer = new FlatConfigComposer<Linter.Config, string>(
-    ...source(options)
+    ...configs
       .filter(config => ESLINT_DOMAINS.includes(config.domain))
       .map(async config => toEslintConfig(config)),
+    ...isBridgeEnabled(options.oxlint) ? bridgeObjects(configs, options) : [],
   )
 
   // Markdown has its own `SourceCode`, which lacks the JS-only methods (`getAllComments`, ...) that

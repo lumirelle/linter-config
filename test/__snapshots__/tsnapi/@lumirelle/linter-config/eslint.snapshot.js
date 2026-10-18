@@ -3,4 +3,5 @@
  */
 // #region Functions
 export function eslint(_) {}
+export function oxlintBridge(_) {}
 // #endregion

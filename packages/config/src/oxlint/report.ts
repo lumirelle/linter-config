@@ -31,49 +31,62 @@ export interface CoverageReport {
 }
 
 /**
- * The Source the report is computed from: the type-aware TypeScript block, the peer
- * `erasableOnly` plugin, the `lib` rule set and the stylistic slices are the option-dependent
- * parts of Source, and all of them stay visible here.
+ * The Source the report is computed from: the framework and `antislop` Modules, the type-aware
+ * TypeScript block, the peer `erasableOnly` plugin, the `lib` rule set and the stylistic slices are
+ * the option-dependent parts of Source, and all of them stay visible here.
  *
- * `gitignore` and `isInEditor` are pinned because they read the environment, not a Module, and
- * `pnpm` is pinned because it auto-detects a `pnpm-workspace.yaml`.
+ * `gitignore`, `isInEditor` and `pnpm` are pinned because they read the environment, not a Module
+ * (`pnpm` auto-detects a `pnpm-workspace.yaml`).
  */
 const WIDEST_SOURCE: Options = {
+  angular: true,
+  antislop: true,
+  astro: true,
   formatters: true,
   gitignore: false,
   isInEditor: false,
+  jsx: true,
+  nextjs: true,
   pnpm: true,
+  react: true,
+  solid: true,
   stylistic: true,
+  svelte: true,
   type: 'lib',
   typescript: { erasableOnly: true, tsconfigPath: 'tsconfig.json' },
+  unocss: true,
 }
 
 /**
  * The rules the Oxlint Emission drops, grouped by Module.
  *
- * `eslint-only-domain` is the reason for the Modules Oxlint cannot read at all (the data and
- * markup Domains): the Adapter filters those Config objects out before mapping, so the report
- * reads every one of their rules under that reason rather than inventing a per-rule analysis.
+ * `eslint-only-domain` is the reason for every rule of a Module Oxlint cannot read at all: a
+ * framework whose files need a parser or processor (`svelte`, `astro`, `angular`) and the data and
+ * markup Domains. The Adapter filters those objects out before mapping, so the report says they
+ * are unrepresentable rather than unknown.
  */
 export function coverageReport(): CoverageReport {
   const modules: CoverageReport['modules'] = {}
   const jsPlugins = new Set<PluginId>()
 
   for (const config of source(WIDEST_SOURCE)) {
-    if (!isOxlintDomain(config.domain)) {
-      record(
-        modules,
-        config.module,
-        Object.keys(config.rules ?? {}).map(key => ({ key, reason: 'eslint-only-domain' })),
-      )
-      continue
-    }
+    // A Domain Oxlint cannot read never reaches the mapper, so every rule of the object is
+    // ESLint-only for the reason of the Domain rather than of the rule.
+    const unemitted = isOxlintDomain(config.domain)
+      ? mapRules(config.rules).unemitted
+      : Object.keys(config.rules ?? {}).map(key => ({ key: key as UnemittedRule['key'], reason: 'eslint-only-domain' as const }))
 
-    for (const rule of mapRules(config.rules).unemitted) {
-      record(modules, config.module, [rule])
+    for (const rule of unemitted) {
+      const collected = modules[config.module] ?? []
+      if (!collected.some(entry => entry.key === rule.key && entry.reason === rule.reason)) {
+        collected.push(rule)
+      }
+      modules[config.module] = collected
     }
-    for (const id of mapRules(config.rules).jsPlugins) {
-      jsPlugins.add(id)
+    if (isOxlintDomain(config.domain)) {
+      for (const id of mapRules(config.rules).jsPlugins) {
+        jsPlugins.add(id)
+      }
     }
   }
 
@@ -90,19 +103,4 @@ export function coverageReport(): CoverageReport {
         ]),
     ) as CoverageReport['modules'],
   }
-}
-
-/** Collects one Module's dropped rules, keeping one entry per key and reason. */
-function record(
-  modules: CoverageReport['modules'],
-  module: ModuleId,
-  rules: UnemittedRule[],
-): void {
-  const collected = modules[module] ?? []
-  for (const rule of rules) {
-    if (!collected.some(entry => entry.key === rule.key && entry.reason === rule.reason)) {
-      collected.push(rule)
-    }
-  }
-  modules[module] = collected
 }

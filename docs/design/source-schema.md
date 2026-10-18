@@ -160,9 +160,9 @@ export function pluginRef(id: PluginId): PluginRef
 | `e18e` | js | bundle (`@e18e/eslint-plugin`) | `jsPlugins` (conformance-tested) |
 | `antfu` | js | bundle | `jsPlugins` |
 | `command` | js | bundle | `jsPlugins` |
-| `eslint-comments` | js | bundle | `jsPlugins` |
+| `eslint-comments` | js | bundle | ESLint only: blacklisted for Oxlint (`no-unlimited-disable` crashes the report shim) |
 | `unused-imports` | js | bundle | `jsPlugins` |
-| `antislop` | js | peer (`eslint-plugin-slop`, `eslint-plugin-sonarjs`) | `jsPlugins` for sonarjs; slop may be ESLint-only |
+| `antislop` | js | peer (`eslint-plugin-slop`, `eslint-plugin-sonarjs`) | `jsPlugins` for both, load-tested against Oxlint |
 | `stylistic` | js | bundle | `jsPlugins`, disabled by default |
 | `svelte` / `astro` / `angular` | svelte / astro / angular | peer | unsupported |
 | `jsonc` / `yaml` / `toml` | data | bundle | unsupported (no parser) |

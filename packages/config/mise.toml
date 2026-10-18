@@ -23,6 +23,12 @@ run = "nub ./scripts/generate-inventory.ts"
 sources = ["@group:deps", "scripts"]
 outputs = ["src/oxlint/inventory.generated.ts"]
 
+[tasks.plugin-rules]
+description = "Regenerate the regexp and e18e rule tables from the installed plugins."
+run = "nub ./scripts/generate-plugin-rules.ts"
+sources = ["@group:deps", "scripts"]
+outputs = ["src/modules/plugin-rules.generated.ts"]
+
 [tasks.stylistic]
 description = "Regenerate the stylistic rule table and its option patches from the installed plugin."
 run = "nub ./scripts/generate-stylistic-rules.ts"

@@ -4,22 +4,36 @@ import { dirname, join, parse } from 'node:path'
 import process from 'node:process'
 import { isInEditorEnv } from './editor'
 import { assertGlobVocabulary } from './globs'
+import { angular } from './modules/angular'
+import { antislop } from './modules/antislop'
+import { astro } from './modules/astro'
+import { command } from './modules/command'
 import { disables } from './modules/disables'
+import { e18e } from './modules/e18e'
+import { eslintComments } from './modules/eslint-comments'
 import { formatters } from './modules/formatters'
 import { ignores } from './modules/ignores'
 import { imports } from './modules/imports'
 import { javascript } from './modules/javascript'
 import { jsdoc } from './modules/jsdoc'
 import { jsonc } from './modules/jsonc'
+import { jsx } from './modules/jsx'
 import { markdown } from './modules/markdown'
+import { nextjs } from './modules/nextjs'
 import { node } from './modules/node'
+import { perfectionist } from './modules/perfectionist'
 import { pnpm } from './modules/pnpm'
+import { react } from './modules/react'
+import { regexp } from './modules/regexp'
+import { solid } from './modules/solid'
 import { sortPackageJson, sortTsconfig } from './modules/sort'
 import { stylistic } from './modules/stylistic'
+import { svelte } from './modules/svelte'
 import { isTestEnabled, test, testOverrides } from './modules/test'
 import { toml } from './modules/toml'
 import { typescript } from './modules/typescript'
 import { unicorn } from './modules/unicorn'
+import { unocss } from './modules/unocss'
 import { yaml } from './modules/yaml'
 import { isPackageInstalled } from './packages'
 import { enabledRuleKeys } from './rules'
@@ -45,22 +59,43 @@ export function source(options: Options = {}): ConfigObject[] {
   const composed: ConfigObject[] = [
     ...ignores(options),
     ...javascript({ isInEditor }),
+    ...eslintComments(),
+    ...command(),
+    ...options.perfectionist === false ? [] : perfectionist(),
+    ...options.jsx ? jsx() : [],
     ...isTypeScriptEnabled(options.typescript) ? typescript(options) : [],
     ...options.node === false ? [] : node(),
     ...options.jsdoc === false ? [] : jsdoc({ stylistic: stylisticSlices }),
     ...options.imports === false ? [] : imports({ stylistic: stylisticSlices }),
+    ...options.e18e === false ? [] : e18e({ isInEditor, type: options.type }),
     ...options.unicorn === false ? [] : unicorn(),
+    ...options.antislop === true ? antislop() : [],
     ...isStylisticEnabled(options.stylistic) ? stylistic(stylisticOptions(options.stylistic)) : [],
+    ...options.regexp === false ? [] : regexp(),
+    ...options.react ? react(options) : [],
+    ...options.nextjs ? nextjs() : [],
+    ...options.solid ? solid(options) : [],
+    ...options.svelte ? svelte({ ...options, stylistic: isStylisticEnabled(options.stylistic) }) : [],
+    ...options.unocss ? unocss() : [],
+    ...options.astro ? astro({ stylistic: isStylisticEnabled(options.stylistic) }) : [],
+    ...options.angular ? angular() : [],
+  ]
 
-    // The data Modules follow Upstream's factory: `jsonc` carries the two `sort` objects, and
-    // `yaml`/`toml` come after them. All three are ESLint-only, because Oxlint has no parser hook.
+  // The data and markup Modules follow Upstream's factory order: `jsonc` carries the two `sort`
+  // objects, then `pnpm`, `yaml`, `toml` and `markdown`; all of them are ESLint-only, because
+  // Oxlint has no parser or processor hook. `markdown` disables rules of the Modules above it
+  // inside code blocks, so it reads what they actually enabled.
+  composed.push(
     ...options.jsonc === false ? [] : [...jsonc({ stylistic: stylisticSlices }), ...sortPackageJson(), ...sortTsconfig()],
+    ...pnpmModule(options.pnpm, { isInEditor, stylistic: stylisticSlices }),
     ...options.yaml === false ? [] : yaml({ stylistic: stylisticSlices }),
     ...options.toml === false ? [] : toml({ stylistic: stylisticSlices }),
-    ...options.markdown === false ? [] : markdown({ componentExts: options.componentExts, stylistic: stylisticSlices }),
-    ...pnpmModule(options.pnpm, { isInEditor, stylistic: stylisticSlices }),
     ...formatterModules(options.formatters),
-  ]
+  )
+
+  if (options.markdown !== false) {
+    composed.push(...markdown({ componentExts: options.componentExts, enabled: enabledRuleKeys(composed) }))
+  }
 
   if (isTestEnabled(options.test)) {
     composed.push(...test({ enabled: enabledRuleKeys(composed), isInEditor, overrides: testOverrides(options.test) }))
@@ -76,9 +111,9 @@ export function source(options: Options = {}): ConfigObject[] {
 }
 
 /**
- * Upstream enables the stylistic slices of otherwise-useful Modules when the house asks for them.
+ * Whether the stylistic slices of otherwise-useful Modules are on.
  *
- * Upstream has them on by default; the house turns them off ({@link Options.stylistic}), so a
+ * Upstream enables them by default; the house turns them off ({@link Options.stylistic}), so a
  * Module asks this instead of its own default.
  */
 function isStylisticEnabled(option: Options['stylistic']): boolean {
@@ -101,7 +136,7 @@ function formatterModules(option: Options['formatters']): ConfigObject[] {
  *
  * The flag wins when the caller gives one; otherwise the presence of that file decides, and its
  * contents decide whether catalogs are in use. Both readings are of the working directory, like
- * the gitignore handling, so a test pins them rather than inheriting the environment.
+ * the gitignore handling.
  */
 function pnpmModule(
   option: Options['pnpm'],

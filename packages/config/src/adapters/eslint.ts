@@ -1,5 +1,5 @@
 import type { ESLint, Linter } from 'eslint'
-import type { ConfigObject, Domain, Options, PluginId, PluginRef } from '../types'
+import type { ConfigObject, Domain, Options, PluginId, PluginRef, ProcessorRef } from '../types'
 import { FlatConfigComposer } from 'eslint-flat-config-utils'
 import { mergeProcessors, processorPassThrough } from 'eslint-merge-processors'
 import { GLOB_MARKDOWN } from '../globs'
@@ -39,13 +39,13 @@ async function toEslintConfig(config: ConfigObject): Promise<Linter.Config> {
     ...(globals ? { globals } : {}),
     ...(tools?.eslint?.parser ? { parser: await loadParser(tools.eslint.parser) } : {}),
   } as Linter.LanguageOptions
+  const nestedParser = await resolveNestedParser(languageOptions)
   const eslintConfig = {
     ...shared,
     ...(tools?.eslint?.language ? { language: tools.eslint.language } : {}),
-    ...(Object.keys(languageOptions).length > 0 ? { languageOptions } : {}),
+    ...(Object.keys(languageOptions).length > 0 ? { languageOptions: nestedParser } : {}),
     ...(tools?.eslint?.linterOptions ? { linterOptions: tools.eslint.linterOptions } : {}),
-    ...(tools?.eslint?.processor === undefined ? {} : { processor: tools.eslint.processor as Linter.Config['processor'] }),
-    ...(tools?.eslint?.processorMerge ? { processor: await loadMergedProcessor(tools.eslint.processorMerge) } : {}),
+    ...(tools?.eslint?.processor ? { processor: await loadProcessor(tools.eslint.processor) } : {}),
     ...(plugins ? { plugins: await resolvePlugins(plugins) } : {}),
   } as Linter.Config
 
@@ -130,22 +130,46 @@ async function loadParser(ref: PluginRef): Promise<NonNullable<Linter.LanguageOp
 }
 
 /**
- * Builds the merged processor a Config object asks for: the Plugin id's own processor, plus a
- * pass-through so the document itself is linted alongside the blocks the processor extracts.
+ * Resolves a processor Source named by Plugin id and registration name.
+ *
+ * A processor lives inside its plugin package rather than in a package of its own, so the plugin
+ * the Config object already declares is what carries it.
  */
-async function loadMergedProcessor(
-  merge: { plugin: PluginRef, name: string },
-): Promise<NonNullable<Linter.Config['processor']>> {
-  const id = merge.plugin as PluginId
-  const plugin = await loadPlugin(id, merge.plugin)
-  const processor = plugin.processors?.[merge.name]
+async function loadProcessor(ref: ProcessorRef): Promise<Linter.Config['processor']> {
+  const id = ref.plugin as PluginId
+  const plugin = await loadPlugin(id, ref.plugin)
+  const processor = (plugin as { processors?: Record<string, Linter.Config['processor']> }).processors?.[ref.name]
   if (!processor) {
-    throw new Error(`The "${id}" plugin registers no "${merge.name}" processor.`)
+    throw new Error(`The "${id}" plugin registers no "${ref.name}" processor.`)
   }
-  return mergeProcessors([processor, processorPassThrough])
+  if (!ref.passThrough) {
+    return processor
+  }
+  // The pass-through half is an object processor; the pair merges into one object as well.
+  return mergeProcessors([processor as Exclude<typeof processor, string>, processorPassThrough])
 }
 
-/** What the Plugin Bundle forwards: plugin objects and parser modules, both keyed by Plugin id. */interface Bundle {
+/**
+ * Resolves the `parserOptions.parser` a component parser delegates its scripts to.
+ *
+ * `svelte-eslint-parser` and `astro-eslint-parser` read the script parser from that option, and
+ * Source can only name it as a Plugin id, so the Adapter swaps the id for the parser object.
+ */
+async function resolveNestedParser(languageOptions: Linter.LanguageOptions): Promise<Linter.LanguageOptions> {
+  const parserOptions = languageOptions.parserOptions
+  const nested = parserOptions?.parser
+  if (typeof nested !== 'string') {
+    return languageOptions
+  }
+
+  return {
+    ...languageOptions,
+    parserOptions: { ...parserOptions, parser: await loadParser(nested as PluginRef) },
+  }
+}
+
+/** What the Plugin Bundle forwards: plugin objects and parser modules, both keyed by Plugin id. */
+interface Bundle {
   plugins: Record<string, ESLint.Plugin>
   parsers: Record<string, Linter.LanguageOptions['parser']>
 }

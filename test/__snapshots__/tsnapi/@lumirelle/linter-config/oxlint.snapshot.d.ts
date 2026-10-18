@@ -18,11 +18,7 @@ export interface ConfigObject {
       parser?: PluginRef;
       languageOptions?: Record<string, unknown>;
       linterOptions?: Record<string, unknown>;
-      processor?: unknown;
-      processorMerge?: {
-        plugin: PluginRef;
-        name: string;
-      };
+      processor?: ProcessorRef;
     };
     oxlint?: false | {
       env?: Record<string, boolean>;
@@ -116,6 +112,11 @@ export interface PnpmOptions {
   sort?: boolean;
   stylistic?: boolean;
   yaml?: boolean;
+}
+export interface ProcessorRef {
+  plugin: PluginRef;
+  name: string;
+  passThrough?: boolean;
 }
 export interface StylisticOptions {
   braceStyle?: '1tbs' | 'stroustrup' | 'allman';

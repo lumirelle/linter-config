@@ -2,20 +2,7 @@ import type { Linter } from 'eslint'
 import type { FlatGitignoreOptions } from 'eslint-config-flat-gitignore'
 import type { PluginId } from './plugins'
 
-/** Options for the `formatters` Module, mirroring Upstream's `OptionsFormatters`. */
-export interface FormattersOptions {
-  css?: 'prettier' | boolean
-  html?: 'prettier' | boolean
-  xml?: 'prettier' | boolean
-  svg?: 'prettier' | boolean
-  markdown?: 'prettier' | 'dprint' | boolean
-  graphql?: 'prettier' | boolean
-  astro?: 'prettier' | boolean
-  /** Whether the Slidev `slides.md` file is formatted, and with which files. */
-  slidev?: boolean | { files?: string[] }
-  prettierOptions?: Record<string, unknown>
-  dprintOptions?: Record<string, unknown>
-}
+export type { PluginId } from './plugins'
 
 /**
  * The file domain of a Config object.
@@ -65,6 +52,22 @@ export interface PluginDefinition {
     /** Always equals the Plugin id, so rule keys are identical in both tools. */
     alias?: string
   }
+}
+
+/**
+ * A processor, named as the Plugin id that registers it plus the name it registers it under.
+ *
+ * Source never imports a plugin package, so it cannot hold the processor object itself; the
+ * ESLint Adapter resolves the pair through the plugin it already loads.
+ */
+export interface ProcessorRef {
+  plugin: PluginRef
+  name: string
+  /**
+   * Merge the processor with a pass-through, so the document itself is linted as well as the
+   * blocks the processor extracts. The Markdown Module needs both halves.
+   */
+  passThrough?: boolean
 }
 
 declare const pluginRefBrand: unique symbol
@@ -140,15 +143,8 @@ export interface ConfigObject {
       parser?: PluginRef
       languageOptions?: Record<string, unknown>
       linterOptions?: Record<string, unknown>
-      processor?: unknown
-      /**
-       * ESLint-only: the Plugin id's processor of that name, merged with a pass-through so the
-       * document itself is linted as well as the code blocks the processor extracts.
-       *
-       * The Markdown Module needs both halves; Source cannot build the merged object, because one
-       * half is a plugin package's processor and Source imports no plugin package.
-       */
-      processorMerge?: { plugin: PluginRef, name: string }
+      /** ESLint-only: the processor that turns a component into lintable scripts. */
+      processor?: ProcessorRef
     }
     /** `false` marks this object as ESLint-only; the object form carries Oxlint-only fields. */
     oxlint?: false | {
@@ -156,6 +152,21 @@ export interface ConfigObject {
       jsPlugins?: Array<string | { name: string, specifier: string }>
     }
   }
+}
+
+/** Options for the `formatters` Module, mirroring Upstream's `OptionsFormatters`. */
+export interface FormattersOptions {
+  css?: 'prettier' | boolean
+  html?: 'prettier' | boolean
+  xml?: 'prettier' | boolean
+  svg?: 'prettier' | boolean
+  markdown?: 'prettier' | 'dprint' | boolean
+  graphql?: 'prettier' | boolean
+  astro?: 'prettier' | boolean
+  /** Whether the Slidev `slides.md` file is formatted, and with which files. */
+  slidev?: boolean | { files?: string[] }
+  prettierOptions?: Record<string, unknown>
+  dprintOptions?: Record<string, unknown>
 }
 
 /** Options for the `pnpm` Module, mirroring Upstream's `OptionsPnpm`. */
@@ -173,8 +184,6 @@ export interface PnpmOptions {
   /** The `pnpm-workspace.yaml` objects. */
   yaml?: boolean
 }
-
-export type { PluginId } from './plugins'
 
 /**
  * The `indent` option of `@stylistic/eslint-plugin`'s `customize()`: a level, or a level plus the rule

@@ -20,6 +20,7 @@ const OXLINT_SPELLING: Readonly<Record<string, string | undefined>> = {
   'antfu/no-import-dist': 'antfu/no-import-dist',
   'antfu/no-import-node-modules-by-path': 'antfu/no-import-node-modules-by-path',
   'antfu/no-top-level-await': 'antfu/no-top-level-await',
+  'eslint-comments/no-unlimited-disable': undefined,
   'no-console': 'no-console',
   'no-restricted-syntax': undefined,
   'ts/explicit-function-return-type': 'typescript/explicit-function-return-type',
@@ -107,12 +108,17 @@ describe('eslint() disables module', () => {
     expect(Object.keys((await disablesObjects({ type: 'lib' }))[0]!.rules ?? {})).toContain('ts/explicit-function-return-type')
   })
 
-  it('leaves out the rules of Modules that are not ported yet', async () => {
+  it('keeps a row only for the rules another Module turns on', async () => {
     const dts = (await disablesObjects()).find(config => config.name === 'lumirelle/disables/dts')
 
-    // Upstream also disables `eslint-comments/no-unlimited-disable` here; the eslint-comments
-    // Module is not part of Source yet, so nothing enables it and the entry stays out.
-    expect(Object.keys(dts?.rules ?? {})).toEqual(['no-restricted-syntax', 'unused-imports/no-unused-vars'])
+    // `eslint-comments/no-unlimited-disable` is Upstream's row for declaration files; it is only
+    // here because the eslint-comments Module now turns it on, and it stays out of Oxlint (see
+    // the blacklist) while the other two rows keep their Oxlint spelling.
+    expect(Object.keys(dts?.rules ?? {})).toEqual([
+      'eslint-comments/no-unlimited-disable',
+      'no-restricted-syntax',
+      'unused-imports/no-unused-vars',
+    ])
   })
 })
 
@@ -136,8 +142,9 @@ describe('disables in both Emissions', () => {
     }
   })
 
-  it('records the one rule Oxlint has no realization for', () => {
+  it('records the rules Oxlint cannot be given', () => {
     expect(coverageReport().modules.disables).toEqual([
+      { key: 'eslint-comments/no-unlimited-disable', plugin: 'eslint-comments', reason: 'blacklisted-plugin' },
       { key: 'no-restricted-syntax', reason: 'unknown-rule' },
     ])
   })

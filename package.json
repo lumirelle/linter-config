@@ -70,6 +70,7 @@
         "vitest": "^5.0.4"
       },
       "bundle": {
+        "@e18e/eslint-plugin": "^0.8.0",
         "@eslint-community/eslint-plugin-eslint-comments": "^4.7.2",
         "@eslint/markdown": "^8.0.3",
         "@stylistic/eslint-plugin": "^5.10.0",
@@ -77,12 +78,15 @@
         "@typescript-eslint/parser": "^8.68.0",
         "@vitest/eslint-plugin": "^1.6.27",
         "eslint-plugin-antfu": "^3.2.3",
+        "eslint-plugin-command": "^4.0.0",
         "eslint-plugin-import-lite": "^0.6.0",
         "eslint-plugin-jsdoc": "^64.3.2",
         "eslint-plugin-jsonc": "^3.4.2",
         "eslint-plugin-n": "^18.3.0",
         "eslint-plugin-no-only-tests": "^3.4.0",
+        "eslint-plugin-perfectionist": "^5.10.1",
         "eslint-plugin-pnpm": "^1.9.1",
+        "eslint-plugin-regexp": "^3.2.0",
         "eslint-plugin-toml": "^1.5.0",
         "eslint-plugin-unicorn": "^74.0.0",
         "eslint-plugin-unused-imports": "^4.4.1",
@@ -91,8 +95,22 @@
         "yaml-eslint-parser": "^2.1.0"
       },
       "peer": {
+        "@angular-eslint/eslint-plugin": "^22.6.0",
+        "@angular-eslint/eslint-plugin-template": "^22.6.0",
+        "@angular-eslint/template-parser": "^22.6.0",
+        "@eslint-react/eslint-plugin": "^5.28.0",
+        "@next/eslint-plugin-next": "^16.4.2",
+        "@unocss/eslint-plugin": "^66.11.0",
+        "astro-eslint-parser": "^3.2.0",
+        "eslint-plugin-astro": "^3.2.1",
         "eslint-plugin-erasable-syntax-only": "^0.7.1",
-        "eslint-plugin-format": "^2.0.1"
+        "eslint-plugin-format": "^2.0.1",
+        "eslint-plugin-react-refresh": "^0.5.7",
+        "eslint-plugin-slop": ">=0.1.1",
+        "eslint-plugin-solid": "^0.18.1",
+        "eslint-plugin-sonarjs": ">=4.0.0",
+        "eslint-plugin-svelte": "^3.23.1",
+        "svelte-eslint-parser": "^1.9.0"
       },
       "release": {
         "bumpp": "^12.3.0",

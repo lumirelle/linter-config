@@ -23,7 +23,7 @@ describe('plugin bundles', () => {
   })
 
   it('carry no rule semantics of their own, only forwarded plugin objects', () => {
-    expect(Object.keys(eslintPlugins).sort()).toEqual(['antfu', 'import', 'jsdoc', 'jsonc', 'md', 'node', 'pnpm', 'style', 'test', 'toml', 'ts', 'unicorn', 'unused-imports', 'yaml'])
+    expect(Object.keys(eslintPlugins).sort()).toEqual(['antfu', 'command', 'e18e', 'eslint-comments', 'import', 'jsdoc', 'jsonc', 'md', 'node', 'perfectionist', 'pnpm', 'regexp', 'style', 'test', 'toml', 'ts', 'unicorn', 'unused-imports', 'yaml'])
     for (const plugin of Object.values(eslintPlugins)) {
       expect(plugin.rules).toBeTypeOf('object')
     }

@@ -109,6 +109,7 @@ const registry = {
   'slop': {
     from: 'peer',
     eslint: { plugin: 'eslint-plugin-slop' },
+    oxlint: { jsPlugin: 'eslint-plugin-slop', alias: 'slop' },
   },
   'solid': {
     from: 'peer',

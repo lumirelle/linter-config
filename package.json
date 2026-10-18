@@ -1,0 +1,95 @@
+{
+  "type": "module",
+  "version": "0.0.0",
+  "private": true,
+  "packageManager": "nub@0.9.6",
+  "devEngines": {
+    "packageManager": {
+      "name": "nub",
+      "version": "^0.9.6",
+      "onFail": "ignore"
+    }
+  },
+  "workspaces": {
+    "packages": [
+      "docs",
+      "playground",
+      "packages/*"
+    ],
+    "catalogs": {
+      "dev": {
+        "taze": "^21.3.0"
+      },
+      "types": {
+        "@lumirelle/tsconfig": "^0.1.6",
+        "@types/node": "^26.6.5",
+        "typescript": "npm:typescript-native-bridge@^6.0.3-bridge.18.tsgo.7.0.2"
+      },
+      "build": {
+        "tsdown": "^0.23.1"
+      },
+      "docs": {
+        "@iconify-json/svg-spinners": "^1.2.4",
+        "@shikijs/vitepress-twoslash": "^4.5.0",
+        "@unocss/reset": "^66.11.0",
+        "@vueuse/core": "^15.0.0",
+        "floating-vue": "^5.4.0",
+        "oxc-minify": "^0.154.0",
+        "pinia": "^4.1.0",
+        "unocss": "^66.11.0",
+        "unplugin-vue-components": "^32.1.0",
+        "vite": "^8.3.4",
+        "vitepress": "^2.0.0-alpha.20",
+        "vitepress-plugin-group-icons": "^1.7.7",
+        "vue": "^3.5.44"
+      },
+      "check": {
+        "@antfu/eslint-config": "^9.5.1",
+        "@arethetypeswrong/cli": "^0.18.5",
+        "@lumirelle/oxlint-config": "^0.14.0",
+        "eslint": "^10.12.0",
+        "eslint-plugin-oxlint": "^1.88.0",
+        "knip": "^6.41.0",
+        "oxlint": "^1.88.0",
+        "oxlint-tsgolint": "^7.0.2004",
+        "publint": "^0.3.25"
+      },
+      "test": {
+        "@vitest/coverage-v8": "^5.0.4",
+        "tsnapi": "^1.5.0",
+        "vitest": "^5.0.4"
+      },
+      "release": {
+        "bumpp": "^12.3.0",
+        "changelogithub": "^15.0.5",
+        "pkg-pr-new": "^0.0.91"
+      }
+    }
+  },
+  "devDependencies": {
+    "@antfu/eslint-config": "catalog:check",
+    "@arethetypeswrong/cli": "catalog:check",
+    "@lumirelle/oxlint-config": "catalog:check",
+    "@lumirelle/tsconfig": "catalog:types",
+    "@types/node": "catalog:types",
+    "@vitest/coverage-v8": "catalog:test",
+    "bumpp": "catalog:release",
+    "changelogithub": "catalog:release",
+    "eslint": "catalog:check",
+    "eslint-plugin-oxlint": "catalog:check",
+    "knip": "catalog:check",
+    "oxlint": "catalog:check",
+    "oxlint-tsgolint": "catalog:check",
+    "pkg-pr-new": "catalog:release",
+    "publint": "catalog:check",
+    "taze": "catalog:dev",
+    "tsnapi": "catalog:test",
+    "typescript": "catalog:types",
+    "vitest": "catalog:test"
+  },
+  "overrides": {
+    "typescript": "catalog:types",
+    "vite": "catalog:docs",
+    "vue": "catalog:docs"
+  }
+}

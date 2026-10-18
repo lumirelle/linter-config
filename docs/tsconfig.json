@@ -1,0 +1,12 @@
+{
+  "extends": "@lumirelle/tsconfig/vue",
+  "compilerOptions": {
+    "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.app.tsbuildinfo",
+    "paths": {
+      "~": ["./src"],
+      "~/*": ["./src/*"]
+    },
+    "types": ["vitepress/client"]
+  },
+  "include": [".vitepress/**/*"]
+}

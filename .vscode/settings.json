@@ -1,0 +1,24 @@
+{
+  // Code Quality
+  "editor.formatOnSave": false,
+  "editor.codeActionsOnSave": {
+    "source.fixAll.oxc": "always",
+    "source.fixAll.eslint": "always",
+    "source.organizeImports": "never"
+  },
+  "eslint.validate": [
+    // Code
+    "javascript",
+    "javascriptreact",
+    "typescript",
+    "typescriptreact",
+    "vue",
+    // Configurations
+    "json",
+    "jsonc",
+    "yaml",
+    "toml",
+    // Documentations
+    "markdown"
+  ]
+}

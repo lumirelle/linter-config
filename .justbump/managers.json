@@ -1,0 +1,39 @@
+{
+  "version": 5,
+  "verify": "run `mise run check` and `mise run test`",
+  "managers": [
+    {
+      "name": "mise",
+      "kind": "toolchain",
+      "detect": ["mise.toml", "mise.lock"],
+      "note": "project-scoped: --local keeps this off the machine-global config",
+      "commands": {
+        "check": "mise outdated --local --json",
+        "bump": {
+          "default": "mise upgrade --local",
+          "major": "mise upgrade --local --bump"
+        }
+      }
+    },
+    {
+      "name": "nub",
+      "kind": "package",
+      "detect": ["nub.lock", "packageManager=nub"],
+      "note": "taze is declared, so the four-mode Node lane is available; taze.config.js teaches taze this repo's workspaces.catalogs",
+      "commands": {
+        "check": "nub outdated --json",
+        "bump": {
+          "default": "nub exec taze -x nub -w --no-interactive --no-node-version --no-github-actions",
+          "patch": "nub exec taze patch -x nub -w --no-interactive --no-node-version --no-github-actions",
+          "minor": "nub exec taze minor -x nub -w --no-interactive --no-node-version --no-github-actions",
+          "major": "nub exec taze major -x nub -w --no-interactive --no-node-version --no-github-actions"
+        },
+        "refresh": [
+          "node --input-type=commonjs -e \"const fs=require('fs');for(const p of ['node_modules','nub.lock'])fs.rmSync(p,{recursive:true,force:true})\"",
+          "nub install",
+          "nub dedupe"
+        ]
+      }
+    }
+  ]
+}

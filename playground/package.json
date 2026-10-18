@@ -1,0 +1,10 @@
+{
+  "name": "playground",
+  "type": "module",
+  "private": true,
+  "devDependencies": {
+    "@lumirelle/linter-config": "workspace:*",
+    "@lumirelle/tsconfig": "catalog:types",
+    "typescript": "catalog:types"
+  }
+}

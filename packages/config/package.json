@@ -1,0 +1,43 @@
+{
+  "name": "@lumirelle/linter-config",
+  "type": "module",
+  "version": "0.0.0",
+  "description": "Lumirelle's opinionated linter config.",
+  "author": "Lumirelle <lumirelle@outlook.com>",
+  "license": "MIT",
+  "funding": "https://github.com/sponsors/lumirelle",
+  "homepage": "https://github.com/lumirelle/linter-config#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lumirelle/linter-config.git"
+  },
+  "bugs": "https://github.com/lumirelle/linter-config/issues",
+  "keywords": [],
+  "sideEffects": false,
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/index.d.mts",
+        "default": "./dist/index.mjs"
+      }
+    },
+    "./package.json": "./package.json"
+  },
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.mts",
+  "files": [
+    "dist"
+  ],
+  "engines": {
+    "node": ">22",
+    "bun": ">1"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "devDependencies": {
+    "@lumirelle/tsconfig": "catalog:types",
+    "tsdown": "catalog:build",
+    "typescript": "catalog:types"
+  }
+}

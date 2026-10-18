@@ -1,0 +1,15 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "extends": ["./node_modules/@lumirelle/oxlint-config/.oxlintrc.ts.json"],
+  "options": {
+    "typeAware": true,
+    "typeCheck": true
+  },
+  "env": {
+    "builtin": true,
+    "es2026": true,
+    "browser": true,
+    "node": true
+  },
+  "ignorePatterns": ["README.md", "test/__snapshots__/**"]
+}

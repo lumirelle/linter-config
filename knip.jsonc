@@ -1,0 +1,30 @@
+{
+  "ignoreFiles": [
+    // Snapshots
+    "test/__snapshots__/**",
+    // Loaded by taze at runtime; knip has no plugin for it
+    "taze.config.js"
+  ],
+  "ignoreDependencies": [
+    // Build tools
+    "tsdown",
+    // Quality
+    "@lumirelle/oxlint-config",
+    "@arethetypeswrong/cli",
+    "publint",
+    // Node.js dependencies manager
+    "taze",
+    // Node.js releasing tools
+    "bumpp",
+    "changelogithub",
+    "pkg-pr-new",
+    // Docs
+    "@iconify-json/svg-spinners",
+    "@unocss/reset",
+    "@vueuse/core",
+    "floating-vue",
+    "oxc-minify",
+    "pinia",
+    "uno.css"
+  ]
+}

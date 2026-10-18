@@ -1,0 +1,115 @@
+monorepo_root = true
+
+[tools]
+# Environments
+node = 'latest'
+nub = 'latest'
+# Linters & Formatters
+hk = 'latest'
+stylua = 'latest'
+pkl = 'latest'
+
+[deps.nub]
+description = 'Automatically install Node.js dependencies via nub.'
+sources = ['mise.toml', 'mise.lock', 'package.json', 'nub.lock']
+outputs = ['node_modules/']
+run = 'nub pm pin && nub install'
+auto = true
+
+[monorepo]
+config_roots = ["docs/", "packages/*", "playground/"]
+
+[env]
+_.path = ['{{config_root}}/node_modules/.bin']
+
+# See https://github.com/webpro-nl/knip/issues/1813 & https://github.com/oxc-project/oxc/issues/11834
+KNIP_DISABLE_RAW_TRANSFER = 1
+
+[task_config.input_groups]
+deps = ["**/package.json", "nub.lock"]
+src = ["packages/**/src",]
+check = ["*.js", "*.mjs", "*.cjs", "*.jsx", "*.ts", "*.mts", "*.cts", "*.tsx", "*.vue", "*.json", "*.jsonc", "*.yaml", "*.yml", "*.toml", "*.md", "*.mdc", "*.mdx", "*.lua", "hk.pkl"]
+test = ["package/**/test", "packages/**/dist"]
+
+[tasks.dev]
+description = "Run the development build with hot reloading."
+run = { task = "//packages/...:dev" }
+
+[tasks.build]
+description = "Run the production build."
+run = { task = "//packages/...:build" }
+
+[tasks.start]
+description = "Run the source code."
+run = { task = "//packages/linter-config:start" }
+
+[tasks.docs]
+description = "Run the docs in the specified mode."
+usage = '''
+arg "<mode>" help="The mode to run the docs in. Can be one of: dev, build, start."
+'''
+run = { task = "//docs:{{usage.mode}}" }
+
+[tasks.play]
+description = "Run the playground."
+run = { task = "//playground:play" }
+
+[tasks.check]
+description = 'Run all checks.'
+usage = '''
+flag "-s --staged" help="Run on staged files only without stashing unstaged changes"
+arg "[rest]" var=#true help="Additional arguments to pass to the test runner"
+'''
+run = '''
+hk check {{ "--staged" if usage.staged else "--all" }} {{ usage.rest | join(sep=' ') if usage.rest else '' }}
+'''
+sources = ["@group:deps", "@group:check"]
+outputs = []
+depends = "build"
+cache = { enabled = true, command_inputs = ["hk --version"] }
+
+[tasks.fix]
+description = 'Fix all check issues.'
+usage = '''
+flag "-s --staged" help="Run on staged files only without stashing unstaged changes"
+arg "[rest]" var=#true help="Additional arguments to pass to the test runner"
+'''
+run = '''
+hk fix {{ "--staged" if usage.staged else "--all" }} {{ usage.rest | join(sep=' ') if usage.rest else '' }}
+'''
+sources = ["@group:deps", "@group:check"]
+outputs = []
+depends = "build"
+cache = { enabled = true, command_inputs = ["hk --version"] }
+
+[tasks.test]
+description = "Run tests."
+depends = "build"
+usage = '''
+flag "-w --watch" help="Watch files for changes and rerun tests"
+arg "[rest]" var=#true help="Additional arguments to pass to the test runner"
+'''
+run = '''
+vitest {{ '' if usage.watch else 'run' }} {{ usage.rest | join(sep=' ') if usage.rest else '' }}
+'''
+sources = ["@group:deps", "@group:src", "@group:test"]
+outputs = []
+cache = { enabled = true, command_inputs = ["node --version"] }
+
+[tasks.prerelease]
+description = 'Prepare for release.'
+# All tasks in parallel.
+run = { tasks = [":check", ":test"] }
+
+[tasks.release]
+description = 'Bump the version and push new version of all packages with a Git tag.'
+depends = ":prerelease"
+run = "bumpp --recursive"
+raw = true
+
+[tasks.publish]
+description = 'Publish the package.'
+run = "nub publish --recursive --provenance"
+
+[tasks.publish-commit]
+run = "pkg-pr-new publish packages/*"

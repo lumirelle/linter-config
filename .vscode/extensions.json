@@ -1,0 +1,15 @@
+{
+  "recommendations": [
+    // Environment
+    "hverlin.mise-vscode",
+    "editorconfig.editorconfig",
+
+    // Language Support
+    "redhat.vscode-yaml",
+    "remcohaszing.schemastore",
+    "tamasfe.even-better-toml",
+
+    // Quality
+    "dbaeumer.vscode-eslint"
+  ]
+}

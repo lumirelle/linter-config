@@ -38,7 +38,7 @@ function resolvesAsEsm(name: string): boolean {
  * plugin and the parser that goes with it. Bundled ids are provided by the Plugin Bundle and are
  * never missing.
  */
-export function peerPackages(ids: readonly PluginId[]): string[] {
+function peerPackages(ids: readonly PluginId[]): string[] {
   const packages = ids.flatMap((id) => {
     const definition = pluginDefinition(id)
     if (definition.from !== 'peer') {

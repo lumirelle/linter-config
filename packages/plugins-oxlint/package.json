@@ -1,0 +1,51 @@
+{
+  "name": "@lumirelle/linter-plugins-oxlint",
+  "type": "module",
+  "version": "0.0.0",
+  "description": "Oxlint plugin data for @lumirelle/linter-config.",
+  "author": "Lumirelle <lumirelle@outlook.com>",
+  "license": "MIT",
+  "funding": "https://github.com/sponsors/lumirelle",
+  "homepage": "https://github.com/lumirelle/linter-config#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lumirelle/linter-config.git",
+    "directory": "packages/plugins-oxlint"
+  },
+  "bugs": "https://github.com/lumirelle/linter-config/issues",
+  "keywords": [],
+  "sideEffects": false,
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/index.d.mts",
+        "default": "./dist/index.mjs"
+      }
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist"
+  ],
+  "engines": {
+    "node": ">22",
+    "bun": ">1"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "peerDependencies": {
+    "oxlint": ">=1.85.0"
+  },
+  "peerDependenciesMeta": {
+    "oxlint": {
+      "optional": true
+    }
+  },
+  "devDependencies": {
+    "@lumirelle/tsconfig": "catalog:types",
+    "oxlint": "catalog:check",
+    "tsdown": "catalog:build",
+    "typescript": "catalog:types"
+  }
+}

@@ -15,4 +15,4 @@ outputs = ["dist"]
 cache = { enabled = true }
 
 [tasks.start]
-run = "nub ./src/index.ts"
+run = "nub ./src/eslint.ts"

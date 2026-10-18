@@ -41,7 +41,7 @@ run = { task = "//packages/...:build" }
 
 [tasks.start]
 description = "Run the source code."
-run = { task = "//packages/linter-config:start" }
+run = { task = "//packages/config:start" }
 
 [tasks.docs]
 description = "Run the docs in the specified mode."

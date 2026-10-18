@@ -15,16 +15,20 @@
   "keywords": [],
   "sideEffects": false,
   "exports": {
-    ".": {
+    "./eslint": {
       "import": {
-        "types": "./dist/index.d.mts",
-        "default": "./dist/index.mjs"
+        "types": "./dist/eslint.d.mts",
+        "default": "./dist/eslint.mjs"
+      }
+    },
+    "./oxlint": {
+      "import": {
+        "types": "./dist/oxlint.d.mts",
+        "default": "./dist/oxlint.mjs"
       }
     },
     "./package.json": "./package.json"
   },
-  "module": "./dist/index.mjs",
-  "types": "./dist/index.d.mts",
   "files": [
     "dist"
   ],
@@ -35,9 +39,41 @@
   "publishConfig": {
     "access": "public"
   },
+  "peerDependencies": {
+    "@lumirelle/linter-plugins-eslint": "workspace:^",
+    "@lumirelle/linter-plugins-oxlint": "workspace:^",
+    "eslint": "^9.10.0 || ^10.0.0",
+    "oxlint": ">=1.85.0"
+  },
+  "peerDependenciesMeta": {
+    "@lumirelle/linter-plugins-eslint": {
+      "optional": true
+    },
+    "@lumirelle/linter-plugins-oxlint": {
+      "optional": true
+    },
+    "eslint": {
+      "optional": true
+    },
+    "oxlint": {
+      "optional": true
+    }
+  },
+  "dependencies": {
+    "@oxlint-flat-config/composer": "catalog:lint",
+    "eslint-flat-config-utils": "catalog:lint",
+    "oxlint-flat-config": "catalog:lint"
+  },
   "devDependencies": {
+    "@lumirelle/linter-plugins-eslint": "workspace:*",
+    "@lumirelle/linter-plugins-oxlint": "workspace:*",
     "@lumirelle/tsconfig": "catalog:types",
+    "eslint": "catalog:check",
+    "fast-glob": "catalog:test",
+    "minimatch": "catalog:test",
+    "oxlint": "catalog:check",
     "tsdown": "catalog:build",
-    "typescript": "catalog:types"
+    "typescript": "catalog:types",
+    "vitest": "catalog:test"
   }
 }

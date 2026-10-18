@@ -1,0 +1,190 @@
+import type { Linter } from 'eslint'
+import type { PluginId } from './plugins'
+
+export type { PluginId } from './plugins'
+
+/**
+ * The file domain of a Config object.
+ * An Adapter filters on it before anything else, because a tool can only read
+ * the languages it has a parser or a processor for.
+ */
+export type Domain
+  = | 'js' // JS / TS / JSX / TSX
+    | 'vue' // Vue SFC, natively supported by Oxlint
+    | 'svelte' // requires a parser; Oxlint cannot read it
+    | 'astro' // requires a parser; Oxlint cannot read it
+    | 'angular' // requires a parser; Oxlint cannot read it
+    | 'data' // JSON / JSONC / YAML / TOML
+    | 'markup' // Markdown / HTML
+    | 'style' // CSS; reserved for a future stylelint adapter
+
+/**
+ * A file pattern, accepted by both minimatch and fast-glob.
+ * Only `*`, `**`, `{a,b}` and character classes are allowed, which keeps one
+ * glob valid for ESLint and Oxlint at once; `assertGlobVocabulary` enforces it.
+ */
+export type Glob = string
+
+/** Every rule key is prefixed by a registered Plugin id; unprefixed keys are core rules. */
+export type RuleKey = `${PluginId}/${string}` | (string & Record<never, never>)
+
+export type RuleSeverity = Linter.RuleSeverity
+
+export type RuleEntry = RuleSeverity | [RuleSeverity, ...unknown[]]
+
+/**
+ * Registry entry for one Plugin id.
+ */
+export interface PluginDefinition {
+  /** `bundle` -> re-exported by a Plugin Bundle; `peer` -> optional peer installed by the consumer. */
+  from: 'bundle' | 'peer'
+  /** ESLint plugin package, plus the parser/processor glue it needs. */
+  eslint: {
+    plugin: string
+    parser?: string
+    processor?: string
+  }
+  /** Oxlint realization: a built-in scope and/or a `jsPlugins` specifier. */
+  oxlint?: {
+    builtin?: string
+    jsPlugin?: string
+    /** Always equals the Plugin id, so rule keys are identical in both tools. */
+    alias?: string
+  }
+}
+
+declare const pluginRefBrand: unique symbol
+
+/** A branded Plugin id; the runtime value is the id itself. */
+export type PluginRef = string & { readonly [pluginRefBrand]: true }
+
+/**
+ * A Module of Source: the grouping unit that maps one-to-one to an Upstream `configs/*` file,
+ * and the key consumers use for `overrides`.
+ */
+export type ModuleId
+  = | 'ignores'
+    | 'javascript'
+    | 'typescript'
+    | 'imports'
+    | 'unicorn'
+    | 'node'
+    | 'jsdoc'
+    | 'test'
+    | 'jsx'
+    | 'vue'
+    | 'nextjs'
+    | 'react'
+    | 'solid'
+    | 'unocss'
+    | 'regexp'
+    | 'perfectionist'
+    | 'e18e'
+    | 'antfu'
+    | 'command'
+    | 'eslint-comments'
+    | 'unused-imports'
+    | 'antislop'
+    | 'stylistic'
+    | 'svelte'
+    | 'astro'
+    | 'angular'
+    | 'jsonc'
+    | 'yaml'
+    | 'toml'
+    | 'markdown'
+    | 'formatters'
+    | 'sort'
+    | 'pnpm'
+    | 'disables'
+
+/** One ESLint-flat-config-shaped item produced by Source; the shared input of both Adapters. */
+export interface ConfigObject {
+  /** Public API: `lumirelle/<upstream tail>`, immutable once published. */
+  name: string
+  module: ModuleId
+  domain: Domain
+  files?: Glob[]
+  ignores?: Glob[]
+  /** Declares plugin usage; the ESLint Adapter resolves it to objects, Oxlint derives plugins/jsPlugins. */
+  plugins?: Partial<Record<PluginId, PluginRef>>
+  /** Both tools have an equivalent: ESLint -> `languageOptions.globals`, Oxlint -> `globals`. */
+  globals?: Record<string, boolean>
+  rules?: Partial<Record<RuleKey, RuleEntry>>
+  /** Root objects only; both tools require settings to be unscoped. */
+  settings?: Record<string, unknown>
+  tools?: {
+    eslint?: {
+      /** ESLint-only: the language a parser declares (`jsonc/x`, `markdown/gfm`); Oxlint has no parsers. */
+      language?: string
+      languageOptions?: Record<string, unknown>
+      linterOptions?: Record<string, unknown>
+      processor?: unknown
+    }
+    /** `false` marks this object as ESLint-only; the object form carries Oxlint-only fields. */
+    oxlint?: false | {
+      env?: Record<string, boolean>
+      jsPlugins?: Array<string | { name: string, specifier: string }>
+    }
+  }
+}
+
+/** Options for the `formatters` module; its concrete shape lands with that module. */
+export type FormattersOptions = Record<string, unknown>
+
+/** Options for the `stylistic` module; its concrete shape lands with that module. */
+export type StylisticOptions = Record<string, unknown>
+
+/** Options for the `ignores` module; its concrete shape lands with that module. */
+export type FlatGitignoreOptions = Record<string, unknown>
+
+export interface OxlintOptions {
+  typeAware?: boolean
+  typeCheck?: boolean
+}
+
+/**
+ * The same options object configures both factories, so the two emissions cannot
+ * drift by configuration. Fields mirror Upstream.
+ */
+export interface Options {
+  vue?: boolean | { a11y?: boolean, vueVersion?: 2 | 3, sfcBlocks?: boolean }
+  react?: boolean
+  svelte?: boolean
+  astro?: boolean
+  solid?: boolean
+  angular?: boolean
+  nextjs?: boolean
+  test?: boolean
+  jsonc?: boolean
+  yaml?: boolean
+  toml?: boolean
+  markdown?: boolean
+  jsdoc?: boolean
+  imports?: boolean
+  unicorn?: boolean
+  perfectionist?: boolean
+  pnpm?: boolean
+  e18e?: boolean
+  antislop?: boolean
+  sonarjs?: boolean
+  regexp?: boolean
+  unocss?: boolean
+  formatters?: boolean | FormattersOptions
+  /** Defaults to false: this project formats with oxfmt (`objectWrap: preserve`). */
+  stylistic?: boolean | StylisticOptions
+  gitignore?: boolean | FlatGitignoreOptions
+  type?: 'lib' | 'app'
+  typescript?: boolean | { tsconfigPath?: string, erasableOnly?: boolean }
+  jsx?: boolean
+  componentExts?: string[]
+  ignores?: string[]
+  /**
+   * Deep rule/scope merge, equivalent to Upstream's `overrides` option. A key is either a
+   * Module (every object of that Module) or one Config object name (`lumirelle/<tail>`), so a
+   * single object can be targeted, e.g. `typescript/overrides-type-aware`.
+   */
+  overrides?: Partial<Record<ModuleId | `lumirelle/${string}`, Pick<ConfigObject, 'rules' | 'files' | 'ignores'>>>
+  /** ESLint-side Bridge: turn off rules already handled by Oxlint. */
+  oxlint?: boolean | OxlintOptions
+}

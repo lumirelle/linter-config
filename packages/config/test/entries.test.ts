@@ -18,10 +18,11 @@ describe('package entries', () => {
   })
 
   it('exposes thenable factories on both built subpaths', async () => {
-    const { eslint } = await import('../dist/eslint.mjs') as { eslint: () => PromiseLike<unknown> }
+    const { eslint } = await import('../dist/eslint.mjs') as { eslint: () => PromiseLike<{ name?: string }[]> }
     const { oxlint } = await import('../dist/oxlint.mjs') as { oxlint: () => PromiseLike<unknown> }
 
-    await expect(eslint()).resolves.toEqual([])
+    const configs = await eslint()
+    expect(configs.map(config => config.name)).toContain('lumirelle/javascript/rules')
     await expect(oxlint()).resolves.toBeTypeOf('object')
   })
 })

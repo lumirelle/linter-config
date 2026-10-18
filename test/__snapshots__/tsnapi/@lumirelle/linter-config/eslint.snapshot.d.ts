@@ -66,6 +66,7 @@ export interface Options {
   jsx?: boolean;
   componentExts?: string[];
   ignores?: string[];
+  isInEditor?: boolean;
   overrides?: Partial<Record<ModuleId | `lumirelle/${string}`, Pick<ConfigObject, 'rules' | 'files' | 'ignores'>>>;
   oxlint?: boolean | OxlintOptions;
 }
@@ -90,7 +91,6 @@ export interface PluginDefinition {
 
 // #region Types
 export type Domain = 'js' | 'vue' | 'svelte' | 'astro' | 'angular' | 'data' | 'markup' | 'style';
-export type FlatGitignoreOptions = Record<string, unknown>;
 export type FormattersOptions = Record<string, unknown>;
 export type Glob = string;
 export type ModuleId = 'ignores' | 'javascript' | 'typescript' | 'imports' | 'unicorn' | 'node' | 'jsdoc' | 'test' | 'jsx' | 'vue' | 'nextjs' | 'react' | 'solid' | 'unocss' | 'regexp' | 'perfectionist' | 'e18e' | 'antfu' | 'command' | 'eslint-comments' | 'unused-imports' | 'antislop' | 'stylistic' | 'svelte' | 'astro' | 'angular' | 'jsonc' | 'yaml' | 'toml' | 'markdown' | 'formatters' | 'sort' | 'pnpm' | 'disables';
@@ -106,4 +106,8 @@ export type StylisticOptions = Record<string, unknown>;
 
 // #region Functions
 export declare function eslint(_?: Options): FlatConfigComposer<Linter.Config, string>;
+// #endregion
+
+// #region Other
+export { FlatGitignoreOptions }
 // #endregion

@@ -109,6 +109,18 @@ export const GLOB_EXCLUDE: Glob[] = [
 
 const FORBIDDEN_CHARACTERS = ['?', '+', '(', ')', '@', '!', '\\'] as const
 
+/** What a glob outside the shared vocabulary uses, or `undefined` when it stays inside it. */
+export function globVocabularyViolation(glob: Glob): string | undefined {
+  const character = FORBIDDEN_CHARACTERS.find(forbidden => glob.includes(forbidden))
+  if (character) {
+    return `uses "${character}"`
+  }
+  if (glob.includes('..')) {
+    return 'uses ".."'
+  }
+  return undefined
+}
+
 /**
  * Asserts that every glob stays inside the shared vocabulary (`*`, `**`, `{a,b}` and
  * character classes).
@@ -118,13 +130,9 @@ const FORBIDDEN_CHARACTERS = ['?', '+', '(', ')', '@', '!', '\\'] as const
  */
 export function assertGlobVocabulary(globs: readonly Glob[]): void {
   for (const glob of globs) {
-    for (const character of FORBIDDEN_CHARACTERS) {
-      if (glob.includes(character)) {
-        throw new Error(`Glob "${glob}" uses "${character}"; only *, **, {a,b} and character classes are allowed.`)
-      }
-    }
-    if (glob.includes('..')) {
-      throw new Error(`Glob "${glob}" uses ".."; only *, **, {a,b} and character classes are allowed.`)
+    const violation = globVocabularyViolation(glob)
+    if (violation) {
+      throw new Error(`Glob "${glob}" ${violation}; only *, **, {a,b} and character classes are allowed.`)
     }
   }
 }

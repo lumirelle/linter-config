@@ -12,5 +12,9 @@ export default antfu(
       },
     },
   },
+  {
+    // Test fixtures deliberately break house rules to prove that the emitted config reports them.
+    ignores: ['packages/config/test/fixtures/**'],
+  },
   ...oxlint.buildFromOxlintConfigFile('.oxlintrc.json'),
 )

@@ -1,4 +1,5 @@
 import type { Linter } from 'eslint'
+import type { FlatGitignoreOptions } from 'eslint-config-flat-gitignore'
 import type { PluginId } from './plugins'
 
 export type { PluginId } from './plugins'
@@ -135,8 +136,8 @@ export type FormattersOptions = Record<string, unknown>
 /** Options for the `stylistic` module; its concrete shape lands with that module. */
 export type StylisticOptions = Record<string, unknown>
 
-/** Options for the `ignores` module; its concrete shape lands with that module. */
-export type FlatGitignoreOptions = Record<string, unknown>
+/** Options for the `.gitignore` handling; `eslint-config-flat-gitignore` owns the shape. */
+export type { FlatGitignoreOptions }
 
 export interface OxlintOptions {
   typeAware?: boolean
@@ -173,12 +174,27 @@ export interface Options {
   formatters?: boolean | FormattersOptions
   /** Defaults to false: this project formats with oxfmt (`objectWrap: preserve`). */
   stylistic?: boolean | StylisticOptions
+  /**
+   * Fold the project's `.gitignore` into the global ignores.
+   *
+   * @default true, reading `.gitignore` from `process.cwd()`; a project without one gets no
+   * extra ignores. `false` turns the handling off, and the object form passes options to
+   * `eslint-config-flat-gitignore` (`cwd`, `files`, `strict`, ...)
+   */
   gitignore?: boolean | FlatGitignoreOptions
   type?: 'lib' | 'app'
   typescript?: boolean | { tsconfigPath?: string, erasableOnly?: boolean }
   jsx?: boolean
   componentExts?: string[]
   ignores?: string[]
+  /**
+   * Whether the factory runs inside an editor integration, where autofixable rules report
+   * as warnings instead of errors.
+   *
+   * @default detected from the environment: false under `CI` and in git hooks or lint-staged,
+   * true for VS Code, JetBrains, Vim, Neovim and Zed
+   */
+  isInEditor?: boolean
   /**
    * Deep rule/scope merge, equivalent to Upstream's `overrides` option. A key is either a
    * Module (every object of that Module) or one Config object name (`lumirelle/<tail>`), so a

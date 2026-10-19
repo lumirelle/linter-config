@@ -1,7 +1,7 @@
 {
   "name": "@lumirelle/linter-plugins-eslint",
   "type": "module",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "ESLint plugin objects for @lumirelle/linter-config.",
   "author": "Lumirelle <lumirelle@outlook.com>",
   "license": "MIT",

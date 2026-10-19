@@ -113,6 +113,10 @@ depends = ":prerelease"
 run = "bumpp --recursive"
 raw = true
 
+[tasks.changelog]
+description = 'Generate GitHub changelog.'
+run = "changelogithub"
+
 [tasks.publish]
 description = 'Publish the package.'
 run = "nub publish --recursive --provenance"

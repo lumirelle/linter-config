@@ -1,0 +1,374 @@
+---
+name: justbump
+description: >-
+  Bump every version a project pins — toolchain tools and package
+  dependencies — in one pass across all its managers, then report per manager.
+  Use when the user says "justbump", asks to bump/update/upgrade the project's
+  dependencies or tool versions, or names a mode (patch, minor, major; bare
+  means default). Not for a single dependency, a first-time install, or project
+  setup.
+---
+
+# justbump
+
+One pass over every version this repo pins: bump, refresh lockfiles, report what
+changed, hand back to the user for verification.
+
+**The diff is the record.** justbump writes no run artifacts and keeps no
+history — the git diff and the per-manager commits are the durable record.
+`.justbump/managers.json` is the only file it creates, and it is committed.
+
+## Vocabulary
+
+| Term | Meaning |
+|---|---|
+| **manager** | Something that owns pinned versions in this project. `kind: toolchain` (mise: `node`, `hk`, `pkl`) or `kind: package` (nub, pnpm, go, cargo: manifest dependencies). |
+| **mode** | The *ceiling* on the version change allowed, not a target to reach. `default` ⊂ `patch` ⊂ `minor` ⊂ `major`. |
+| **degrade** | The manager cannot express the requested mode, so it runs its nearest coarser lane and the report says so. Never silently skip a manager. |
+| **stale reference** | A hard-coded copy of an item's version living outside the manager's own files — a schema URL in another tool's config, a CI pin, a doc. The manager cannot see it, so the bump has to sweep for it. |
+
+## Modes
+
+| Mode | Ceiling |
+|---|---|
+| `default` | Stay inside the range already declared in the manifest — what `npm install` / `pnpm update` / `mise upgrade` do. |
+| `patch` | Latest patch within the same minor. |
+| `minor` | Latest minor within the same major. |
+| `major` | Any newer stable. Breaking changes possible. |
+
+Bare `justbump` means `default`. Only widen when asked.
+
+Only some managers can express the fine modes. That is expected — it is what
+`degrade` is for. [references/managers.md](references/managers.md) records, per
+manager, exactly which modes its `bump` map covers.
+
+## Step 1 — the config file
+
+`.justbump/managers.json` records which managers this project uses and the exact
+command for each job.
+
+**Detection is file-based. Never infer a manager from what is installed on the
+machine.** A `pnpm` binary on `PATH` is not evidence that this project uses pnpm;
+`mise.lock` and the `packageManager` field are. The signals are in
+[references/managers.md](references/managers.md).
+
+If the file does not exist, generate it:
+
+1. **Detect** from the matrix.
+2. **Write the file.** A manager the matrix covers gets `commands`; one it does not
+   gets a record with `detect` and **no `commands`**. A Node package manager gets the
+   four-mode Node lane only if `package.json` already declares taze; otherwise it gets
+   its native lane, whose key count comes from
+   [references/managers.md](references/managers.md) — one key for `npm`, all four for
+   classic Yarn. `refresh` is written as an array of steps, one command each — the file
+   is committed and shared, and no chained one-liner survives both POSIX shells and
+   Windows. Schema in [references/schema.md](references/schema.md).
+3. **Show the user what you detected and wait.** List the supported and unsupported
+   managers separately. This is the one gate where a wrong detection is cheap to fix
+   and a wrong command is not.
+4. **Offer to adopt the unsupported ones.** If the user supplies the commands for a
+   manager, record them as a normal (unverified) entry — the config file is the
+   per-project extension point, so nothing waits for the skill itself to grow a row.
+   Skipped is acceptable; silently dropped never is.
+
+If the file already exists, **rescan its `detect` signals before the plan gate**.
+Signals are cheap to re-check. Tell the user when a recorded manager's signal has
+gone, or when the repo carries a signal no record covers, and offer to regenerate —
+that is what keeps path 2 from depending on the user happening to notice.
+
+A `version` that is not the current schema version also means regenerate. The `bump`
+map's meaning changed between versions, so an old file describes commands that are
+not the ones this skill would run.
+
+Never invent a command for a manager the matrix does not cover.
+
+## Step 2 — precondition and plan
+
+**Refuse to start with uncommitted changes to tracked files.** Git is the rollback
+mechanism, and a modified tracked file makes "restore what the run touched"
+indistinguishable from "keep what the user already had". **Untracked files are
+fine** — `.justbump/managers.json` is itself untracked on first run, so a clean-tree
+rule that counted untracked files would forbid justbump's own first run.
+
+Untracked files are allowed. But you cannot know in advance which paths a bump will
+write, so do not pretend to — **snapshot the untracked paths and a hash of each before
+the run, and compare afterwards.** Any untracked file that existed before and changed
+during the run is one rollback cannot restore; report it plainly instead of discovering
+it mid-rollback.
+
+If the user asks to proceed with tracked changes anyway, keep an exact record of the
+paths the run touches and say plainly that rollback is limited to them.
+
+**Run every manager's `check`.** It is read-only, and everything downstream keys off
+its output: the report's `From`/`To` rows, the stale reference sweep, and the skip rule
+in step 3. Records with no `commands` are not run at all. Read the output rather than
+the exit code — some managers signal "updates available" with a non-zero exit.
+
+Then show the plan and wait:
+
+| Manager | Kind | Mode | Command |
+|---|---|---|---|
+
+Records with no `commands` appear in this table as `skipped (out of support matrix)`
+— never omitted, never attempted.
+
+Offer three outcomes: **proceed**, **narrow scope** (drop a manager, or lower the
+mode for one of them), **cancel**. This table is where a `patch` request that will
+degrade to `default` becomes visible *before* the run instead of in the report.
+
+## Step 3 — bump
+
+**Skip a manager whose `check` reported nothing to change.** No bump to make means no
+`refresh` either — and the Node lane's `refresh` deletes `node_modules` and the lockfile
+and re-resolves the tree, which would churn it for zero version movement.
+Report that manager as `unchanged` and move on. A mode the manager cannot express is *not* a
+reason to skip it; that is `degrade`, and it still runs.
+
+Run each manager's recorded `bump` command for the requested mode. **What runs is what
+the file says** — there is no override layer and nothing to expand at run time.
+
+Then run `refresh` where the record has one. Its job is that **the verification in
+step 5 exercises the bumped versions**: a `bump` that only edits the manifest leaves
+the lockfile and `node_modules` on the old versions, and a check run against those
+proves nothing. Records omit `refresh` where `bump` already settles the tree.
+
+The Node lane's delete step removes `node_modules` **and the lockfile**. The lockfile is
+what re-pins a resolution, so one left behind makes `install` reinstate every dependency
+whose specifier the bump did not rewrite — the refresh would verify the old tree. That is
+not a widened mode: the fresh resolution stays inside the ranges the bump just wrote.
+
+`refresh` is an **ordered array of steps**. Run them in order and stop at the first
+failure — a step that failed is the thing to fix, and the steps after it would only
+run against a half-refreshed tree. Each element is one command, already written out:
+nothing to chain and nothing to expand.
+
+### After each manager — sweep for stale references
+
+Sweep per manager, right after its bump, so a found reference lands in that manager's
+commit instead of floating loose.
+
+A manager does not own every copy of a version, for example, `hk` is pinned in `mise.toml` **and**
+in `hk.pkl`, as a versioned schema URL that another tool reads:
+
+```
+amends "package://github.com/jdx/hk/releases/download/v2.4.0/hk@2.4.0#/Config.pkl"
+```
+
+And some deploy configuration may hard-code the runtime version, like `netlify.toml`:
+
+```toml
+[build.environment]
+NODE_VERSION = "26.12.0"
+```
+
+The bump updates the first copy and never sees the second. So for every item `check`
+reported as changing, search the repo for its **old** version:
+
+- Exclude `.git`, `node_modules`, Git submodule, and build output — and
+  **every lockfile**. The manager already rewrote its own; a hit in one is a different
+  package, or a `refresh` that did not happen.
+- Search the decorated forms too: `2.4.0`, `v2.4.0`, `hk@2.4.0`.
+- A hit is **confirmed** only when the tool's name appears on the same line or in the
+  enclosing URL/path **as a whole token**, and the file is one the toolchain consumes —
+  a config, CI, container, or build file. Everything else is a **candidate**: report
+  it, never edit it. A substring is not a match: `go` must not confirm
+  `golangci-lint`, `hk` must not confirm `hkx`, `uv` must not confirm `uvicorn`, `nub`
+  must not confirm `nubx` (nub's own alias). Prose is a candidate even when it names the
+  tool: a version in Markdown is as likely to be a historical record, or an
+  illustration, as a live pin.
+
+**The main flow will not catch this**, which is why it is a rule rather than something
+the user will notice: a stale schema URL still resolves, so validation passes while the
+config quietly points at the previous release. See
+[references/managers.md](references/managers.md#stale-references) for where
+hard-coded versions typically live.
+
+If a recorded command cannot run — most often a Node project whose `node_modules` is
+not installed, so the declared taze binary is missing — run the manager's `refresh`
+first (it installs `node_modules`), then retry the `bump`. If it still cannot run, use
+that manager's native lane from [references/managers.md](references/managers.md), and
+report both the fallback and the mode degradation it causes.
+
+If the manager is **not in the matrix** — one the user supplied at the generation gate
+— there is no native lane to fall back to. Stop and ask.
+
+**If a `bump` or `refresh` command fails, fix it and carry on. Do not ask.** A non-zero
+exit here
+is a broken assumption — a bad flag, a missing tool, a stale lockfile — not a
+decision for the user. Remember every fix so the report can disclose it.
+
+**Only `bump` and `refresh` failures count here.** A `check` command exiting non-zero
+is not a failure — some managers signal "updates available" that way. Read its output, not
+its exit code.
+
+**Three attempts per manager.** If you cannot land it in three, stop and offer the
+user: roll back, exclude that manager, or describe the situation.
+
+Before running a command the reference marks *unverified* — one the user supplied, or a row
+a later tool release has moved — probe it first. `--help` is version-exact and offline; a
+web search can return a different release. **Mix is the exception:** mix tasks reject
+`--help` as an unknown option, so a `mix` row is probed with `mix help <task>`.
+
+### After the last manager — refresh the environment
+
+A bump changes *which binary a shell resolves*, and a shell resolves its `PATH` **when
+it starts**. Every command above ran in a shell that started before the bump, and the
+user's terminal is one of those shells — left alone, step 5 verifies the old tools
+against the new manifest and proves nothing.
+
+So before reporting:
+
+- **Re-resolve your own environment.** Drop the command hash (`hash -r` in bash and
+  zsh; nothing to do in `cmd` or PowerShell), and where the toolchain manager has a
+  reshim step (mise: `mise reshim`), run it so shims point at the new installs.
+- **Confirm, do not assume.** `command -v <tool>` and `<tool> --version` must show the
+  bumped version. If the inherited shell will not re-resolve, run the rest of the run
+  through a fresh process or the manager's own runner (`mise x -- <cmd>`), where the
+  environment is built from the current config.
+- **Tell the user about their terminal.** You cannot re-resolve it for them — say so
+  in step 5.
+
+This changes no file, so it has nothing to show in step 4 and nothing to roll back.
+It is what makes step 5's verification mean anything.
+
+## Step 4 — report
+
+Group by manager: one heading per manager, one table under each. Summary first:
+
+| Manager | Kind | Mode | Result |
+|---|---|---|---|
+
+`Result` is one of `bumped`, `degraded` (say what it actually ran), `fixed` (say
+what you had to fix), `failed`, `unchanged`, or `skipped` (say why).
+
+Then, per manager, one row per changed item:
+
+| Item | From | To |
+|---|---|---|
+
+Cap a table at roughly 30 rows. For anything larger, summarise per manifest file
+and state how many rows were omitted — the full detail is in the diff.
+
+If step 3 needed a fix, say so here — and list every stale reference you updated, or
+deliberately left alone. Never let a fix, or an untouched stale pin, hide in the diff.
+
+## Step 5 — hand back
+
+Tell the user how to check the result, using the config's `verify` text, then wait.
+**You do not run the main flow; the user does.**
+
+**End the turn with plain text, and call no tool after it.** `ask_user_question` — or any
+other tool that blocks on an answer — takes the user's input line away from them, and
+that line is where verification happens: they need to type a command, like
+`! mise check` or `! mise run check`. Write what to run, then stop. The user's next
+message is the answer.
+
+If a toolchain manager was bumped, name the tools and tell the user to **start a new
+terminal — or re-run their shell's activation hook — before verifying**. Their shell
+resolved the pre-bump versions at startup, so the verification they run is otherwise
+reading the old `PATH`. Pass on anything your own re-resolution in step 3 turned up.
+
+Take their answer:
+
+1. **All correct** → step 7.
+2. **A manager is missing** → re-generate `.justbump/managers.json`, confirm it with
+   the user, and re-run for the missing manager.
+3. **The main flow is broken** → step 6.
+4. **Anything else** → ask the user to describe it.
+
+## Step 6 — the main flow is broken
+
+Read the release notes of the suspect dependency **first**. A breaking change is the
+most likely cause, and the notes name it directly.
+
+Reproduce it — build, test, the project's check task. The user reported a break you
+failed to prevent, so reproducing it is diagnosis, not verification. Confirm the fix
+with the user before writing it.
+
+Same three-attempt budget. On exceeding it, offer: roll back, exclude that
+dependency, or let the user describe what they see. Then return to step 5 and ask
+the user to verify again.
+
+## Step 7 — commits
+
+Print the exact commands. **Ask before running them.**
+
+**Commit in the order the run made the changes.** History written the other way puts a
+fix in front of the bump that broke the flow, and buries the config under the work it
+configured:
+
+1. **The config commit, when step 1 generated `.justbump/managers.json`.** It comes
+   first — every later commit's commands came out of that file. A correction to a file
+   *generated this run* stays in this commit; a correction to one that already existed
+   is a fix and rides its own fix commit (3).
+2. **One commit per manager, in the `managers` array order** — the order the report
+   groups by, because that is the order the run bumped them.
+3. **One commit per fix, after the manager it repairs.** A fix to a bump or refresh
+   command, or to the code a bump broke, is the *result* of that manager's commit, not
+   its precondition: committed first, it reads as a fix for a breakage its own revision
+   does not yet contain, and the manager's bump stops being the whole story of its own
+   files. Fix commits follow the repo's own commit convention.
+
+**Stage the paths the run modified — tracked or newly created — and nothing else.** The
+config commit takes `.justbump/managers.json`; a manager commit takes that manager's
+manifest and lockfile paths; a fix commit takes the files the fix touched. The report's
+tables give you the items; the run's diff gives you the files. Installed artifacts that
+`refresh` produced — `node_modules/`, a `bin/`, a build output directory — are build
+output, not commits. Most repos gitignore them; a run that commits them has committed
+its own scratch space.
+
+```
+chore(justbump): add the manager config
+chore(deps): bump mise tools
+chore(deps): bump node deps
+fix(deps): drop the stale --frozen-lockfile from the nub refresh
+```
+
+Per-manager commits make `git revert <sha>` a precise undo when one manager's bump
+turns out to be what broke the flow.
+
+## Rollback
+
+Restore the manager-owned paths the run touched and delete the files it created — the
+clean-tracked-tree precondition in step 2 is what makes this exact. Ask before doing it.
+
+**Leave `.justbump/managers.json` alone.** A command correction found during the run is
+a fix to keep, not state to undo — reverting it only reproduces the same failure next
+run. Its diff stays visible, and step 7 places it: with the config commit when step 1
+generated the file, in a fix commit when the file already existed.
+
+Any pre-existing untracked file the run changed cannot be restored; say so explicitly
+rather than presenting the rollback as complete.
+
+## Hard rules
+
+- **Never touch machine-global state.** Every command is scoped to the project.
+  Where a tool defaults to machine-wide behaviour, pass its scoping flag
+  (`mise --local`). "Bump this project" must never upgrade the user's globally
+  installed tools.
+- **Never detect a manager from the machine.** Only from a signal in the repo.
+- **Never use taze to look before you leap.** Its project config can turn every
+  invocation into a write, so inspect with the manager's native `check`. The one
+  exception is a Node manager that has no native check — yarn berry — where the check
+  is `<runner> taze --json --no-write`; the flag is the only thing making it read-only,
+  so never drop it. See [references/managers.md](references/managers.md).
+- **Never install justbump's own tooling into the project.** A Node package manager
+  uses taze only when `package.json` already declares it, and runs the **declared**
+  binary (`nub exec taze`) rather than fetching one — the fetching forms ignore the
+  project's pin and need the network. Either way taze is never added to
+  `package.json`; that is visible in the config the user reviews, and a bump run that
+  edits the manifest to add its own tool would contaminate the diff and the report.
+- **Never silently skip a manager.** Degrade and report, or fail and report.
+- **Never widen scope.** The mode is a ceiling the user asked for.
+- **One manager owns each version.** The recorded taze commands keep `node`-version
+  and GitHub Actions handling off, so taze stays inside `package.json` and never
+  fights `mise` for `node`. Under `nub` they also pass `-x nub`: the registry package
+  named `nub` is not nubjs/nub — it is an unrelated 2014 package at `1.0.0` — so
+  without the exclusion taze would rewrite a `nub` pin to a different tool.
+- **Never let a pre-bump shell stand in for verification.** A shell resolves its `PATH`
+  at startup, so a bump made after that start is invisible to it. Re-resolve after the
+  run, and have the user start a fresh terminal before step 5.
+- **Do not commit without being asked.** Print the commands first.
+- **Hand back in plain text.** The request for verification is the end of the turn — no
+  `ask_user_question`, no tool call that holds the turn open. The user's reply is often a
+  command (`! mise run check`) typed into the input line a prompt would hide.

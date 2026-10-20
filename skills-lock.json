@@ -55,6 +55,12 @@
       "skillPath": "skills/doc/grilling/SKILL.md",
       "computedHash": "4c3cd6016aa562d6977b320c172f9e389bd6ef93dd58321e1ec5f0021c959bc3"
     },
+    "handoff": {
+      "source": "lumirelle/skills",
+      "sourceType": "github",
+      "skillPath": "skills/agent/handoff/SKILL.md",
+      "computedHash": "23f302ea833ed59648eb35653fee86922b9c7a8e11cfa029e3d73968f876366e"
+    },
     "implement": {
       "source": "lumirelle/skills",
       "sourceType": "github",
@@ -109,11 +115,29 @@
       "skillPath": "skills/design/prototype/SKILL.md",
       "computedHash": "8d8d58ee1074211b6aa5ca67b414ee352affd28d4664ad99e41e6c2110758ca6"
     },
+    "research": {
+      "source": "lumirelle/skills",
+      "sourceType": "github",
+      "skillPath": "skills/doc/research/SKILL.md",
+      "computedHash": "e57989184408e6fecaee9f2032649224198568c86ed50722fc5a50d3ac90a8f9"
+    },
+    "retro": {
+      "source": "lumirelle/skills",
+      "sourceType": "github",
+      "skillPath": "skills/doc/retro/SKILL.md",
+      "computedHash": "43d793214adf86958ee9cac6c2aae48a7fd6301d1dc81ee31e4d33c8394f1e5a"
+    },
     "setup-matt-pocock-skills": {
       "source": "lumirelle/skills",
       "sourceType": "github",
       "skillPath": "skills/starup/setup-matt-pocock-skills/SKILL.md",
       "computedHash": "56c7c84c44e806ef96b09fb0909a8f5532336440a56752d3f2029c3199026886"
+    },
+    "skill-creator": {
+      "source": "lumirelle/skills",
+      "sourceType": "github",
+      "skillPath": "skills/agent/skill-creator/SKILL.md",
+      "computedHash": "3626e16dc14e582e42df77d20f1f9e6e05ac3ea3adfc4fb15da2292f2f2c169a"
     },
     "tdd": {
       "source": "lumirelle/skills",
@@ -126,6 +150,12 @@
       "sourceType": "github",
       "skillPath": "skills/doc/teach/SKILL.md",
       "computedHash": "349ad25ac8cbf035176e9759397290e80c42b39093833af837b38607dd30f939"
+    },
+    "to-questionnaire": {
+      "source": "lumirelle/skills",
+      "sourceType": "github",
+      "skillPath": "skills/doc/to-questionnaire/SKILL.md",
+      "computedHash": "a590b7a9f97fb74cfba72d3ef98839b0bb31635362a88203b72844fded2db66e"
     },
     "to-spec": {
       "source": "lumirelle/skills",
@@ -162,6 +192,18 @@
       "sourceType": "github",
       "skillPath": "skills/design/web-design-guidelines/SKILL.md",
       "computedHash": "039bda9ba9ff4cf28b1f7173ce2e6378aa05b2d92671d4b6667a51975fd90562"
+    },
+    "wizard": {
+      "source": "lumirelle/skills",
+      "sourceType": "github",
+      "skillPath": "skills/dev/wizard/SKILL.md",
+      "computedHash": "9f8fa07e04f255f6f1ee325822eb1b6d65ef8072bc41a775b0e44ff98d762f57"
+    },
+    "writing-for-agents": {
+      "source": "lumirelle/skills",
+      "sourceType": "github",
+      "skillPath": "skills/agent/writing-for-agents/SKILL.md",
+      "computedHash": "fd6a1f8dc46f8ec6b8830e50fd7876ac4b711a51246fe2ee7c8f617458ae3539"
     }
   }
 }

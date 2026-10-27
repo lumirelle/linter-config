@@ -1,0 +1,5 @@
+{
+  "name": "@lumirelle/example-ts-monorepo-cli",
+  "type": "module",
+  "private": true
+}

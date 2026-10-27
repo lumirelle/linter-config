@@ -1,0 +1,16 @@
+{
+  "name": "@lumirelle/example-eslint-next",
+  "type": "module",
+  "private": true,
+  "devDependencies": {
+    "@eslint-react/eslint-plugin": "catalog:peer",
+    "@lumirelle/linter-config": "workspace:*",
+    "@lumirelle/linter-plugins-eslint": "workspace:*",
+    "@lumirelle/tsconfig": "catalog:types",
+    "@next/eslint-plugin-next": "catalog:peer",
+    "eslint": "catalog:check",
+    "eslint-plugin-react-refresh": "catalog:peer",
+    "typescript": "catalog:types",
+    "vitest": "catalog:test"
+  }
+}

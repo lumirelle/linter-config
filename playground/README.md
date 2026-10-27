@@ -1,10 +1,5 @@
 # Playground
 
-The examples under this directory are private workspace packages, each one a snapshot of a real
-project that uses `@lumirelle/linter-config`. They exist so an option or Module regression fails in
-this repository instead of in a consumer's: an integration test loads every example's two Emissions
-the same way a consumer's config files do.
-
 | Example | Simulates | Options it demonstrates | Guide |
 | --- | --- | --- | --- |
 | [`next`](./next/README.md) | A Next.js App Router project — canonical consumer, no starter counterpart | `react` and `nextjs` at `type: 'app'`, with the `test` Module | [`playground/next`](./next/README.md) |
@@ -30,23 +25,18 @@ mise run play --all        # both Emissions for every example
 
 The task depends on `mise run build`, because each example's config files import the package's built
 `@lumirelle/linter-config/eslint` and `@lumirelle/linter-config/oxlint` subpaths, never Source
-internals. That makes the runner an export smoke test as well: a broken entry point, a missing peer
-or a missing parser fails here. An unknown name exits non-zero after listing the valid ones.
+internals.
 
 ## Layout
 
-`playground/` itself is a group directory, not a package. Each example is a directory with:
+Each example is a directory with:
 
-- `package.json` — a private workspace package declaring the peers its Modules need;
+- `package.json` — a private package declaring the peers its Modules need;
 - `options.ts` — the one options object both configs are built from;
 - `eslint.config.js` and `oxlint.config.ts` — the paired configs, each importing the public subpath;
 - `tsconfig.json` — the example's project file, documentation rather than part of this repository's
   type check;
 - a minimal representative source tree and a README mapping the predecessor configuration.
-
-A monorepo example adds `packages/*` beneath its root. Those nested directories are sources and
-manifests, not workspace packages: the workspace glob is `playground/*`, so only the example itself
-is installed.
 
 [`examples.ts`](./examples.ts) is the registry: it discovers examples by reading
 `playground/*/package.json` and resolves one by importing its options and config modules. Adding an

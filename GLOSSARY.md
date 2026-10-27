@@ -37,7 +37,7 @@ The canonical identifier used for rule prefixes and plugin references in Source,
 _Avoid_: scope, namespace
 
 **Bridge**:
-A set of Config objects on the ESLint side that turns off rules already handled by Oxlint, generated with the same file scopes; it closes the ESLint Emission at resolution time, after the consumer's own appends, one config object per Config object the Oxlint Emission takes, and the `oxlint` option is the one way to enable it. Its algorithm is in the [Source schema](docs/design/source-schema.md).
+A set of Config objects on the ESLint side that turns off rules already handled by Oxlint: one config object per Config object the Oxlint Emission takes, with the same file scopes, closing the ESLint Emission at resolution time. The `oxlint` option is the one way to enable it. Its algorithm is in the [Source schema](docs/design/source-schema.md) and the decision in [ADR 0004](docs/adr/0004-oxlint-bridge-closes-the-emission.md).
 _Avoid_: interop, disable list
 
 **Coverage report**:

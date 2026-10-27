@@ -1,9 +1,14 @@
-# `ts` example
+# `eslint-oxlint/ts` example
 
 A TypeScript library modelled on [`antfu/starter-ts`](https://github.com/antfu/starter-ts). It is
 the snapshot the library-specific options are exercised against: `type: 'lib'` keeps the library
 rule slices, `typescript.tsconfigPath` turns on the type-aware rules, `oxlint: { typeAware: true }`
 makes Oxlint implement the type-aware rules it can, and `test: true` lints the test file.
+
+This is the paired flavor of the `ts` stack and the stack's canonical README: the predecessor
+mapping below is written once. The two single-tool flavors strip one side of this directory and
+link back here — [`eslint/ts`](../../eslint/ts/README.md) has no Oxlint and no Bridge,
+[`oxlint/ts`](../../oxlint/ts/README.md) has no ESLint config module.
 
 Predecessor snapshot: `antfu/starter-ts` at commit
 [`13b0323`](https://github.com/antfu/starter-ts/commit/13b03234a7ea2ae9b2f1ad1a152e65e7202d3631)
@@ -79,7 +84,7 @@ Oxlint refuses to load when both files exist in one directory. Delete the old fi
 ## Tree
 
 ```text
-playground/ts/
+playground/eslint-oxlint/ts/
 ├── eslint.config.js
 ├── oxlint.config.ts
 ├── options.ts

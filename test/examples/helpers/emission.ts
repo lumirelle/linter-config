@@ -11,6 +11,9 @@ export type ExampleEmissions = Example & {
   oxlint: OxlintConfig
 }
 
+/** One Oxlint override, as the Emission writes it. */
+export type OxlintOverride = NonNullable<OxlintConfig['overrides']>[number]
+
 /**
  * Load one example exactly as `mise run play` does: through the registry, which imports the
  * example's own config modules, so the Emission is the one a consumer's file would build.
@@ -38,6 +41,45 @@ export async function loadExample(name: string): Promise<ExampleEmissions> {
 /** The Config object names an ESLint Emission carries, in emission order. */
 export function configNames(configs: readonly Linter.Config[]): string[] {
   return configs.flatMap(config => config.name === undefined ? [] : [config.name])
+}
+
+/**
+ * The Bridge tail of an ESLint Emission: the Config objects an example's `oxlint` entry appends.
+ *
+ * Read out of the Emission the registry returned, never rebuilt from the example's options, so an
+ * assertion cannot agree with the Bridge builder by construction. The Bridge is the last part of an
+ * Emission, so the tail is the run of `/oxlint-bridge` objects at its end: a Bridge object anywhere
+ * else shortens the tail, which is what the callers' length assertions turn into a failure.
+ */
+export function bridgeTail(configs: readonly Linter.Config[]): Linter.Config[] {
+  const tail: Linter.Config[] = []
+  for (let index = configs.length - 1; index >= 0; index--) {
+    const config = configs[index]!
+    if (!config.name?.endsWith('/oxlint-bridge')) {
+      break
+    }
+    tail.unshift(config)
+  }
+  return tail
+}
+
+/**
+ * The overrides an Oxlint Emission uses to carry rules.
+ *
+ * The Emission pairs one Bridge object with each of them, so this count is what a paired flavor's
+ * Bridge tail has to match. Overrides that only declare plugins or environments carry no rules and
+ * get no Bridge object.
+ */
+export function ruleCarryingOverrides(oxlint: OxlintConfig): OxlintOverride[] {
+  return (oxlint.overrides ?? []).filter(override => Object.keys(override.rules ?? {}).length > 0)
+}
+
+/** Every rule key an Oxlint Emission carries, top-level and per override. */
+export function oxlintRuleKeys(oxlint: OxlintConfig): string[] {
+  return [
+    ...Object.keys(oxlint.rules ?? {}),
+    ...(oxlint.overrides ?? []).flatMap(override => Object.keys(override.rules ?? {})),
+  ]
 }
 
 /** The Config object names an ESLint Emission carries for `module`. */

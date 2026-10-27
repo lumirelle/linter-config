@@ -33,7 +33,7 @@ describe('the `eslint-oxlint/webext` example', () => {
 describe('the `webext` build-output ignores', () => {
   it('are asserted on all three flavors, not on the paired one alone', () => {
     // The loop below is only as wide as the flavors the stack ships, so the flavors are named: a
-    // half-converted stack would otherwise assert one Emission and call it every flavor.
+    // stack that lost a flavor directory would otherwise assert one Emission and call it every flavor.
     expect(FLAVORS.map(example => example.name)).toEqual([
       'eslint/webext',
       'oxlint/webext',

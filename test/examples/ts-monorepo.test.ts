@@ -40,8 +40,8 @@ describe('the `eslint-oxlint/ts-monorepo` example', () => {
 
 describe('the `ts-monorepo` per-package override', () => {
   it('is asserted on all three flavors, not on the paired one alone', () => {
-    // An `overrides` entry belongs to the stack's options, so every flavor has to carry it; a
-    // half-converted stack would otherwise assert the paired directory and call it every flavor.
+    // An `overrides` entry belongs to the stack's options, so every flavor has to carry it; a stack
+    // that lost a flavor directory would otherwise assert the paired one and call it every flavor.
     expect(FLAVORS.map(example => example.name)).toEqual([
       'eslint/ts-monorepo',
       'oxlint/ts-monorepo',

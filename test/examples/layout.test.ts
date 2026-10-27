@@ -38,7 +38,7 @@ const SHARED_PACKAGES = ['@lumirelle/linter-config', '@lumirelle/tsconfig', 'typ
 /** Every example, resolved the way the runner resolves it. */
 const EXAMPLES = await Promise.all((await listExamples()).map(name => resolveExample(name)))
 
-/** Every stack, with the flavors it ships today. */
+/** Every stack, with the three flavors it ships. */
 const STACKS = await Promise.all(
   (await listStacks()).map(async stack => ({ stack, examples: await resolveStack(stack) })),
 )
@@ -75,9 +75,7 @@ async function declaredPackages(example: Example): Promise<string[]> {
 
 describe('the flavor directories', () => {
   describe.each(STACKS)('the $stack stack', ({ examples }) => {
-    const converted = examples.length === 3
-
-    it.skipIf(!converted)('differs between its flavors only in the files a flavor owns', async () => {
+    it('differs between its flavors only in the files a flavor owns', async () => {
       const own = (files: string[]) => files.filter(file => !FLAVOR_FILES.has(file))
       const listed = await Promise.all(examples.map(example => filesUnder(example.directory)))
       const shared = listed.map(own)
@@ -129,7 +127,7 @@ describe('the flavor directories', () => {
   })
 
   describe.each(STACKS)('the $stack manifests', ({ examples }) => {
-    it.runIf(examples.length === 3)('share one dependency set outside the tool packages', async () => {
+    it('share one dependency set outside the tool packages', async () => {
       const shared = await Promise.all(examples.map(async (example) => {
         return (await declaredPackages(example)).filter(name => !ALL_TOOL_PACKAGES.has(name)).sort()
       }))

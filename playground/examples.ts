@@ -10,9 +10,7 @@ import { fileURLToPath, pathToFileURL } from 'node:url'
  * The directory holding the examples.
  *
  * This module lives in `playground/`, so the registry never needs a hand-maintained list: an
- * example is a directory with a `package.json`, in either of the two layouts the playground
- * accepts — `playground/<stack>` for the paired flavor a flat directory is, or
- * `playground/<flavor>/<stack>` once a stack ships one directory per flavor.
+ * example is the directory `playground/<flavor>/<stack>` that carries a `package.json`.
  */
 const PLAYGROUND_DIRECTORY = dirname(fileURLToPath(import.meta.url))
 
@@ -21,9 +19,6 @@ export type Flavor = 'eslint' | 'oxlint' | 'eslint-oxlint'
 
 /** Every flavor, in the order a stack's examples are resolved and printed. */
 const FLAVORS: readonly Flavor[] = ['eslint', 'oxlint', 'eslint-oxlint']
-
-/** The flavor a flat example directory is, since it ships both config modules. */
-const PAIRED_FLAVOR: Flavor = 'eslint-oxlint'
 
 /** One example directory, before its options and config modules are imported. */
 interface ExampleLocation {
@@ -64,8 +59,8 @@ export async function listStacks(): Promise<string[]> {
 /**
  * Every example name, sorted.
  *
- * An example is a directory under `playground/`, either a flat one or one grouped by flavor;
- * nothing else here knows the names, so the directory is the registration.
+ * The name is `<flavor>/<stack>`, and no list anywhere holds it: the directory is the registration,
+ * so a stack that starts shipping a flavor needs no edit outside its own three directories.
  */
 export async function listExamples(): Promise<string[]> {
   const locations = await discoverExamples()
@@ -79,25 +74,25 @@ export async function listExamples(): Promise<string[]> {
  * example doubles as an export smoke test: a broken export, a missing peer or a missing parser
  * throws here.
  *
- * A bare stack name is the pre-flavor spelling of an example name and resolves to that stack's
- * paired flavor; it goes away once every stack ships one directory per flavor.
+ * The name is `<flavor>/<stack>`. There is no bare-stack spelling: one stack is three examples, so
+ * a name that leaves the flavor out names none of them.
  *
  * @throws when no example has that name, naming every valid one
  */
 export async function resolveExample(name: string): Promise<Example> {
   const locations = await discoverExamples()
-  const location = findByName(locations, name)
+  const location = locations.find(candidate => nameOf(candidate) === name)
   if (!location) {
-    throw unknownName(name, locations)
+    throw unknownExample(name, locations)
   }
   return load(location)
 }
 
 /**
- * One stack's examples, in flavor order.
+ * One stack's three examples, in flavor order.
  *
- * The runner prints a stack by resolving it, so a stack that ships three flavors prints three
- * blocks and one that has not been converted yet prints the one it has.
+ * Every stack ships one directory per flavor, so this always returns three; a stack that lost a
+ * directory returns fewer, which the suite reads as a broken flavor rather than as a layout.
  *
  * @throws when no stack has that name, naming every valid one
  */
@@ -105,51 +100,33 @@ export async function resolveStack(stack: string): Promise<Example[]> {
   const locations = await discoverExamples()
   const matches = locations.filter(location => location.stack === stack)
   if (matches.length === 0) {
-    throw unknownName(stack, locations)
+    throw unknownStack(stack, locations)
   }
   const ordered = FLAVORS.flatMap(flavor => matches.filter(location => location.flavor === flavor))
   return Promise.all(ordered.map(load))
 }
 
-/** The example a name denotes: `<flavor>/<stack>`, or a bare stack name the runner also expands. */
-function findByName(locations: ExampleLocation[], name: string): ExampleLocation | undefined {
-  const slash = name.indexOf('/')
-  if (slash === -1) {
-    return locations.find(location => location.flavor === PAIRED_FLAVOR && location.stack === name)
-  }
-  const flavor = name.slice(0, slash)
-  const stack = name.slice(slash + 1)
-  return locations.find(location => location.flavor === flavor && location.stack === stack)
-}
-
 /**
- * Every example directory, in both layouts.
+ * Every example directory.
  *
- * `node_modules` is skipped wherever it appears: every example has one, and it holds package
- * manifests of its own. A directory that holds examples but is not named after a flavor is a
- * mistake rather than a layout, so it fails instead of registering nothing.
+ * A flavor is the only directory `playground/` holds besides this registry and the runner, so a
+ * directory that is not named after a flavor is a mistake rather than a layout, and it fails
+ * instead of registering nothing. `node_modules` is skipped wherever it appears: the playground
+ * root and every example carry install artifacts, and they hold package manifests of their own.
  */
 async function discoverExamples(): Promise<ExampleLocation[]> {
   const locations: ExampleLocation[] = []
   for (const entry of await exampleDirectories(PLAYGROUND_DIRECTORY)) {
-    const directory = join(PLAYGROUND_DIRECTORY, entry)
-    if (existsSync(join(directory, 'package.json'))) {
-      locations.push({ flavor: PAIRED_FLAVOR, stack: entry, directory })
-      continue
-    }
-
-    const nested = await exampleDirectories(directory)
-    if (nested.length === 0) {
-      continue
-    }
     const flavor = FLAVORS.find(candidate => candidate === entry)
     if (!flavor) {
       throw new Error(
         `Unknown flavor "${entry}" under playground/. Valid flavors: ${FLAVORS.join(', ')}`,
       )
     }
-    for (const stack of nested) {
-      const stackDirectory = join(directory, stack)
+
+    const flavorDirectory = join(PLAYGROUND_DIRECTORY, entry)
+    for (const stack of await exampleDirectories(flavorDirectory)) {
+      const stackDirectory = join(flavorDirectory, stack)
       if (existsSync(join(stackDirectory, 'package.json'))) {
         locations.push({ flavor, stack, directory: stackDirectory })
       }
@@ -192,17 +169,20 @@ function nameOf(location: ExampleLocation): string {
 }
 
 /**
- * The failure for a name the playground does not ship.
+ * The failure for an example name the playground does not ship.
  *
- * A caller may have meant a stack, which the runner expands into its flavors, or one example; the
- * message names both, so a typo never reads as an empty vocabulary.
+ * Every valid name is flavor-qualified, because that is the only vocabulary an example has; listing
+ * the stacks as well would suggest a bare name is one of them.
  */
-function unknownName(name: string, locations: ExampleLocation[]): Error {
-  const stacks = [...new Set(locations.map(location => location.stack))].sort()
+function unknownExample(name: string, locations: ExampleLocation[]): Error {
   const examples = locations.map(nameOf).sort()
-  return new Error(
-    `Unknown example "${name}". Valid stacks: ${stacks.join(', ')}. Valid examples: ${examples.join(', ')}`,
-  )
+  return new Error(`Unknown example "${name}". Valid examples: ${examples.join(', ')}`)
+}
+
+/** The failure for a stack the playground does not ship. */
+function unknownStack(stack: string, locations: ExampleLocation[]): Error {
+  const stacks = [...new Set(locations.map(location => location.stack))].sort()
+  return new Error(`Unknown stack "${stack}". Valid stacks: ${stacks.join(', ')}`)
 }
 
 /**

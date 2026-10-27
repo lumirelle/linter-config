@@ -24,18 +24,29 @@ export const options = {
     // An example simulates a consumer project, so its source tree is linted by that project's own
     // Config objects, never by this repository's root config. The patterns name the source
     // directories the examples use, including a monorepo example's nested package sources; the
-    // example's own lint configs, options module, manifest, tsconfig, README and framework config
-    // files sit at its root, where this repository's root config does lint them.
+    // example's own lint configs, options module, manifest, tsconfig and README sit at its root,
+    // where this repository's root config does lint them; its framework config files are the
+    // exception, listed below.
     'playground/*/src/**',
     'playground/*/app/**',
     'playground/*/packages/*/src/**',
     'playground/*/*/src/**',
     'playground/*/*/app/**',
     'playground/*/*/packages/*/src/**',
-    // The one framework config that does not survive this repository's own lint: `nuxt.config.ts`
-    // calls `defineNuxtConfig` from the Nuxt runtime the example deliberately does not install.
+    // The example-root framework and bundler config files, which do not survive this repository's
+    // own lint: they import the framework or bundler the example deliberately does not install, so
+    // they are outside this repository's TypeScript project, and one that needs type information
+    // throws on them rather than reporting a rule. `nuxt.config.ts` calls `defineNuxtConfig`,
+    // `uno.config.ts` imports `unocss` and `vite.config.ts` imports `vite`. The example's own lint
+    // config and its options module are deliberately *not* here: those are the linter inputs this
+    // repository type-checks on purpose. A flavor that ships no ESLint config module leaves these
+    // files to this config rather than to a nested one, which is why the list names them.
     'playground/*/nuxt.config.ts',
+    'playground/*/uno.config.ts',
+    'playground/*/vite.config.ts',
     'playground/*/*/nuxt.config.ts',
+    'playground/*/*/uno.config.ts',
+    'playground/*/*/vite.config.ts',
   ],
   overrides: {
     // Two type-aware rules do not describe this repository, and turning them off here — in Source,

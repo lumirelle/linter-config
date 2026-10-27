@@ -3,7 +3,6 @@ import type { FlatConfigComposer } from 'eslint-flat-config-utils'
 import type { Options } from './types'
 import { composeEslint } from './adapters/eslint'
 
-export { oxlintBridge } from './bridge'
 export type * from './types'
 
 /**
@@ -42,11 +41,11 @@ export type * from './types'
  * without a top-level `await`, and it supports `append` / `override` / `remove` by
  * Config object name.
  *
- * With {@link Options.oxlint} set, the Emission ends with the Bridge: one config object per
- * Config object the Oxlint Emission takes, turning off the rules Oxlint reports, in the same file
- * scopes. That is what keeps a project running both tools from reporting the same violation twice;
- * `eslint()` without it emits no Bridge. Because a consumer's own configs are appended after ours
- * and may re-enable a rule, {@link oxlintBridge} is exported to be appended last.
+ * With {@link Options.oxlint} set, the Bridge closes the Emission: one config object per Config
+ * object the Oxlint Emission takes, turning off the rules Oxlint reports, in the same file scopes.
+ * That is what keeps a project running both tools from reporting the same violation twice.
+ * `eslint()` without it emits no Bridge, and there is no second call to make: the factory owns the
+ * Bridge's position, so Config objects appended after the factory still resolve before it.
  *
  * @param options - Shared options; the same object configures {@link oxlint}.
  * @returns A composer that resolves to the ESLint Emission.

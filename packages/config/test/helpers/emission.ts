@@ -57,3 +57,16 @@ export function jsPluginDeclarations(config: OxlintConfig): Array<{ name: string
 export async function jsPluginsOf(options: Options = {}): Promise<Array<{ name: string, specifier: string }>> {
   return jsPluginDeclarations(await oxlint(houseOptions(options)))
 }
+
+/**
+ * The Bridge of `options`: the tail a resolution with `oxlint` adds over the same options resolved
+ * without it.
+ *
+ * Deriving it through the Composer keeps the tests on the public seam — the Bridge builder is never
+ * imported, so it stays free to change — and turns "is it still last" into "is it the tail".
+ */
+export async function bridgeOf(options: Options = {}): Promise<Linter.Config[]> {
+  const without = await eslint(houseOptions({ ...options, oxlint: false }))
+  const withBridge = await eslint(houseOptions({ ...options, oxlint: options.oxlint ?? true }))
+  return withBridge.slice(without.length)
+}

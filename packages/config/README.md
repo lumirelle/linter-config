@@ -52,30 +52,30 @@ export default oxlint({
 
 ## Composition and overrides
 
-Both composers of ESLint and OxLint support `append`, `override`, `insertAfter` and `remove`. 
+Both composers of ESLint and OxLint support `append`, `override`, `insertAfter` and `remove`.
 
 For ESLint, it uses [`eslint-flat-config-utils`](https://github.com/antfu/eslint-flat-config-utils) under the hood; for OxLint, it uses [`@oxlint-flat-config/composer`](https://github.com/liangmiQwQ/oxlint-flat-config/tree/main/packages/composer) under the hood.
 
 A Config object is addressed by its stable `name`, `lumirelle/<upstream tail>`:
 
 > [!Note]
-> Only the ESLint side has the Bridge option: `oxlint: true` (or its object form), and [`oxlintBridge()`][bridge] used to turn off the rules of ESLint which is already handled by OxLint.
+> Only the ESLint side has the Bridge: `oxlint: true` (or its object form) turns off the rules of ESLint which is already handled by OxLint.
+>
+> That option alone enables it, and it always resolves last: the factory owns its position, after every Config object you append, insert or override.
 >
 > They are designed for mixed use, because of OxLint does not support custom language parser yet.
 
 ```js
 // eslint.config.js
-import { eslint, oxlintBridge } from '@lumirelle/linter-config/eslint'
+import { eslint } from '@lumirelle/linter-config/eslint'
 
 const options = { oxlint: { typeAware: true } }
 
 export default eslint(options)
   // One named Config object, without restating the Module.
   .override('lumirelle/javascript/rules', { rules: { 'no-console': 'off' } })
-  // Your own objects are appended after ours.
+  // Your own objects are appended after ours and resolve before the Bridge, which the factory appends last.
   .append({ name: 'project/no-legacy', files: ['legacy/**'], rules: { 'ts/no-explicit-any': 'error' } })
-  // The Bridge goes last, so a rule you re-enabled is turned off again where Oxlint reports it.
-  .append(...oxlintBridge(options))
 ```
 
 Or by its Module for the factory's own `overrides` option:
@@ -159,11 +159,6 @@ This configuration is highly inspired by the upstream package [`@antfu/eslint-co
 
 <!-- Repository links: absolute, so this README resolves from both the repository root and packages/config/ -->
 
-[glossary]: https://github.com/lumirelle/linter-config/blob/main/GLOSSARY.md
-[adr-1]: https://github.com/lumirelle/linter-config/blob/main/docs/adr/0001-source-and-composers.md
-[adr-2]: https://github.com/lumirelle/linter-config/blob/main/docs/adr/0002-plugin-bundles.md
-[schema]: https://github.com/lumirelle/linter-config/blob/main/docs/design/source-schema.md
-[bridge]: https://github.com/lumirelle/linter-config/blob/main/packages/config/src/bridge.ts
 [playground]: https://github.com/lumirelle/linter-config/blob/main/playground/README.md
 [coverage]: https://github.com/lumirelle/linter-config/blob/main/packages/config/coverage.json
 [dogfood-eslint]: https://github.com/lumirelle/linter-config/blob/main/eslint.config.js

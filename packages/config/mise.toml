@@ -3,7 +3,7 @@ _.path = ['{{config_root}}/node_modules/.bin']
 
 [task_config.input_groups]
 deps = ["package.json", "../../nub.lock"]
-src = ["src", "tsconfig.json", "tsdown.config.ts"]
+src = ["src/**/*", "tsconfig.json", "tsdown.config.ts"]
 
 [tasks.dev]
 run = "tsdown --watch"

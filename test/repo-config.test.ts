@@ -1,8 +1,9 @@
 import { describe, expect, it } from 'vitest'
 import { options } from '../lint-options'
-import { eslint, oxlintBridge } from '../packages/config/src/eslint'
+import { eslint } from '../packages/config/src/eslint'
 import { oxlint } from '../packages/config/src/oxlint'
 import { pluginDefinition, pluginIdOfRuleKey } from '../packages/config/src/plugins'
+import { bridgeOf } from '../packages/config/test/helpers/emission'
 
 /**
  * Oxlint's spelling of a Source rule key, read from the Plugin registry both Emissions map with:
@@ -24,10 +25,14 @@ function isEnabled(entry: unknown): boolean {
   return severity(entry) !== 'off' && severity(entry) !== 0
 }
 
+/** The ESLint Emission without the Bridge, so `off` entries cannot mask what Source turned on. */
+async function eslintEnabledConfigs(): Promise<Awaited<ReturnType<typeof eslint>>> {
+  return eslint({ ...options, oxlint: false })
+}
+
 /** The rule keys the ESLint Emission enables, in Source spelling. */
 async function eslintEnabledRules(): Promise<string[]> {
-  // Without `oxlint`, so the Bridge (which is all `off`) does not mask what Source turned on.
-  const configs = await eslint({ ...options, oxlint: false })
+  const configs = await eslintEnabledConfigs()
   const enabled = new Set<string>()
   for (const config of configs) {
     for (const [key, entry] of Object.entries(config.rules ?? {})) {
@@ -39,9 +44,13 @@ async function eslintEnabledRules(): Promise<string[]> {
   return [...enabled]
 }
 
-/** The rule keys the Bridge turns off, in Oxlint spelling. */
-function bridgeDisabledRules(): string[] {
-  const disabled = oxlintBridge(options).flatMap(config => Object.keys(config.rules ?? {}))
+/**
+ * The rule keys the Bridge turns off, in Oxlint spelling, as the tail `oxlint` adds to this Emission.
+ * The helper pins the cwd-reading flags; the Bridge depends only on Config objects that carry rules,
+ * so neither the `.gitignore` ignores nor editor detection can change it.
+ */
+async function bridgeDisabledRules(): Promise<string[]> {
+  const disabled = (await bridgeOf(options)).flatMap(config => Object.keys(config.rules ?? {}))
   return [...new Set(disabled.map(oxlintRuleKey))].sort()
 }
 
@@ -63,7 +72,7 @@ async function oxlintEnabledRules(): Promise<string[]> {
 describe('the repository\'s own two configs', () => {
   it('builds both Emissions from one options object, so the Bridge silences only what Oxlint reports', async () => {
     const sourceEnabled = new Set((await eslintEnabledRules()).map(oxlintRuleKey))
-    const bridge = bridgeDisabledRules().filter(key => sourceEnabled.has(key))
+    const bridge = (await bridgeDisabledRules()).filter(key => sourceEnabled.has(key))
 
     // Every rule the Bridge turns off is a rule Oxlint reports...
     expect(await oxlintEnabledRules()).toEqual(expect.arrayContaining(bridge))

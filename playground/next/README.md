@@ -141,8 +141,9 @@ import { eslint } from '@lumirelle/linter-config/eslint'
 import jsxA11y from 'eslint-plugin-jsx-a11y'
 import { options } from './options.ts'
 
-// Your own Config objects are appended after the Emission; a rule you re-enable that Oxlint also
-// reports needs the exported `oxlintBridge` appended last again.
+// Your own Config objects are appended after the Emission and resolve before the Bridge, which the
+// factory appends last: a rule you re-enable is turned off again where Oxlint reports it, and there
+// is nothing to re-append.
 export default eslint(options).append({
   name: 'project/jsx-a11y',
   files: ['app/**/*.tsx'],

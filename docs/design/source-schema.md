@@ -2,7 +2,7 @@
 
 Status: accepted — implemented. Source, both Adapters and the Bridge live in [`packages/config/src`](../../packages/config/src); this document stays the reference for their field-level shape, invariants and algorithms.
 
-Terms are defined in [GLOSSARY.md](../../GLOSSARY.md). The decisions behind this shape are [ADR 0001](../adr/0001-source-and-composers.md) (Source is a function graph; both artifacts go through a Composer), [ADR 0002](../adr/0002-plugin-bundles.md) (plugin dependencies live in two Bundles) and [ADR 0003](../adr/0003-generated-rule-tables.md) (plugin rule tables stay committed data).
+Terms are defined in [GLOSSARY.md](../../GLOSSARY.md). The decisions behind this shape are [ADR 0001](../adr/0001-source-and-composers.md) (Source is a function graph; both artifacts go through a Composer), [ADR 0002](../adr/0002-plugin-bundles.md) (plugin dependencies live in two Bundles), [ADR 0003](../adr/0003-generated-rule-tables.md) (plugin rule tables stay committed data) and [ADR 0004](../adr/0004-oxlint-bridge-closes-the-emission.md) (the Bridge closes the ESLint Emission at resolution time).
 
 ## Goals
 
@@ -226,7 +226,8 @@ The Modules as implemented, with the Oxlint realization each Plugin id records. 
    resolve `tools.eslint.parser` the same way into `languageOptions.parser`
 4. `globals` -> `languageOptions.globals`
 5. Merge `tools.eslint`
-6. `new FlatConfigComposer(configs)`; when `options.oxlint` is set, append the Bridge
+6. `new FlatConfigComposer(configs)`; when `options.oxlint` is set, register the Bridge as the composer's
+   resolution hook, so it closes the resolved array after every consumer `append` / `insertAfter` / `override`
 
 **Oxlint**
 
@@ -239,7 +240,7 @@ The Modules as implemented, with the Oxlint realization each Plugin id records. 
 
 **Bridge**
 
-For every Config object, take the rules Oxlint can implement and emit `off` entries with the same `files` / `ignores`, preserving order, appended last. `oxlintBridge()` is exported so consumers can re-append it after their own configs.
+For every Config object, take the rules Oxlint can implement and emit `off` entries with the same `files` / `ignores`, preserving order. The ESLint Adapter derives the Bridge once per factory call, from the Config objects `source()` already produced, and registers it as the composer's resolution hook: it closes the Emission, so whatever a consumer appends, inserts or overrides lands before it. There is no exported helper and nothing to re-append; the resolved objects keep their `/oxlint-bridge` name suffix for diagnosis.
 
 ## Decisions
 

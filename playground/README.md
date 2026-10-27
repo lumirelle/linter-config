@@ -71,7 +71,7 @@ one flavor a reader is most likely to copy.
 
 ## Scope
 
-Examples install only the lint-time peers their enabled Modules require. The frameworks they
+Examples install only the lint-time peers their enabled Modules require. The technologies they
 simulate (Vue, React, Next, Vite, UnoCSS) are deliberately **not** installed: these are lint targets
 and resolution proofs, not applications, and the root dogfood configuration does not lint their
 source trees either.

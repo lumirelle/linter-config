@@ -52,8 +52,7 @@ export interface Example {
  * flavors showing the same snapshot, and it is what `mise run play` expands into them.
  */
 export async function listStacks(): Promise<string[]> {
-  const locations = await discoverExamples()
-  return [...new Set(locations.map(location => location.stack))].sort()
+  return stackNames(await discoverExamples())
 }
 
 /**
@@ -63,8 +62,7 @@ export async function listStacks(): Promise<string[]> {
  * so a stack that starts shipping a flavor needs no edit outside its own three directories.
  */
 export async function listExamples(): Promise<string[]> {
-  const locations = await discoverExamples()
-  return locations.map(nameOf).sort()
+  return exampleNames(await discoverExamples())
 }
 
 /**
@@ -89,10 +87,11 @@ export async function resolveExample(name: string): Promise<Example> {
 }
 
 /**
- * One stack's three examples, in flavor order.
+ * One stack's examples, in flavor order.
  *
- * Every stack ships one directory per flavor, so this always returns three; a stack that lost a
- * directory returns fewer, which the suite reads as a broken flavor rather than as a layout.
+ * The result is the flavors the stack ships, not a fixed three: every stack in the playground ships
+ * all of them today, and a stack that lost a directory returns fewer, which
+ * `test/examples/flavors.test.ts` turns into a failure rather than a shorter matrix row.
  *
  * @throws when no stack has that name, naming every valid one
  */
@@ -111,14 +110,12 @@ export async function resolveStack(stack: string): Promise<Example[]> {
  *
  * A flavor is the only directory `playground/` holds besides this registry and the runner, so a
  * directory that groups examples under any other name is a mistake rather than a layout, and it
- * fails instead of registering nothing. `node_modules` is skipped wherever it appears: the
- * playground root and every example carry install artifacts, and they hold package manifests of
- * their own.
- *
- * A directory that groups nothing is skipped rather than failed: a checkout that installed
- * dependencies before the flavor-first layout still holds `node_modules`-only directories where
- * the flat examples used to be, and those are install history rather than a layout the registry
- * should reject.
+ * fails instead of registering nothing. It fails only when it groups at least one example, though:
+ * a directory that groups nothing is skipped, because a checkout that installed dependencies before
+ * the flavor-first layout still holds `node_modules`-only directories where the flat examples used
+ * to be, and those are install history rather than a layout the registry should reject. `node_modules`
+ * is skipped wherever it appears: the playground root and every example carry install artifacts, and
+ * they hold package manifests of their own.
  */
 async function discoverExamples(): Promise<ExampleLocation[]> {
   const locations: ExampleLocation[] = []
@@ -179,20 +176,38 @@ function nameOf(location: ExampleLocation): string {
 }
 
 /**
+ * Every stack name the locations group, sorted.
+ *
+ * The public stack list and the unknown-stack failure both read this, so the message cannot list a
+ * stack the resolver would not accept.
+ */
+function stackNames(locations: readonly ExampleLocation[]): string[] {
+  return [...new Set(locations.map(location => location.stack))].sort()
+}
+
+/**
+ * Every example name the locations name, sorted.
+ *
+ * The public example list and the unknown-example failure both read this, for the same reason on the
+ * example side: one list, one vocabulary.
+ */
+function exampleNames(locations: readonly ExampleLocation[]): string[] {
+  return locations.map(nameOf).sort()
+}
+
+/**
  * The failure for an example name the playground does not ship.
  *
  * Every valid name is flavor-qualified, because that is the only vocabulary an example has; listing
  * the stacks as well would suggest a bare name is one of them.
  */
 function unknownExample(name: string, locations: ExampleLocation[]): Error {
-  const examples = locations.map(nameOf).sort()
-  return new Error(`Unknown example "${name}". Valid examples: ${examples.join(', ')}`)
+  return new Error(`Unknown example "${name}". Valid examples: ${exampleNames(locations).join(', ')}`)
 }
 
 /** The failure for a stack the playground does not ship. */
 function unknownStack(stack: string, locations: ExampleLocation[]): Error {
-  const stacks = [...new Set(locations.map(location => location.stack))].sort()
-  return new Error(`Unknown stack "${stack}". Valid stacks: ${stacks.join(', ')}`)
+  return new Error(`Unknown stack "${stack}". Valid stacks: ${stackNames(locations).join(', ')}`)
 }
 
 /**

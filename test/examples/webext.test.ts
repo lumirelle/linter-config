@@ -10,8 +10,8 @@ import { configNamed, configNames, expectNoModules, loadExample } from './helper
  */
 const BUILD_OUTPUT = ['dist/**', 'extension/**', '.output/**']
 
-/** The stack's three flavors, resolved the way the runner resolves them. */
-const FLAVORS = await resolveStack('webext')
+/** The stack's three examples, one per flavor, resolved the way the runner resolves them. */
+const EXAMPLES = await resolveStack('webext')
 
 describe('the `eslint-oxlint/webext` example', () => {
   it('emits an application Emission with no framework Config objects', async () => {
@@ -34,7 +34,7 @@ describe('the `webext` build-output ignores', () => {
   it('are asserted on all three flavors, not on the paired one alone', () => {
     // The loop below is only as wide as the flavors the stack ships, so the flavors are named: a
     // stack that lost a flavor directory would otherwise assert one Emission and call it every flavor.
-    expect(FLAVORS.map(example => example.name)).toEqual([
+    expect(EXAMPLES.map(example => example.name)).toEqual([
       'eslint/webext',
       'oxlint/webext',
       'eslint-oxlint/webext',
@@ -44,14 +44,14 @@ describe('the `webext` build-output ignores', () => {
   it('are the patterns the options module declares in every flavor', () => {
     // The patterns live in the options module, which every flavor shares byte for byte, so a flavor
     // cannot lose them without losing the file the contract already compares.
-    for (const example of FLAVORS) {
+    for (const example of EXAMPLES) {
       expect(example.options.ignores).toEqual(BUILD_OUTPUT)
     }
   })
 
   // One assertion per Adapter, because the two spell a global ignore differently: ESLint has a
   // `files`-less Config object, and Oxlint has no per-object equivalent.
-  describe.each(FLAVORS)('$name', (example: Example) => {
+  describe.each(EXAMPLES)('$name', (example: Example) => {
     it.skipIf(!example.eslint)('reaches the global ignores Config object', () => {
       const ignores = configNamed(example.eslint ?? [], 'lumirelle/ignores')
 

@@ -3,7 +3,7 @@ import { readdir, readFile } from 'node:fs/promises'
 import { dirname, join, relative, sep } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { describe, expect, it } from 'vitest'
-import { listExamples, listStacks, resolveExample, resolveStack } from '../../playground/examples'
+import { exampleTables } from './helpers/emission'
 
 /** Where the examples live, so a package name can be read off its directory. */
 const PLAYGROUND = join(dirname(fileURLToPath(import.meta.url)), '..', '..', 'playground')
@@ -12,8 +12,8 @@ const PLAYGROUND = join(dirname(fileURLToPath(import.meta.url)), '..', '..', 'pl
  * The files a stack's flavors are allowed to differ in: the two config modules, the options module
  * they read, the manifest and the README.
  *
- * Everything else — the source tree, the project file, the framework config files — is the stack's
- * rather than the flavor's, so it is byte-identical in all three directories.
+ * Everything else — the source tree, the project file, the stack's own config files — belongs to the
+ * stack rather than to the flavor, so it is byte-identical in all three directories.
  */
 const FLAVOR_FILES = new Set(['README.md', 'eslint.config.js', 'options.ts', 'oxlint.config.ts', 'package.json'])
 
@@ -35,13 +35,8 @@ const ALL_TOOL_PACKAGES = new Set(Object.values(TOOL_PACKAGES).flat())
 /** The packages every example declares, whatever its flavor and stack. */
 const SHARED_PACKAGES = ['@lumirelle/linter-config', '@lumirelle/tsconfig', 'typescript']
 
-/** Every example, resolved the way the runner resolves it. */
-const EXAMPLES = await Promise.all((await listExamples()).map(name => resolveExample(name)))
-
-/** Every stack, with the three flavors it ships. */
-const STACKS = await Promise.all(
-  (await listStacks()).map(async stack => ({ stack, examples: await resolveStack(stack) })),
-)
+/** Every example the playground ships, and every stack with the three flavors it ships. */
+const { examples: EXAMPLES, stacks: STACKS } = await exampleTables()
 
 /**
  * Every file under `directory`, as `/`-separated paths relative to it.
@@ -132,8 +127,9 @@ describe('the flavor directories', () => {
         return (await declaredPackages(example)).filter(name => !ALL_TOOL_PACKAGES.has(name)).sort()
       }))
 
-      // Framework peers stay in every flavor because Source's peer check runs for both Adapters, so
-      // the only dependency difference between flavors is the tool packages themselves.
+      // The peers the stack's Modules require stay in every flavor because Source's peer check runs
+      // for both Adapters, so the only dependency difference between flavors is the tool packages
+      // themselves.
       for (const packages of shared.slice(1)) {
         expect(packages).toEqual(shared[0])
       }

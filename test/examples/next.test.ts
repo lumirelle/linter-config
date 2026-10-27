@@ -1,19 +1,16 @@
 import type { Linter } from 'eslint'
 import { describe, expect, it } from 'vitest'
 import { resolveExample } from '../../playground/examples'
-import { configNames, expectNoModules, loadExample, objectsOfModule } from './helpers/emission'
+import { comparableEmission, configNames, expectNoModules, loadExample, objectsOfModule } from './helpers/emission'
 
 /**
  * The React Config objects of an ESLint Emission, compared the way two Emissions are compared.
  *
- * A whole-object comparison cannot be the assertion: a processor is rebuilt per call, so two
- * Emissions built from the same options are never identity-equal. Names, file scopes and rules are
- * what a Module or a flavor can change; plugins and processors belong to the Modules.
+ * The pair relation is about one Module, so this filters `comparableEmission`'s output rather than
+ * rebuilding the projection: a field that comparison starts reading applies here too.
  */
-function reactObjects(configs: readonly Linter.Config[]): Array<Pick<Linter.Config, 'name' | 'files' | 'ignores' | 'rules'>> {
-  return configs
-    .filter(config => config.name?.startsWith('lumirelle/react/'))
-    .map(config => ({ name: config.name, files: config.files, ignores: config.ignores, rules: config.rules }))
+function reactObjects(configs: readonly Linter.Config[]): ReturnType<typeof comparableEmission> {
+  return comparableEmission(configs).filter(config => config.name?.startsWith('lumirelle/react/'))
 }
 
 describe('the `eslint-oxlint/next` example', () => {

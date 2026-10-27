@@ -69,15 +69,16 @@
       ]
     },
     // An example is a consumer snapshot, not a library with a single index: its options module and
-    // the two config modules built from it are the whole program. Globbed, so a later example
-    // package needs no edit here; a declared peer is covered by the root `ignoreDependencies`
-    // above, which a workspace inherits. `packages/*/src/**/*` is a monorepo example's nested
-    // package sources, which the workspace glob does not make workspaces of their own.
-    "playground/*": {
+    // the config modules built from it are the whole program. `playground/<flavor>/<stack>` is the
+    // only layout, and this glob reaches every example without naming one, so a later stack needs
+    // no edit here; a declared peer is covered by the root `ignoreDependencies` above, which a
+    // workspace inherits. `packages/*/src/**/*` is a monorepo example's nested package sources,
+    // which the workspace glob does not make workspaces of their own.
+    "playground/*/*": {
       "entry": [
-        // The paired lint configs and the framework config files an example keeps — the
-        // `uno.config.ts` a UnoCSS project needs before its plugin can order a class name. Nothing
-        // imports them, and they are part of the snapshot rather than dead code.
+        // The lint configs and the framework config files an example keeps — the `uno.config.ts` a
+        // UnoCSS project needs before its plugin can order a class name. Nothing imports them, and
+        // they are part of the snapshot rather than dead code.
         "*.config.{js,ts}",
         "options.ts",
         "src/**/*",

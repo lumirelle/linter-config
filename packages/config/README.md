@@ -97,7 +97,8 @@ For more usage details, please refer to below two composer package:
 
 ## Examples
 
-[`playground/`][playground] holds seven example projects:
+[`playground/`][playground] holds twenty-one examples: seven stacks, each shipped in an
+ESLint-only, an Oxlint-only and a paired flavor and named `<flavor>/<stack>`:
 
 - A Next.js application
 - A Nuxt application
@@ -107,14 +108,17 @@ For more usage details, please refer to below two composer package:
 - A TypeScript monorepo
 - A browser extension
 
-You can run `mise run play {example_id}` to see the emissions for each example:
+You can run `mise run play {name}` to see the emissions: a stack name prints all three flavors of
+that stack, and a flavor-qualified name prints one.
 
 ```sh
-mise run play ts     # Print both Emissions for one example
-mise run play --all  # Print for every example
+mise run play ts         # All three flavors of one stack
+mise run play eslint/ts  # One flavor of it
+mise run play --all      # Print every example
 ```
 
-See the [playground index][playground] for the table of examples and the options each one demonstrates.
+See the [playground index][playground] for the Flavor × Stack matrix and the options each stack
+demonstrates.
 
 ## Coverage report and upstream comparison
 

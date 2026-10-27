@@ -1,0 +1,13 @@
+{
+  "name": "@lumirelle/example-eslint-ts",
+  "type": "module",
+  "private": true,
+  "devDependencies": {
+    "@lumirelle/linter-config": "workspace:*",
+    "@lumirelle/linter-plugins-eslint": "workspace:*",
+    "@lumirelle/tsconfig": "catalog:types",
+    "eslint": "catalog:check",
+    "typescript": "catalog:types",
+    "vitest": "catalog:test"
+  }
+}

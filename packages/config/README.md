@@ -26,6 +26,16 @@ The default plugins setup for different linter are optional peers, pick as your 
 
 If you want to use some optional options, such as `eslint({ react: true })`, you may need to install the corresponding plugin.
 
+> [!NOTE]
+> Oxlint runs most of these plugins natively. One that needs its own parser cannot run through
+> `jsPlugins` yet — Svelte, Astro, Angular, `format` and the `jsonc`/`yaml`/`toml`/`markdown` Modules
+> stay ESLint-only ([docs][oxlint-js-plugins], [Milestone 3][oxlint-js-plugins-milestone]). The rest are
+> `jsPlugins` specifiers Oxlint resolves against your config file, so you install them yourself. The
+> [bundle README][plugins-oxlint] lists them and records the workaround — an absolute `require.resolve`
+> specifier resolved from the package that owns the plugin — which we plan to offer in a later version so
+> this bundle can ship the plugins instead of you. The [Coverage report][coverage] has the rules still
+> missing.
+
 ## ESLint
 
 ```js
@@ -163,3 +173,6 @@ This configuration is highly inspired by the upstream package [`@antfu/eslint-co
 [coverage]: https://github.com/lumirelle/linter-config/blob/main/packages/config/coverage.json
 [dogfood-eslint]: https://github.com/lumirelle/linter-config/blob/main/eslint.config.js
 [dogfood-oxlint]: https://github.com/lumirelle/linter-config/blob/main/oxlint.config.ts
+[plugins-oxlint]: https://github.com/lumirelle/linter-config/blob/main/packages/plugins-oxlint/README.md
+[oxlint-js-plugins]: https://oxc.rs/docs/guide/usage/linter/js-plugins
+[oxlint-js-plugins-milestone]: https://github.com/oxc-project/oxc/issues/19918

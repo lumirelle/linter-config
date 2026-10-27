@@ -105,10 +105,10 @@ export default defineConfig({
 Verified against the Oxlint version this repository pins: the rule reports normally, where the plain
 package name fails in a project that does not depend on the plugin itself.
 
-It is not applied here yet. It would give the installation parity worth having — install this bundle,
-get the plugins — but it also puts machine-specific absolute paths into the Emission, the artifact
-`mise run play` prints and `mise run upstream:diff` compares, and it leans on `jsPlugins` behaviour that
-is still alpha. When it lands it will be an opt-in the config package sets, not a new default.
+Not applied here yet: it would move the plugin dependency into this bundle, but it also puts
+machine-specific absolute paths into the Emission — the artifact `mise run play` prints and
+`mise run upstream:diff` compares — and it leans on `jsPlugins` behaviour that is still alpha. The plan
+is to offer it as an opt-in the config package sets, not as a default.
 
 ## Usage
 

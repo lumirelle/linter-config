@@ -52,7 +52,7 @@ export default oxlint({
 
 ## Composition and overrides
 
-Both composers of ESLint and OxLint support `append`, `override`, `insertAfter` and `remove`. 
+Both composers of ESLint and OxLint support `append`, `override`, `insertAfter` and `remove`.
 
 For ESLint, it uses [`eslint-flat-config-utils`](https://github.com/antfu/eslint-flat-config-utils) under the hood; for OxLint, it uses [`@oxlint-flat-config/composer`](https://github.com/liangmiQwQ/oxlint-flat-config/tree/main/packages/composer) under the hood.
 
@@ -159,10 +159,6 @@ This configuration is highly inspired by the upstream package [`@antfu/eslint-co
 
 <!-- Repository links: absolute, so this README resolves from both the repository root and packages/config/ -->
 
-[glossary]: https://github.com/lumirelle/linter-config/blob/main/GLOSSARY.md
-[adr-1]: https://github.com/lumirelle/linter-config/blob/main/docs/adr/0001-source-and-composers.md
-[adr-2]: https://github.com/lumirelle/linter-config/blob/main/docs/adr/0002-plugin-bundles.md
-[schema]: https://github.com/lumirelle/linter-config/blob/main/docs/design/source-schema.md
 [bridge]: https://github.com/lumirelle/linter-config/blob/main/packages/config/src/bridge.ts
 [playground]: https://github.com/lumirelle/linter-config/blob/main/playground/README.md
 [coverage]: https://github.com/lumirelle/linter-config/blob/main/packages/config/coverage.json

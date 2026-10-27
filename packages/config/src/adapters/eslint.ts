@@ -17,17 +17,29 @@ const BUNDLE_PACKAGE = '@lumirelle/linter-plugins-eslint'
  * hand the result to a `FlatConfigComposer`.
  *
  * With {@link Options.oxlint} set, the Bridge closes the Emission: it turns off the rules the
- * Oxlint Emission reports, computed from the same Config objects and appended last, so its `off`
- * entries win over every Module's severity in the same scope.
+ * Oxlint Emission reports, computed from the same Config objects, so its `off` entries win over
+ * every Module's severity in the same scope.
+ *
+ * Closing is a resolution hook rather than a constructor entry, because "last" has to survive the
+ * consumer's own `append` / `insertAfter` / `override` calls: the composer runs `onResolved` after
+ * every operation, so the Bridge is the tail of whatever the consumer built. It is also why the
+ * default `.md` ignore, folded in before that hook runs, reaches the Emission's own objects and
+ * never the Bridge.
  */
 export function composeEslint(options: Options): FlatConfigComposer<Linter.Config, string> {
   const configs = source(options)
-  const composer = new FlatConfigComposer<Linter.Config, string>(
+  const composed = new FlatConfigComposer<Linter.Config, string>(
     ...configs
       .filter(config => ESLINT_DOMAINS.includes(config.domain))
       .map(async config => toEslintConfig(config)),
-    ...isBridgeEnabled(options.oxlint) ? bridgeObjects(configs, options) : [],
   )
+  // The Bridge closes the Emission instead of joining it, so it is registered as a resolution hook:
+  // `onResolved` runs after every consumer operation, and "last" stops being theirs to take away.
+  // It is derived here, once, from the Config objects this call already built.
+  const bridge = isBridgeEnabled(options.oxlint) ? bridgeObjects(configs, options) : undefined
+  const composer = bridge
+    ? composed.onResolved(resolved => [...resolved, ...bridge])
+    : composed
 
   // Markdown has its own `SourceCode`, which lacks the JS-only methods (`getAllComments`, ...) that
   // an unscoped rule can call; Upstream keeps every such rule off `.md` files the same way.

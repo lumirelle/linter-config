@@ -8,10 +8,12 @@ import { source } from './source'
 /**
  * How a Bridge object is named after the Config object it mirrors.
  *
- * Names are public API, so this is a stable suffix rather than a counter: a consumer can address
- * one Bridge object (`lumirelle/vue/rules/oxlint-bridge`) the way it addresses any other.
+ * Names are public API, so this is a stable suffix rather than a counter: a resolved config dump
+ * shows `lumirelle/vue/rules/oxlint-bridge` the way it shows any other Config object name. The
+ * constant stays private: the Bridge is enabled by the `oxlint` option alone, so a consumer never
+ * spells a Bridge object's name to append one.
  */
-export const BRIDGE_NAME_SUFFIX = '/oxlint-bridge'
+const BRIDGE_NAME_SUFFIX = '/oxlint-bridge'
 
 /**
  * The ESLint side of running both tools over the same files: a config object per Config object the

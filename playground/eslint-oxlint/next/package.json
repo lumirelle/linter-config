@@ -1,5 +1,5 @@
 {
-  "name": "@lumirelle/example-next",
+  "name": "@lumirelle/example-eslint-oxlint-next",
   "type": "module",
   "private": true,
   "devDependencies": {

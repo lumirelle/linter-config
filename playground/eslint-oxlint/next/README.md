@@ -1,12 +1,19 @@
-# `next` example
+# `eslint-oxlint/next` example
 
 A Next.js App Router project. `react: true` adds the React Module, `nextjs: true` the Next Module
 (`@next/eslint-plugin-next`'s `recommended` set and then its `core-web-vitals` set), `type: 'app'`
 the application rule set, and `test: true` lints `app/page.test.tsx`.
 
 It is the second half of the React-family pair: it emits the same three React Config objects as the
-[`react`](../react/README.md) example and adds the two Next ones, so the boundary between the React
-Module and the Next Module is visible in one Emission.
+[`react`](../../react/README.md) example and adds the two Next ones, so the boundary between the
+React Module and the Next Module is visible in one Emission.
+
+This is the paired flavor of the `next` stack and the stack's canonical README: the predecessor
+mapping below is written once. The two single-tool flavors strip one side of this directory and link
+back here — [`eslint/next`](../../eslint/next/README.md) has no Oxlint config module,
+[`oxlint/next`](../../oxlint/next/README.md) has no ESLint one. The stack sets no `oxlint` entry, so
+no flavor appends a Bridge: the ESLint and paired flavors emit the same objects, and the flavor
+difference there is the Oxlint config module alone.
 
 Predecessor: **canonical consumer, no starter snapshot.** There is no Next starter to take a
 snapshot of, so the previous configuration below is the two shapes a Next project has today: the
@@ -160,6 +167,11 @@ npm install -D @lumirelle/linter-config @lumirelle/linter-plugins-eslint @lumire
   eslint oxlint @eslint-react/eslint-plugin eslint-plugin-react-refresh @next/eslint-plugin-next
 ```
 
+Every flavor declares those same three peers, because Source's peer check runs for both Adapters:
+an Oxlint-only Next project still installs `@eslint-react/eslint-plugin`,
+`eslint-plugin-react-refresh` and `@next/eslint-plugin-next`, and the Oxlint Emission maps the React
+and Next rules onto Oxlint's own `react` and `nextjs` plugin scopes instead of loading the plugins.
+
 There is no `.oxlintrc.json` to keep: `oxlint.config.ts` is discovered without a `-c` flag, and
 Oxlint refuses to load when both files exist in one directory. Delete the old file when migrating.
 
@@ -169,7 +181,7 @@ stays a lint target rather than an application. One rule reads whether `next` is
 `generateMetadata`, `revalidate`, ...) only then. This example has no `next`, so `app/layout.tsx`
 exports the component alone; in a real project, which always has `next`, the same file keeps the
 `metadata` export a route layout normally carries. The same rule allows constant exports only when
-`vite` is installed, which is the matching difference from [`react`](../react/README.md).
+`vite` is installed, which is the matching difference from [`react`](../../react/README.md).
 
 The Next plugin also warns that `Pages directory cannot be found at <root>/pages` while this tree is
 linted: it looks for the legacy `pages` route directory, which an App Router project does not have.
@@ -181,7 +193,7 @@ is exactly the package the example does not install.
 ## Tree
 
 ```text
-playground/next/
+playground/eslint-oxlint/next/
 ├── app/
 │   ├── about/
 │   │   └── page.tsx       # a second route segment

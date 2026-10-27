@@ -1,8 +1,13 @@
-# `nuxt` example
+# `eslint-oxlint/nuxt` example
 
 A Nuxt 4 application modelled on [`lumirelle/starter-nuxt`](https://github.com/lumirelle/starter-nuxt).
 It turns the Vue Module on for a Nuxt-shaped tree (`app/app.vue`, `app/pages/`, `app/components/`),
 keeps the UnoCSS Module the starter already used, and enables the `test` Module at application type.
+
+This is the paired flavor of the `nuxt` stack and the stack's canonical README: the predecessor
+mapping below is written once. The two single-tool flavors strip one side of this directory and link
+back here — [`eslint/nuxt`](../../eslint/nuxt/README.md) has no Oxlint config module,
+[`oxlint/nuxt`](../../oxlint/nuxt/README.md) has no ESLint one.
 
 Predecessor snapshot: `lumirelle/starter-nuxt` at commit
 [`0255e28`](https://github.com/lumirelle/starter-nuxt/commit/0255e283c822cc45793dda94958b05ea87bf0017)
@@ -96,9 +101,9 @@ export default oxlint(options)
 | — | `type: 'app'` | The starter never states it. The `e18e` Module reads it — application type keeps its `prefer-static-regex` rule on — and the example states it because that choice is part of the options object. |
 | — | `test: true` | Upstream reads the `test` Module inline and defaults it on; the starter lints a `@nuxt/test-utils` suite. This snapshot ships no test file — the runners are not installed — so the option is stated rather than demonstrated. |
 
-Neither Emission carries the Bridge: the example does not set `oxlint: true`, so ESLint still reports
-the rules Oxlint reports. Add it (as the `ts` example does) if the project wants each violation
-reported once.
+No flavor carries the Bridge: the stack does not set `oxlint: true`, so ESLint still reports the
+rules Oxlint reports. Add it (as the `ts` stack does) if the project wants each violation reported
+once.
 
 ## The generated Nuxt ESLint config is deliberately not composed
 
@@ -138,6 +143,11 @@ npm install -D @lumirelle/linter-config @lumirelle/linter-plugins-eslint @lumire
 npm uninstall @antfu/eslint-config eslint-plugin-oxlint @lumirelle/oxlint-config @unocss/eslint-config
 ```
 
+All three flavors declare `@unocss/eslint-plugin`, because the `unocss` Module's peer check runs for
+both Adapters and the Oxlint Emission loads the plugin through `jsPlugins`. The plugin declares
+`eslint` as a peer, so an Oxlint-only project may still need `eslint` installed even though the
+Oxlint-only Emission imports nothing from it.
+
 Keep `@nuxt/eslint` only if you compose the generated config as above. There is no `.oxlintrc.json`
 to keep: `oxlint.config.ts` is discovered without a `-c` flag.
 
@@ -150,7 +160,7 @@ what stays absent. The `react` and `vue` examples ship the same file for the sam
 ## Tree
 
 ```text
-playground/nuxt/
+playground/eslint-oxlint/nuxt/
 ├── app/
 │   ├── app.vue              # the application root
 │   ├── components/

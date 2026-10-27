@@ -1,14 +1,12 @@
 {
-  "name": "@lumirelle/example-nuxt",
+  "name": "@lumirelle/example-oxlint-nuxt",
   "type": "module",
   "private": true,
   "devDependencies": {
     "@lumirelle/linter-config": "workspace:*",
-    "@lumirelle/linter-plugins-eslint": "workspace:*",
     "@lumirelle/linter-plugins-oxlint": "workspace:*",
     "@lumirelle/tsconfig": "catalog:types",
     "@unocss/eslint-plugin": "catalog:peer",
-    "eslint": "catalog:check",
     "oxlint": "catalog:check",
     "typescript": "catalog:types"
   }

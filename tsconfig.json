@@ -14,6 +14,8 @@
     "playground/*.ts",
     "playground/*/options.ts",
     "playground/*/oxlint.config.ts",
+    "playground/*/*/options.ts",
+    "playground/*/*/oxlint.config.ts",
     "*.config.js",
     "*.config.ts",
     "lint-options.ts"

@@ -19,7 +19,11 @@ const EXAMPLE_NAMES = [
   'eslint-oxlint/ts-monorepo',
   'eslint-oxlint/vue',
   'eslint-oxlint/webext',
+  'eslint/next',
+  'eslint/nuxt',
   'eslint/ts',
+  'oxlint/next',
+  'oxlint/nuxt',
   'oxlint/ts',
 ]
 
@@ -52,10 +56,11 @@ describe('the example registry', () => {
   })
 
   it('resolves a stack into its flavors in flavor order', async () => {
-    // A flat stack still resolves into the one paired directory it ships; `ts` ships all three.
-    const [flat, converted] = await Promise.all([resolveStack('next'), resolveStack('ts')])
+    // A stack that has not been converted still resolves into the one paired directory it ships;
+    // `ts` ships all three.
+    const [flat, converted] = await Promise.all([resolveStack('react'), resolveStack('ts')])
 
-    expect(flat.map(example => example.name)).toEqual(['eslint-oxlint/next'])
+    expect(flat.map(example => example.name)).toEqual(['eslint-oxlint/react'])
     expect(converted.map(example => example.name)).toEqual([
       'eslint/ts',
       'oxlint/ts',

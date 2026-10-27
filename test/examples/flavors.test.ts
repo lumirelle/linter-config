@@ -1,7 +1,16 @@
-import type { Linter } from 'eslint'
+import type { ModuleId, Options } from '@lumirelle/linter-config/eslint'
 import { describe, expect, it } from 'vitest'
-import { listExamples, listStacks, resolveExample, resolveStack } from '../../playground/examples'
-import { bridgeTail, configNames, oxlintRuleKeys, ruleCarryingOverrides } from './helpers/emission'
+import { listExamples, resolveStack } from '../../playground/examples'
+import {
+  bridgeTail,
+  comparableEmission,
+  configNames,
+  exampleTables,
+  expectNoModules,
+  objectsOfModule,
+  oxlintRuleKeys,
+  ruleCarryingOverrides,
+} from './helpers/emission'
 
 /**
  * The Domains whose Modules only the ESLint side can serve.
@@ -12,25 +21,38 @@ import { bridgeTail, configNames, oxlintRuleKeys, ruleCarryingOverrides } from '
  */
 const ESLINT_ONLY_DOMAINS = ['jsonc', 'yaml', 'toml', 'markdown'] as const
 
-/** Every example the playground ships, resolved the way the runner resolves it. */
-const EXAMPLES = await Promise.all((await listExamples()).map(name => resolveExample(name)))
-
-/** Every stack, with the three flavors it ships. */
-const STACKS = await Promise.all(
-  (await listStacks()).map(async stack => ({ stack, examples: await resolveStack(stack) })),
-)
-
 /**
- * What an ESLint Emission is compared on when two flavors are the subject.
+ * The framework Modules an example can enable, by the option key that enables them.
  *
- * A whole-object comparison cannot be the assertion: a processor is rebuilt per call (the
- * `@eslint/markdown` merged processor is a new object every time), so two Emissions built from the
- * same options are never identity-equal. Names, file scopes and rules are what a flavor can change;
- * plugins and processors belong to the Modules, not to the example.
+ * The Module assertions below read this map and the example's own options module, never the
+ * Emission they check: an expectation derived from the Emission could agree with it by
+ * construction. Every framework Module is listed, because each one absent from an options module is
+ * a Module the Emission must not carry.
  */
-function comparableEmission(configs: readonly Linter.Config[]): Array<Pick<Linter.Config, 'name' | 'files' | 'ignores' | 'rules'>> {
-  return configs.map(config => ({ name: config.name, files: config.files, ignores: config.ignores, rules: config.rules }))
+const FRAMEWORK_MODULES = new Map<keyof Options, ModuleId>([
+  ['angular', 'angular'],
+  ['astro', 'astro'],
+  ['jsx', 'jsx'],
+  ['nextjs', 'nextjs'],
+  ['react', 'react'],
+  ['solid', 'solid'],
+  ['svelte', 'svelte'],
+  ['unocss', 'unocss'],
+  ['vue', 'vue'],
+] as const)
+
+/** The framework Modules an options module enables. */
+function enabledModules(options: Options): ModuleId[] {
+  return [...FRAMEWORK_MODULES].flatMap(([option, module]) => options[option] ? [module] : [])
 }
+
+/** Every framework Module the map names that `enabled` leaves out. */
+function disabledModules(enabled: readonly ModuleId[]): ModuleId[] {
+  return [...FRAMEWORK_MODULES.values()].filter(module => !enabled.includes(module))
+}
+
+/** Every example the playground ships, and every stack with the three flavors it ships. */
+const { examples: EXAMPLES, stacks: STACKS } = await exampleTables()
 
 describe('the flavor contract', () => {
   it('resolves every example the playground lists', async () => {
@@ -81,6 +103,22 @@ describe('the flavor contract', () => {
 
       expect(tail).toHaveLength(example.options.oxlint ? pairs : 0)
       expect(tail.every(config => config.name?.endsWith('/oxlint-bridge'))).toBe(true)
+    })
+
+    it.skipIf(example.eslint === undefined)('carries no Config object of a framework Module its options leave off', () => {
+      // The expectation comes from the options module, so this holds for every example the
+      // playground ships, not only for the ones with a per-stack spec: an option that leaked
+      // between examples shows up as an object of a Module its own options never enable.
+      expectNoModules(example.eslint ?? [], disabledModules(enabledModules(example.options)))
+    })
+
+    it.skipIf(example.flavor !== 'eslint-oxlint' || enabledModules(example.options).length === 0)('carries the framework Modules its options enable', () => {
+      // Once per example, on the flavor that builds every Module's objects: the absence above is
+      // only meaningful while the Modules the options module does enable still put objects in an
+      // Emission. A stack that enables no framework Module has nothing to assert here.
+      for (const module of enabledModules(example.options)) {
+        expect(objectsOfModule(example.eslint ?? [], module), `the Emission drops the ${module} objects`).not.toEqual([])
+      }
     })
   })
 

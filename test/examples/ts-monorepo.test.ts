@@ -10,8 +10,8 @@ import { configNames, expectNoModules, loadExample } from './helpers/emission'
  */
 const NARROWED_PACKAGE = 'packages/core/**/*.ts'
 
-/** The stack's three flavors, resolved the way the runner resolves them. */
-const FLAVORS = await resolveStack('ts-monorepo')
+/** The stack's three examples, one per flavor, resolved the way the runner resolves them. */
+const EXAMPLES = await resolveStack('ts-monorepo')
 
 describe('the `eslint-oxlint/ts-monorepo` example', () => {
   it('emits the Config objects a TypeScript library with the test Module asks for', async () => {
@@ -42,14 +42,14 @@ describe('the `ts-monorepo` per-package override', () => {
   it('is asserted on all three flavors, not on the paired one alone', () => {
     // An `overrides` entry belongs to the stack's options, so every flavor has to carry it; a stack
     // that lost a flavor directory would otherwise assert the paired one and call it every flavor.
-    expect(FLAVORS.map(example => example.name)).toEqual([
+    expect(EXAMPLES.map(example => example.name)).toEqual([
       'eslint/ts-monorepo',
       'oxlint/ts-monorepo',
       'eslint-oxlint/ts-monorepo',
     ])
   })
 
-  describe.each(FLAVORS)('$name', (example: Example) => {
+  describe.each(EXAMPLES)('$name', (example: Example) => {
     it.skipIf(!example.eslint)('narrows one package\'s type-aware rules in the ESLint Emission', () => {
       const rules = example.eslint?.find(config => config.name === 'lumirelle/typescript/rules-type-aware')
 

@@ -3,7 +3,7 @@ import type { Linter } from 'eslint'
 import type { OxlintConfig } from 'oxlint'
 import type { Example } from '../../../playground/examples'
 import { expect } from 'vitest'
-import { resolveExample } from '../../../playground/examples'
+import { listExamples, listStacks, resolveExample, resolveStack } from '../../../playground/examples'
 
 /** One example as a stack spec loads it: its options module plus both Emissions. */
 export type ExampleEmissions = Example & {
@@ -13,6 +13,30 @@ export type ExampleEmissions = Example & {
 
 /** One Oxlint override, as the Emission writes it. */
 export type OxlintOverride = NonNullable<OxlintConfig['overrides']>[number]
+
+/** A stack with the examples it ships. */
+export interface StackExamples {
+  stack: string
+  examples: Example[]
+}
+
+/**
+ * The registry tables both example specs declare their `describe.each` rows from.
+ *
+ * Resolving them here keeps the discovery out of the specs, which only bind the result. It cannot be
+ * a constant: both tables are awaited from the registry, and the house rules ban a top-level await
+ * outside a test file — this module is test scaffolding rather than one.
+ */
+export async function exampleTables(): Promise<{ examples: Example[], stacks: StackExamples[] }> {
+  const [examples, stacks] = await Promise.all([
+    listExamples().then(names => Promise.all(names.map(name => resolveExample(name)))),
+    listStacks().then(names =>
+      Promise.all(names.map(async stack => ({ stack, examples: await resolveStack(stack) }))),
+    ),
+  ])
+
+  return { examples, stacks }
+}
 
 /**
  * Load one example exactly as `mise run play` does: through the registry, which imports the
@@ -36,6 +60,18 @@ export async function loadExample(name: string): Promise<ExampleEmissions> {
     throw new Error(`The example "${example.name}" ships only one config module, so it has no paired Emission pair.`)
   }
   return { ...example, eslint, oxlint }
+}
+
+/**
+ * What an ESLint Emission is compared on when two flavors or two Modules are the subject.
+ *
+ * A whole-object comparison cannot be the assertion: a processor is rebuilt per call (the
+ * `@eslint/markdown` merged processor is a new object every time), so two Emissions built from the
+ * same options are never identity-equal. Names, file scopes and rules are what a flavor can change;
+ * plugins and processors belong to the Modules, not to the example.
+ */
+export function comparableEmission(configs: readonly Linter.Config[]): Array<Pick<Linter.Config, 'name' | 'files' | 'ignores' | 'rules'>> {
+  return configs.map(config => ({ name: config.name, files: config.files, ignores: config.ignores, rules: config.rules }))
 }
 
 /** The Config object names an ESLint Emission carries, in emission order. */

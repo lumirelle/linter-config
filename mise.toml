@@ -28,8 +28,8 @@ KNIP_DISABLE_RAW_TRANSFER = 1
 [task_config.input_groups]
 deps = ["**/package.json", "nub.lock"]
 src = ["packages/**/src/**/*"]
-check = ["*.js", "*.mjs", "*.cjs", "*.jsx", "*.ts", "*.mts", "*.cts", "*.tsx", "*.vue", "*.json", "*.jsonc", "*.yaml", "*.yml", "*.toml", "*.md", "*.mdc", "*.mdx", "*.lua", "hk.pkl", "playground/*.ts", "playground/*/*.{js,ts,json,md}", "playground/*/*/*.{js,ts,json,md}", "playground/*/packages/**", "playground/*/*/packages/**"]
-test = ["packages/**/test/**/*", "packages/**/dist/**/*", "playground/*.ts", "playground/*/*.{js,ts,json,md}", "playground/*/*/*.{js,ts,json,md}", "test/**", "scripts/**", "vitest.config.ts"]
+check = ["*.js", "*.mjs", "*.cjs", "*.jsx", "*.ts", "*.mts", "*.cts", "*.tsx", "*.vue", "*.json", "*.jsonc", "*.yaml", "*.yml", "*.toml", "*.md", "*.mdc", "*.mdx", "*.lua", "hk.pkl", "playground/*.ts", "playground/*/*/*.{js,ts,json,md}", "playground/*/*/packages/**"]
+test = ["packages/**/test/**/*", "packages/**/dist/**/*", "playground/*.ts", "playground/*/*/*.{js,ts,json,md}", "test/**", "scripts/**", "vitest.config.ts"]
 
 [tasks.dev]
 description = "Run the development build with hot reloading."
@@ -51,12 +51,12 @@ arg "<mode>" help="The mode to run the docs in. Can be one of: dev, build, start
 run = { task = "//docs:{{usage.mode}}" }
 
 [tasks.play]
-description = "Print both Emissions for one example, or for every example with `--all`."
+description = "Print the Emissions of one example, of one stack's three flavors, or of every example with `--all`."
 # The examples import the package's built entry points, so the Emissions need a fresh build.
 depends = "build"
 usage = '''
 flag "-a --all" help="Print every example"
-arg "[name]" help="The example to print, e.g. ts"
+arg "[name]" help="A stack to print all its flavors, or a flavor-qualified example e.g. ts or eslint/ts"
 '''
 run = 'nub playground/index.ts {{ "--all" if usage.all else "" }} {{ usage.name if usage.name else "" }}'
 

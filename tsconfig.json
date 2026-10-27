@@ -10,13 +10,11 @@
     "test/**/*",
     // The example registry and runner, plus each example's options module, Oxlint config and
     // UnoCSS/Vite config: root ESLint lints them with the type-aware parser, so they must be in a
-    // project. The two framework configs are here because an Oxlint-only flavour ships no example
+    // project. The two framework configs are here because an Oxlint-only flavor ships no example
     // ESLint config module for ESLint's config lookup to find, so the root config is what lints
     // them, and they import nothing to resolve. The examples' own tsconfigs and source trees stay
     // out of this repository's type check.
     "playground/*.ts",
-    "playground/*/options.ts",
-    "playground/*/oxlint.config.ts",
     "playground/*/*/options.ts",
     "playground/*/*/oxlint.config.ts",
     "playground/*/*/uno.config.ts",

@@ -291,16 +291,17 @@ export interface Options {
    */
   overrides?: Partial<Record<ModuleId | `lumirelle/${string}`, Pick<ConfigObject, 'rules' | 'files' | 'ignores'>>>
   /**
-   * Turn ESLint into Oxlint's complement: append the Bridge, one config object per Config object
-   * the Oxlint Emission takes, with every rule Oxlint reports turned `off` in the same file scopes.
+   * Turn ESLint into Oxlint's complement: the Bridge, one config object per Config object the
+   * Oxlint Emission takes, with every rule Oxlint reports turned `off` in the same file scopes.
    *
    * `true` is the flag; the object form carries Oxlint's root options, and `typeAware` reaches the
    * Bridge too, so a type-aware rule is turned off only when Oxlint is type-aware — otherwise it
    * stays on in ESLint, which is the side that can check it. A rule Oxlint cannot emit (see
    * `coverage.json`) always stays on.
    *
-   * The Bridge is appended at the end of this Emission. A consumer that appends its own configs
-   * after it must re-append `oxlintBridge(options)` last, with the same options the Oxlint side got.
+   * The Bridge closes the Emission at resolution time. The factory owns its position, after every
+   * Config object the consumer appended, inserted or overrode, so a re-enabled rule is silenced
+   * again where Oxlint reports it: appending whatever you like, whenever you like, is safe.
    *
    * @default undefined (no Bridge: ESLint reports everything Source enables)
    */

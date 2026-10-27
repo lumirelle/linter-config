@@ -1,5 +1,5 @@
 {
-  "name": "@lumirelle/example-ts",
+  "name": "@lumirelle/example-eslint-oxlint-ts",
   "type": "module",
   "private": true,
   "devDependencies": {

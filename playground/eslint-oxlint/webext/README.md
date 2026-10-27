@@ -1,4 +1,4 @@
-# `webext` example
+# `eslint-oxlint/webext` example
 
 A browser extension modelled on
 [`lumirelle/starter-webext`](https://github.com/lumirelle/starter-webext). It is the snapshot the
@@ -6,6 +6,11 @@ application-type rule set is exercised against on a project that is neither a li
 framework application: `type: 'app'` drops the library-only rule slices, `test: true` lints the test
 file, and `ignores` keeps the build output out of both Emissions. No framework Module is on — browser
 code is plain TypeScript to this config, not a Vue or React application.
+
+This is the paired flavor of the `webext` stack and the stack's canonical README: the predecessor
+mapping and the tree below are written once. The two single-tool flavors strip one side of this
+directory and link back here — [`eslint/webext`](../../eslint/webext/README.md) has no Oxlint config
+module, [`oxlint/webext`](../../oxlint/webext/README.md) has no ESLint config module.
 
 Predecessor snapshot: `lumirelle/starter-webext` at commit
 [`fc10c13`](https://github.com/lumirelle/starter-webext/commit/fc10c135e060679039c389c963762621874d8b3d)
@@ -92,8 +97,8 @@ export default oxlint(options)
 | `...oxlint.buildFromOxlintConfigFile('.oxlintrc.json')` | `oxlint.config.ts`, built from the same options module | The Oxlint Emission comes from Source, so there is no `.oxlintrc.json` to read and no `eslint-plugin-oxlint` to install. Add `oxlint: true` to append the Bridge that turns off, in ESLint, the rules Oxlint reports; the example leaves it off so ESLint remains the only reporter. |
 | `.oxlintrc.json` `extends: '@lumirelle/oxlint-config/.oxlintrc.ts.json'` | omitted | That preset is what `@lumirelle/linter-config/oxlint` replaces: the Emission carries the rules, so nothing extends a JSON file. |
 | `.oxlintrc.json` `env.browser` / `es2026` / `builtin` / `node` | omitted | The `lumirelle/javascript/setup` object already declares browser, ES2021 and Node globals, and the Oxlint Emission carries the same names. |
-| `.oxlintrc.json` `options.typeAware` + `typeCheck` | omitted | Both need a TypeScript project and the `oxlint-tsgolint` peer. A migrating project adds `typescript: { tsconfigPath: 'tsconfig.json' }` and `oxlint: { typeAware: true, typeCheck: true }`, as `playground/ts` does for the type-aware half. |
-| `extension/` and `extension/dist` build output | `ignores: ['dist/**', 'extension/**', '.output/**']` | The build writes a packable directory, and a bundled file is not source: the one global ignores object takes the list for both tools. |
+| `.oxlintrc.json` `options.typeAware` + `typeCheck` | omitted | Both need a TypeScript project and the `oxlint-tsgolint` peer. A migrating project adds `typescript: { tsconfigPath: 'tsconfig.json' }` and `oxlint: { typeAware: true, typeCheck: true }`, as [`eslint-oxlint/ts`](../ts/README.md) does for the type-aware half. |
+| `extension/` and `extension/dist` build output | `ignores: ['dist/**', 'extension/**', '.output/**']` | The build writes a packable directory, and a bundled file is not source: each Adapter applies the one list globally, as a `files`-less Config object on the ESLint side and as the root `ignorePatterns` on the Oxlint side. |
 | — | `test: true` | Upstream defaults the `test` Module on; the example states it because `src/url-match.test.ts` is part of the source tree. |
 
 ## Install
@@ -116,7 +121,7 @@ for the same reason.
 ## Tree
 
 ```text
-playground/webext/
+playground/eslint-oxlint/webext/
 ├── eslint.config.js
 ├── oxlint.config.ts
 ├── options.ts

@@ -1,0 +1,1 @@
+export { parseRecord } from './parse'

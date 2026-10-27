@@ -1,4 +1,4 @@
-# `ts-monorepo` example
+# `eslint-oxlint/ts-monorepo` example
 
 A TypeScript monorepo modelled on [`lumirelle/starter-ts-monorepo`](https://github.com/lumirelle/starter-ts-monorepo).
 It is the snapshot the workspace-level options are exercised against: one `options.ts` at the root
@@ -6,6 +6,12 @@ lints every package under `packages/`, `type: 'lib'` keeps the library rule slic
 `typescript.tsconfigPath` turns on the type-aware rules, `oxlint: { typeAware: true }` makes Oxlint
 implement the type-aware rules it can, and one `overrides` entry narrows a single package's rules
 without a second config file.
+
+This is the paired flavor of the `ts-monorepo` stack and the stack's canonical README: the
+predecessor mapping and the tree below are written once. The two single-tool flavors strip one side
+of this directory and link back here — [`eslint/ts-monorepo`](../../eslint/ts-monorepo/README.md) has
+no Oxlint and no Bridge, [`oxlint/ts-monorepo`](../../oxlint/ts-monorepo/README.md) has no ESLint
+config module.
 
 Predecessor snapshot: `lumirelle/starter-ts-monorepo` at commit
 [`e0c607c`](https://github.com/lumirelle/starter-ts-monorepo/commit/e0c607c653861020980c3c0b467b65dd21d7f4fa)
@@ -66,7 +72,7 @@ export const options = {
   test: true,
   overrides: {
     'lumirelle/typescript/rules-type-aware': {
-      files: ['packages/core/**'],
+      files: ['packages/core/**/*.ts'],
       rules: {
         'ts/no-unsafe-assignment': 'off',
       },
@@ -103,7 +109,7 @@ form, because only one object should move:
 // options.ts, the field of the same name
 export const overrides = {
   'lumirelle/typescript/rules-type-aware': {
-    files: ['packages/core/**'],
+    files: ['packages/core/**/*.ts'],
     rules: { 'ts/no-unsafe-assignment': 'off' },
   },
 } satisfies Options['overrides']
@@ -111,10 +117,17 @@ export const overrides = {
 
 `rules` merges into the object's rules, while `files` and `ignores` **replace** its scope. That is
 what makes the entry a per-package deviation: the type-aware rule block — the slowest part of the
-Emission — now covers `packages/core` alone, and `packages/cli` keeps every non-type-aware rule.
-The type-aware parser is a different object, so it keeps its own scope and every package still
-parses with the project service. Narrowing the Module (`overrides.typescript`) would instead have
-rescoped the Module's plugin-declaration object too, which is why the example names the rule block.
+Emission — now covers the TypeScript sources of `packages/core` alone, and `packages/cli` keeps
+every non-type-aware rule. The type-aware parser is a different object, so it keeps its own scope
+and every package still parses with the project service. Narrowing the Module
+(`overrides.typescript`) would instead have rescoped the Module's plugin-declaration object too,
+which is why the example names the rule block.
+
+The scope names a TypeScript glob rather than the whole package directory on purpose: `files`
+replaces the block's scope verbatim, a package directory also holds its `package.json`, and a rule
+that needs type information throws on a file no parser project covers. A bare `packages/core/**`
+therefore applies the block to the manifest too, which only stays invisible while a Bridge is turning
+those rules off — an ESLint-only project has no Bridge, and the run fails.
 
 The rule that changes is the boundary package's: `packages/core` reads untrusted payloads, where an
 untyped value is unavoidable, so `ts/no-unsafe-assignment` is off there and every other type-aware
@@ -151,7 +164,7 @@ Oxlint refuses to load when both files exist in one directory. Delete the old fi
 ## Tree
 
 ```text
-playground/ts-monorepo/
+playground/eslint-oxlint/ts-monorepo/
 ├── eslint.config.js       # one config for the whole workspace
 ├── oxlint.config.ts
 ├── options.ts             # the one options object, including the per-package override
@@ -171,5 +184,7 @@ playground/ts-monorepo/
 ```
 
 The two directories under `packages/` are plain packages, not workspace packages: this repository's
-workspace glob is `playground/*`, so they contribute sources and manifests to the example without
-being installed on their own.
+workspace globs are `playground/*` and `playground/*/*`, which reach an example directory and its
+nested `packages/` no further, so they contribute sources and manifests to the example without being
+installed on their own. The same holds after the move into a flavor directory, and it is why all
+three flavors can ship the same package manifests.

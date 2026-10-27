@@ -1,10 +1,11 @@
 import type { Options } from '@lumirelle/linter-config/eslint'
 
 /**
- * The example's own options, the one object both configs are built from.
+ * The example's own options, the one object the config is built from.
  *
  * This is the direct replacement for the starter's `antfu({ toml: { overrides: {...} } },
- * ...oxlint.buildFromOxlintConfigFile('.oxlintrc.json'))` call; `README.md` maps each field.
+ * ...oxlint.buildFromOxlintConfigFile('.oxlintrc.json'))` call; `../eslint-oxlint/webext/README.md`
+ * maps each field.
  */
 export const options = {
   // A browser extension is an application, not a library: nothing here is published for import,
@@ -15,7 +16,8 @@ export const options = {
   test: true,
   // Build output is not source: neither tool should lint a bundled file. `dist` is the bundler's
   // default output, `extension` is the packable directory `web-ext` loads, and `.output` is where
-  // a build integration that keeps both writes. Both tools take the list through the one global
-  // ignores object.
+  // a build integration that keeps both writes. Each Adapter carries the list in its own global
+  // form: a `files`-less Config object here, because without the `oxlint` option there is no Bridge
+  // and ESLint is the only reporter.
   ignores: ['dist/**', 'extension/**', '.output/**'],
 } satisfies Options

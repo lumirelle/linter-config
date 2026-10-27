@@ -1,20 +1,20 @@
 import type { Options } from '@lumirelle/linter-config/eslint'
 
 /**
- * The workspace's own options, the one object every package is linted from.
+ * The workspace's own options, the one object the config is built from.
  *
  * This is the direct replacement for the monorepo starter's root `antfu(...)` call plus its
- * `.oxlintrc.json`; `README.md` maps each field, and `overrides` is where a single package's
- * deviation goes instead of a second config file.
+ * `.oxlintrc.json`; `../eslint-oxlint/ts-monorepo/README.md` maps each field, and `overrides` is
+ * where a single package's deviation goes instead of a second config file.
  */
 export const options = {
   // A library, not an application: the library-specific slices of the `node`, `e18e` and
   // TypeScript Modules stay on for every package.
   type: 'lib',
-  // Type-aware rules need the workspace's TypeScript config, on both sides: Oxlint reads them in
-  // its own type-aware mode, which is what makes the `oxlint` object below more than a Bridge flag.
+  // Type-aware rules need the workspace's TypeScript config. Without the `oxlint` option there is
+  // no Bridge, so this Emission carries every rule the stack turns on instead of one with rules
+  // switched off for a tool the project does not run.
   typescript: { tsconfigPath: 'tsconfig.json' },
-  oxlint: { typeAware: true },
   // The `packages/core` sources include a test file, and the root config lints it.
   test: true,
   overrides: {
@@ -22,8 +22,12 @@ export const options = {
     // config. `files` replaces that object's scope, which is how the type-aware rules — the slowest
     // part of the Emission — are narrowed to the one package that publishes types; the setup and
     // parser objects keep their own scope, so every package still parses with the project service.
+    // The entry belongs to the stack rather than to the linter, so it is the same in all three
+    // flavors of this example. Its scope names TypeScript sources: a package directory also holds
+    // its `package.json`, and a rule that needs type information cannot run on a file no parser
+    // project covers.
     'lumirelle/typescript/rules-type-aware': {
-      files: ['packages/core/**'],
+      files: ['packages/core/**/*.ts'],
       rules: {
         // `packages/core` is the boundary that reads untrusted payloads, where the untyped value
         // cannot be avoided; every other type-aware rule stays on.

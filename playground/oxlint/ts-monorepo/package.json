@@ -1,13 +1,11 @@
 {
-  "name": "@lumirelle/example-webext",
+  "name": "@lumirelle/example-oxlint-ts-monorepo",
   "type": "module",
   "private": true,
   "devDependencies": {
     "@lumirelle/linter-config": "workspace:*",
-    "@lumirelle/linter-plugins-eslint": "workspace:*",
     "@lumirelle/linter-plugins-oxlint": "workspace:*",
     "@lumirelle/tsconfig": "catalog:types",
-    "eslint": "catalog:check",
     "oxlint": "catalog:check",
     "typescript": "catalog:types",
     "vitest": "catalog:test"

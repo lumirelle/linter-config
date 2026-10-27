@@ -110,22 +110,32 @@ export async function resolveStack(stack: string): Promise<Example[]> {
  * Every example directory.
  *
  * A flavor is the only directory `playground/` holds besides this registry and the runner, so a
- * directory that is not named after a flavor is a mistake rather than a layout, and it fails
- * instead of registering nothing. `node_modules` is skipped wherever it appears: the playground
- * root and every example carry install artifacts, and they hold package manifests of their own.
+ * directory that groups examples under any other name is a mistake rather than a layout, and it
+ * fails instead of registering nothing. `node_modules` is skipped wherever it appears: the
+ * playground root and every example carry install artifacts, and they hold package manifests of
+ * their own.
+ *
+ * A directory that groups nothing is skipped rather than failed: a checkout that installed
+ * dependencies before the flavor-first layout still holds `node_modules`-only directories where
+ * the flat examples used to be, and those are install history rather than a layout the registry
+ * should reject.
  */
 async function discoverExamples(): Promise<ExampleLocation[]> {
   const locations: ExampleLocation[] = []
   for (const entry of await exampleDirectories(PLAYGROUND_DIRECTORY)) {
     const flavor = FLAVORS.find(candidate => candidate === entry)
+    const grouped = await exampleDirectories(join(PLAYGROUND_DIRECTORY, entry))
     if (!flavor) {
-      throw new Error(
-        `Unknown flavor "${entry}" under playground/. Valid flavors: ${FLAVORS.join(', ')}`,
-      )
+      if (grouped.length > 0) {
+        throw new Error(
+          `Unknown flavor "${entry}" under playground/. Valid flavors: ${FLAVORS.join(', ')}`,
+        )
+      }
+      continue
     }
 
     const flavorDirectory = join(PLAYGROUND_DIRECTORY, entry)
-    for (const stack of await exampleDirectories(flavorDirectory)) {
+    for (const stack of grouped) {
       const stackDirectory = join(flavorDirectory, stack)
       if (existsSync(join(stackDirectory, 'package.json'))) {
         locations.push({ flavor, stack, directory: stackDirectory })

@@ -19,8 +19,12 @@ const EXAMPLE_NAMES = [
   'eslint-oxlint/ts-monorepo',
   'eslint-oxlint/vue',
   'eslint-oxlint/webext',
+  'eslint/react',
   'eslint/ts',
+  'eslint/vue',
+  'oxlint/react',
   'oxlint/ts',
+  'oxlint/vue',
 ]
 
 describe('the example registry', () => {

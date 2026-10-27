@@ -1,12 +1,19 @@
-# `react` example
+# `eslint-oxlint/react` example
 
 A Vite-style React single-page application. It enables the React, JSX and UnoCSS Modules at
 application type, with the test Module on: `react: true` adds `@eslint-react/eslint-plugin` and
 `eslint-plugin-react-refresh`, `jsx: true` the JSX parser flag, `unocss: true` the class-order
 rules, `type: 'app'` the application rule set, and `test: true` lints `src/App.test.tsx`.
 
+This is the paired flavor of the `react` stack and the stack's canonical README: the predecessor
+mapping below is written once. The two single-tool flavors strip one side of this directory and
+link back here — [`eslint/react`](../../eslint/react/README.md) has no Oxlint and no Bridge,
+[`oxlint/react`](../../oxlint/react/README.md) has no ESLint config module. The stack sets no
+`oxlint` entry, so no flavor carries a Bridge and both ESLint flavors emit the same Config objects.
+
 It is also the React half of the React-family pair: the same `react: true` emits the same three
-React Config objects in the [`next`](../next/README.md) example, and only that one adds Next objects.
+React Config objects in the [`next`](../../next/README.md) example, and only that one adds Next
+objects.
 
 Predecessor: **canonical consumer, no starter snapshot.** There is no React starter to take a
 snapshot of, so the previous configuration below is the shape a React project in this ecosystem has
@@ -73,7 +80,7 @@ export default oxlint(options)
 
 | Previous config | Here | Why |
 | --- | --- | --- |
-| `react: true` | kept | Same Module: `@eslint-react/eslint-plugin` and `eslint-plugin-react-refresh`, now declared as the project's own peers. |
+| `react: true` | kept | Same Module: `@eslint-react/eslint-plugin` and `eslint-plugin-react-refresh`, now declared as the project's own peers. Both stay declared in the Oxlint-only flavor as well; see below. |
 | `unocss: true` | kept | `@unocss/eslint-plugin` is a peer on the ESLint side and the `unocss` `jsPlugin` on the Oxlint side. |
 | — | `type: 'app'` | The predecessor's default; stated because it is the switch that keeps the library-only rule slices off. |
 | — | `jsx: true` | The predecessor had no JSX switch — its React preset already parsed `.tsx`. Here the parser flag is its own Module; the example states it because every source file is JSX or TSX. |
@@ -90,6 +97,13 @@ npm install -D @lumirelle/linter-config @lumirelle/linter-plugins-eslint @lumire
   eslint oxlint @eslint-react/eslint-plugin eslint-plugin-react-refresh @unocss/eslint-plugin
 ```
 
+The three framework packages are in **all three flavors' manifests**, including
+[`oxlint/react`](../../oxlint/react/README.md), which ships no ESLint config module at all. That is
+not redundancy: `requirePeerPackages` runs while Source is composed, before an Adapter filters the
+Config objects down to the Domains its tool can read, so a missing `@eslint-react/eslint-plugin`,
+`eslint-plugin-react-refresh` or `@unocss/eslint-plugin` fails `oxlint(options)` exactly as it fails
+`eslint(options)`. An Oxlint-only project that enables `react` or `unocss` has to install them.
+
 There is no `.oxlintrc.json` to keep: `oxlint.config.ts` is discovered without a `-c` flag, and
 Oxlint refuses to load when both files exist in one directory. Delete the old file when migrating.
 
@@ -101,12 +115,13 @@ needs them, but two rules read whether they are present, and a real project noti
   in a Vite project the same export is accepted.
 - The same rule allows the Next, Remix and React Router route export names when those packages are
   installed. None of them is, which is the difference between this example and
-  [`next`](../next/README.md).
+  [`next`](../../next/README.md).
 
 The one UnoCSS file the example does keep is `uno.config.ts`, without presets: `@unocss/eslint-plugin`
 refuses to order class names without a config file, and the file imports nothing, because the preset
-packages are the runtimes the example does not install. The [`vue`](../vue/README.md) and
-[`nuxt`](../nuxt/README.md) examples ship the same file for the same reason.
+packages are the runtimes the example does not install. The
+[`eslint-oxlint/vue`](../../eslint-oxlint/vue/README.md) and [`nuxt`](../../nuxt/README.md) examples
+ship the same file for the same reason, and every flavor of this stack ships it byte-identically.
 
 A Vite project also has a `vite.config.ts` next to this file. The example leaves it out because it
 would import `vite` and the framework plugin, which are exactly the packages the example does not
@@ -115,7 +130,7 @@ install.
 ## Tree
 
 ```text
-playground/react/
+playground/eslint-oxlint/react/
 ├── eslint.config.js
 ├── oxlint.config.ts
 ├── options.ts
@@ -127,3 +142,7 @@ playground/react/
     ├── App.tsx            # the component, with the utility classes `unocss` orders
     └── main.tsx           # the entry point, which is why the DOM types are in the tsconfig
 ```
+
+The two sibling flavors hold the same tree: `src/`, `tsconfig.json` and `uno.config.ts` are
+byte-identical across the three directories, so a diff between them is the linter configuration and
+nothing else.

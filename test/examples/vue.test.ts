@@ -1,9 +1,9 @@
 import { describe, expect, it } from 'vitest'
 import { configNamed, configNames, expectNoModules, expectOxlintReadsVue, loadExample, objectsOfModule } from './helpers/emission'
 
-describe('the `vue` example', () => {
+describe('the `eslint-oxlint/vue` example', () => {
   it('emits the Vue, UnoCSS and test Config objects a Vite single-page application asks for', async () => {
-    const { eslint } = await loadExample('vue')
+    const { eslint } = await loadExample('eslint-oxlint/vue')
     const names = configNames(eslint)
 
     expect(names).toContain('lumirelle/vue/setup')
@@ -13,7 +13,7 @@ describe('the `vue` example', () => {
   })
 
   it('merges the accessibility rules into the Vue rules object', async () => {
-    const { eslint, options } = await loadExample('vue')
+    const { eslint, options } = await loadExample('eslint-oxlint/vue')
     const ruleKeys = Object.keys(configNamed(eslint, 'lumirelle/vue/rules').rules ?? {})
 
     expect(options.vue).toEqual({ a11y: true })
@@ -24,13 +24,13 @@ describe('the `vue` example', () => {
   })
 
   it('does not emit the framework Modules the example leaves off', async () => {
-    const { eslint } = await loadExample('vue')
+    const { eslint } = await loadExample('eslint-oxlint/vue')
 
     expectNoModules(eslint, ['react', 'nextjs'])
   })
 
   it('emits an Oxlint config that reads Vue files', async () => {
-    const { oxlint } = await loadExample('vue')
+    const { oxlint } = await loadExample('eslint-oxlint/vue')
 
     expectOxlintReadsVue(oxlint)
   })

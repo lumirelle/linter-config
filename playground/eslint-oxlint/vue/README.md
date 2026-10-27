@@ -1,7 +1,13 @@
-# `vue` example
+# `eslint-oxlint/vue` example
 
 A Vue 3 single-page application built the Vite way, with a component tree linted by the Vue Module
 and its accessibility sub-option turned on.
+
+This is the paired flavor of the `vue` stack and the stack's canonical README: the predecessor
+mapping below is written once. The two single-tool flavors strip one side of this directory and
+link back here — [`eslint/vue`](../../eslint/vue/README.md) has no Oxlint and no Bridge,
+[`oxlint/vue`](../../oxlint/vue/README.md) has no ESLint config module. The stack sets no `oxlint`
+entry, so no flavor carries a Bridge and both ESLint flavors emit the same Config objects.
 
 There is no starter counterpart. The previous configuration below is a plausible canonical one — the
 Vue 3 flat presets plus the accessibility plugin's recommended set, as Vue's own tooling guide puts
@@ -94,7 +100,9 @@ The sub-option is a Vue Module option, not a Module of its own:
 
 The contrast with the `nuxt` example is the point: same Vue Module, same Config object names, and the
 only difference in the Emission is the `vue-a11y` plugin and the rule keys that start with
-`vue-a11y/`.
+`vue-a11y/`. The `vue-a11y` rules themselves are ESLint-only, which is why the Oxlint flavor of
+this stack emits the same Oxlint Emission as this directory while still declaring the accessibility
+plugin as a peer.
 
 ## Install
 
@@ -104,6 +112,14 @@ npm install -D @lumirelle/linter-config @lumirelle/linter-plugins-eslint @lumire
 
 `eslint-plugin-vuejs-accessibility` is the extra peer the accessibility sub-option requires; a Vue
 project without `a11y: true` does not install it.
+
+Both framework peers — `eslint-plugin-vuejs-accessibility` for the `vue` Module and
+`@unocss/eslint-plugin` for the `unocss` Module — are declared in **all three flavors' manifests**,
+including [`oxlint/vue`](../../oxlint/vue/README.md), which ships no ESLint config module at all.
+That is not redundancy: `requirePeerPackages` runs while Source is composed, before an Adapter
+filters the Config objects down to the Domains its tool can read, so `oxlint(options)` throws on a
+missing `eslint-plugin-vuejs-accessibility` exactly as `eslint(options)` does. A Vue project that
+runs Oxlint alone and enables `vue: { a11y: true }` or `unocss: true` has to install them.
 
 The packages the previous configuration pulled in are no longer direct dependencies. `@eslint/js`,
 `eslint-plugin-vue` and `typescript-eslint` are covered by the Plugin Bundles and by the core rule
@@ -115,13 +131,15 @@ application, and the root dogfood configuration does not lint its source tree ei
 also has a `vite.config.ts` and a `uno.config.ts`. The example ships the second one — without
 presets, importing nothing — because `@unocss/eslint-plugin` refuses to order class names without a
 config file to read. `vite.config.ts` is the file it leaves out, because it would import `vite` and
-the Vue plugin, which are exactly the packages the example does not install. The `react` and `nuxt`
-examples ship the same `uno.config.ts` for the same reason.
+the Vue plugin, which are exactly the packages the example does not install. The
+[`eslint-oxlint/react`](../../eslint-oxlint/react/README.md) and [`nuxt`](../../nuxt/README.md)
+examples ship the same `uno.config.ts` for the same reason, and every flavor of this stack ships it
+byte-identically.
 
 ## Tree
 
 ```text
-playground/vue/
+playground/eslint-oxlint/vue/
 ├── eslint.config.js
 ├── options.ts
 ├── oxlint.config.ts
@@ -135,3 +153,7 @@ playground/vue/
 ├── uno.config.ts                # no presets: the file `@unocss/eslint-plugin` needs to run at all
 └── README.md
 ```
+
+The two sibling flavors hold the same tree: `src/`, `tsconfig.json` and `uno.config.ts` are
+byte-identical across the three directories, so a diff between them is the linter configuration and
+nothing else.

@@ -61,7 +61,7 @@ A Config object is addressed by its stable `name`, `lumirelle/<upstream tail>`:
 > [!Note]
 > Only the ESLint side has the Bridge: `oxlint: true` (or its object form) turns off the rules of ESLint which is already handled by OxLint.
 >
-> That option alone enables it, and it always resolves last: the factory owns its position, after every Config object you append, insert or override, so there is nothing to re-append.
+> That option alone enables it, and it always resolves last: the factory owns its position, after every Config object you append, insert or override.
 >
 > They are designed for mixed use, because of OxLint does not support custom language parser yet.
 

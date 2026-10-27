@@ -240,7 +240,7 @@ The Modules as implemented, with the Oxlint realization each Plugin id records. 
 
 **Bridge**
 
-For every Config object, take the rules Oxlint can implement and emit `off` entries with the same `files` / `ignores`, preserving order. The ESLint Adapter derives the Bridge once per factory call, from the Config objects `source()` already produced, and registers it as the composer's resolution hook: it closes the Emission, so whatever a consumer appends, inserts or overrides lands before it. There is no exported helper and nothing to re-append; the resolved objects keep their `/oxlint-bridge` name suffix for diagnosis.
+For every Config object, take the rules Oxlint can implement and emit `off` entries with the same `files` / `ignores`, preserving order. The ESLint Adapter derives the Bridge once per factory call, from the Config objects `source()` already produced, and registers it as the composer's resolution hook: it closes the Emission, so whatever a consumer appends, inserts or overrides lands before it. The resolved objects keep their `/oxlint-bridge` name suffix for diagnosis.
 
 ## Decisions
 

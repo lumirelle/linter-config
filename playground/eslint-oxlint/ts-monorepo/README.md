@@ -184,7 +184,6 @@ playground/eslint-oxlint/ts-monorepo/
 ```
 
 The two directories under `packages/` are plain packages, not workspace packages: this repository's
-workspace globs are `playground/*` and `playground/*/*`, which reach an example directory and its
-nested `packages/` no further, so they contribute sources and manifests to the example without being
-installed on their own. The same holds after the move into a flavor directory, and it is why all
-three flavors can ship the same package manifests.
+workspace glob is `playground/*/*`, which reaches an example directory and its nested `packages/` no
+further, so they contribute sources and manifests to the example without being installed on their
+own. That is why all three flavors can ship the same package manifests.

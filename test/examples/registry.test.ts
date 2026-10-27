@@ -21,13 +21,17 @@ const EXAMPLE_NAMES = [
   'eslint-oxlint/webext',
   'eslint/next',
   'eslint/nuxt',
+  'eslint/react',
   'eslint/ts',
   'eslint/ts-monorepo',
+  'eslint/vue',
   'eslint/webext',
   'oxlint/next',
   'oxlint/nuxt',
+  'oxlint/react',
   'oxlint/ts',
   'oxlint/ts-monorepo',
+  'oxlint/vue',
   'oxlint/webext',
 ]
 
@@ -59,18 +63,20 @@ describe('the example registry', () => {
     expect(bare.options).toEqual(qualified.options)
   })
 
-  it('resolves a stack into its flavors in flavor order', async () => {
-    // A stack that has not been converted still resolves into the one paired directory it ships;
-    // `ts` ships all three.
-    const [flat, converted] = await Promise.all([resolveStack('react'), resolveStack('ts')])
+  it('resolves every stack into its three flavors in flavor order', async () => {
+    // Every stack now ships one directory per flavor, and the runner prints a bare stack name in
+    // this order. Asserting it per stack is what makes a lost directory or a wrong flavor order
+    // fail here rather than in a printed Emission.
+    const resolved = await Promise.all(STACKS.map(async stack => ({ stack, flavors: await resolveStack(stack) })))
 
-    expect(flat.map(example => example.name)).toEqual(['eslint-oxlint/react'])
-    expect(converted.map(example => example.name)).toEqual([
-      'eslint/ts',
-      'oxlint/ts',
-      'eslint-oxlint/ts',
-    ])
-    expect(converted.map(example => example.stack)).toEqual(['ts', 'ts', 'ts'])
+    for (const { stack, flavors } of resolved) {
+      expect(flavors.map(example => example.name)).toEqual([
+        `eslint/${stack}`,
+        `oxlint/${stack}`,
+        `eslint-oxlint/${stack}`,
+      ])
+      expect(flavors.map(example => example.stack)).toEqual([stack, stack, stack])
+    }
   })
 
   it('resolves a stack\'s paired flavor with both Emissions built from its own options module', async () => {

@@ -1,0 +1,10 @@
+{
+  "extends": "@lumirelle/tsconfig/ts",
+  "compilerOptions": {
+    // The preset targets a Node library; a browser entry point needs the DOM types, and JSX needs
+    // the automatic runtime.
+    "jsx": "react-jsx",
+    "lib": ["ESNext", "DOM"]
+  },
+  "include": ["src/**/*"]
+}

@@ -1,15 +1,13 @@
 {
-  "name": "@lumirelle/example-react",
+  "name": "@lumirelle/example-oxlint-react",
   "type": "module",
   "private": true,
   "devDependencies": {
     "@eslint-react/eslint-plugin": "catalog:peer",
     "@lumirelle/linter-config": "workspace:*",
-    "@lumirelle/linter-plugins-eslint": "workspace:*",
     "@lumirelle/linter-plugins-oxlint": "workspace:*",
     "@lumirelle/tsconfig": "catalog:types",
     "@unocss/eslint-plugin": "catalog:peer",
-    "eslint": "catalog:check",
     "eslint-plugin-react-refresh": "catalog:peer",
     "oxlint": "catalog:check",
     "typescript": "catalog:types",

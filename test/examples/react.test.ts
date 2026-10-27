@@ -1,9 +1,9 @@
 import { describe, expect, it } from 'vitest'
 import { configNames, expectNoModules, loadExample } from './helpers/emission'
 
-describe('the `react` example', () => {
+describe('the `eslint-oxlint/react` example', () => {
   it('emits the React Config objects a React single-page application asks for', async () => {
-    const { eslint } = await loadExample('react')
+    const { eslint } = await loadExample('eslint-oxlint/react')
     const names = configNames(eslint)
 
     // `react: true` brings both peers and the three objects; the type-aware one stays out because
@@ -15,7 +15,7 @@ describe('the `react` example', () => {
   })
 
   it('emits the JSX, UnoCSS and test Config objects its options module turns on', async () => {
-    const { eslint } = await loadExample('react')
+    const { eslint } = await loadExample('eslint-oxlint/react')
     const names = configNames(eslint)
 
     expect(names).toContain('lumirelle/jsx/setup')
@@ -24,13 +24,13 @@ describe('the `react` example', () => {
   })
 
   it('does not emit the Next or Vue Config objects', async () => {
-    const { eslint } = await loadExample('react')
+    const { eslint } = await loadExample('eslint-oxlint/react')
 
     expectNoModules(eslint, ['nextjs', 'vue'])
   })
 
   it('loads the Oxlint Emission of the same options module', async () => {
-    const { oxlint } = await loadExample('react')
+    const { oxlint } = await loadExample('eslint-oxlint/react')
 
     // Oxlint has no parser, processor or plugin setup to resolve here, but a Module that stops
     // composing fails on both sides.

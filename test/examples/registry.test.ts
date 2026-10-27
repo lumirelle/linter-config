@@ -76,7 +76,7 @@ describe('the example registry', () => {
     // asks for, and the Oxlint one runs in the type-aware mode its options module names.
     expect(example.eslint?.map(config => config.name)).toContain('lumirelle/typescript/rules')
     expect(example.oxlint?.options).toEqual({ typeAware: true })
-    expect(example.options.type).toBe('lib')
+    expect(example.options?.type).toBe('lib')
   })
 
   it('fails an unknown example name, naming only the flavor-qualified names', async () => {

@@ -15,8 +15,9 @@ installs it. That package declares `eslint` as a peer, so a real project may nee
 even though this Emission imports nothing from it. The example states its own flavor's tools and
 leaves that to your project.
 
-The rest of [`options.ts`](./options.ts), the source tree, `tsconfig.json`, `nuxt.config.ts` and
-`uno.config.ts` are the same files as the paired flavor's.
+The options are written inline in [`oxlint.config.ts`](./oxlint.config.ts), the way a project with
+one tool writes them, and they repeat the paired flavor's `options.ts` entries; the source tree,
+`tsconfig.json`, `nuxt.config.ts` and `uno.config.ts` are the same files as the paired flavor's.
 
 The predecessor mapping, the options table and the tree live once, in
 [`eslint-oxlint/nuxt/README.md`](../../eslint-oxlint/nuxt/README.md).

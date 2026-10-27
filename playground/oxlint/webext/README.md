@@ -10,11 +10,11 @@ strips:
 - `eslint.config.js` — there is no ESLint Emission, so no Bridge either;
 - `eslint` and `@lumirelle/linter-plugins-eslint` from [`package.json`](./package.json).
 
-The options module is the stack's rather than the flavor's, so this directory keeps it as the paired
-flavor has it — including `ignores: ['dist/**', 'extension/**', '.output/**']`, which this Adapter
-carries as the Emission's root `ignorePatterns` rather than as an override glob. The rest of the
-options module, the source tree, `tsconfig.json` and `vite.config.ts` are the same files as the
-paired flavor's.
+The options are written inline in [`oxlint.config.ts`](./oxlint.config.ts), the way a project with
+one tool writes them, and they keep the paired flavor's entries — including
+`ignores: ['dist/**', 'extension/**', '.output/**']`, which this Adapter carries as the Emission's
+root `ignorePatterns` rather than as an override glob. The source tree, `tsconfig.json` and
+`vite.config.ts` are the same files as the paired flavor's.
 
 The packages Oxlint loads through `jsPlugins` are ESLint plugins that declare `eslint` as a peer, so
 a real Oxlint-only project may still need `eslint` installed even though this Emission imports

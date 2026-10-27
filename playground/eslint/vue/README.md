@@ -9,10 +9,10 @@ Compared with the paired flavor, [`eslint-oxlint/vue`](../../eslint-oxlint/vue/R
 - `oxlint.config.ts` — there is no Oxlint Emission;
 - `oxlint` and `@lumirelle/linter-plugins-oxlint` from [`package.json`](./package.json).
 
-It keeps the paired flavor's [`options.ts`](./options.ts) entries unchanged, `vue: { a11y: true }`
-included: this stack sets no `oxlint` entry to drop, so the Bridge is absent here for the same
-reason it is absent there, and both ESLint flavors emit the same Config objects, the 22 `vue-a11y/*`
-rules among them.
+Its [`eslint.config.js`](./eslint.config.js) writes the paired flavor's `options.ts` entries inline,
+`vue: { a11y: true }` included, the way a project with one tool does: this stack sets no `oxlint`
+entry to drop, so the Bridge is absent here for the same reason it is absent there, and both ESLint
+flavors emit the same Config objects, the 22 `vue-a11y/*` rules among them.
 
 The source tree, `tsconfig.json` and `uno.config.ts` are the same files as the paired flavor's. The
 predecessor mapping, the options table, the tree and the peer-package reasoning live once, in

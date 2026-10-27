@@ -10,8 +10,9 @@ strips:
 - `eslint.config.js` — there is no ESLint Emission, so no Bridge either;
 - `eslint` and `@lumirelle/linter-plugins-eslint` from [`package.json`](./package.json).
 
-It keeps the paired flavor's [`options.ts`](./options.ts) entries unchanged: this stack sets no
-`oxlint` entry, so there is nothing the pair adds that this flavor drops.
+Its [`oxlint.config.ts`](./oxlint.config.ts) writes the paired flavor's `options.ts` entries inline,
+the way a project with one tool does: this stack sets no `oxlint` entry, so there is nothing the pair
+adds that this flavor drops.
 
 ## Why the framework peers stay
 

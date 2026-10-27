@@ -11,9 +11,10 @@ Compared with the paired flavor, [`eslint-oxlint/nuxt`](../../eslint-oxlint/nuxt
 
 Neither the paired flavor nor this one sets the `oxlint` entry, so no Bridge is appended in either
 and the two Emissions carry the same objects: the flavor difference is the Oxlint config module
-alone. The rest of [`options.ts`](./options.ts), the source tree, `tsconfig.json`, `nuxt.config.ts`
-and `uno.config.ts` are the same files as the paired flavor's. `@unocss/eslint-plugin` stays
-declared, because the `unocss` Module's peer check runs here too.
+alone. The options are written inline in [`eslint.config.js`](./eslint.config.js), the way a project
+with one tool writes them, and they repeat the paired flavor's `options.ts` entries; the source tree,
+`tsconfig.json`, `nuxt.config.ts` and `uno.config.ts` are the same files as the paired flavor's.
+`@unocss/eslint-plugin` stays declared, because the `unocss` Module's peer check runs here too.
 
 The predecessor mapping, the options table, the tree and the installation caveat live once, in
 [`eslint-oxlint/nuxt/README.md`](../../eslint-oxlint/nuxt/README.md).

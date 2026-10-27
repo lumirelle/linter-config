@@ -41,12 +41,13 @@ describe('the `webext` build-output ignores', () => {
     ])
   })
 
-  it('are the patterns the options module declares in every flavor', () => {
-    // The patterns live in the options module, which every flavor shares byte for byte, so a flavor
-    // cannot lose them without losing the file the contract already compares.
-    for (const example of EXAMPLES) {
-      expect(example.options.ignores).toEqual(BUILD_OUTPUT)
-    }
+  it('are the patterns the paired flavor\'s options module declares', () => {
+    // The stack's options live in one module, in the paired flavor: the two single-tool flavors write
+    // the same entries inline. This is the one place the patterns are readable as data; every flavor
+    // then has to carry them into its own Emission below.
+    const paired = EXAMPLES.find(example => example.flavor === 'eslint-oxlint')
+
+    expect(paired?.options?.ignores).toEqual(BUILD_OUTPUT)
   })
 
   // One assertion per Adapter, because the two spell a global ignore differently: ESLint has a

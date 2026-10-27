@@ -11,9 +11,12 @@ Compared with the paired flavor, [`eslint-oxlint/next`](../../eslint-oxlint/next
 
 Neither the paired flavor nor this one sets the `oxlint` entry, so no Bridge is appended in either
 and the two Emissions carry the same objects: the flavor difference is the Oxlint config module
-alone. The rest of [`options.ts`](./options.ts), the source tree and `tsconfig.json` are the same
-files as the paired flavor's, and the three plugin peers — `@eslint-react/eslint-plugin`,
-`eslint-plugin-react-refresh` and `@next/eslint-plugin-next` — stay declared.
+alone. The options are written inline in [`eslint.config.js`](./eslint.config.js): a project that runs
+ESLint alone writes them where it calls the factory, because there is no second config to share them
+with. They repeat the paired flavor's `options.ts` entries, and the source tree and `tsconfig.json`
+are the same files as the paired flavor's. The three plugin peers —
+`@eslint-react/eslint-plugin`, `eslint-plugin-react-refresh` and `@next/eslint-plugin-next` — stay
+declared.
 
 The predecessor mapping, the options table, the tree, the React-pair explanation and the
 installation caveat live once, in [`eslint-oxlint/next/README.md`](../../eslint-oxlint/next/README.md).

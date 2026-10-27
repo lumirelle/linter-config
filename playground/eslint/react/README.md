@@ -10,9 +10,10 @@ strips:
 - `oxlint.config.ts` — there is no Oxlint Emission;
 - `oxlint` and `@lumirelle/linter-plugins-oxlint` from [`package.json`](./package.json).
 
-It keeps the paired flavor's [`options.ts`](./options.ts) entries unchanged, because this stack sets
-no `oxlint` entry to drop: the Bridge is enabled by that entry alone, and `react` never sets it, so
-this Emission and the paired flavor's carry the same Config objects.
+Its [`eslint.config.js`](./eslint.config.js) writes the paired flavor's `options.ts` entries inline,
+the way a project with one tool does, and nothing is dropped because this stack sets no `oxlint`
+entry: the Bridge is enabled by that entry alone, and `react` never sets it, so this Emission and the
+paired flavor's carry the same Config objects.
 
 The source tree, `tsconfig.json` and `uno.config.ts` are the same files as the paired flavor's. The
 predecessor mapping, the options table, the tree and the peer-package reasoning live once, in

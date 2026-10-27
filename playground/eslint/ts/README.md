@@ -7,12 +7,13 @@ no Oxlint.
 Compared with the paired flavor, [`eslint-oxlint/ts`](../../eslint-oxlint/ts/README.md), it strips:
 
 - `oxlint.config.ts` — there is no Oxlint Emission;
-- the `oxlint` entry of [`options.ts`](./options.ts) — the Bridge is enabled by that entry alone, so
-  this Emission keeps every rule the stack turns on instead of turning some off for Oxlint;
+- the `oxlint: { typeAware: true }` entry — the Bridge is enabled by that entry alone, so this
+  Emission keeps every rule the stack turns on instead of turning some off for Oxlint;
 - `oxlint` and `@lumirelle/linter-plugins-oxlint` from [`package.json`](./package.json).
 
-Everything else — the options module's other entries, the source tree, `tsconfig.json` — is the
-same file as the paired flavor's. The predecessor mapping, the options table, the tree and the
+The options are written inline in [`eslint.config.js`](./eslint.config.js), the way a project with
+one tool writes them: apart from the dropped entry they are the paired flavor's, and the source tree
+and `tsconfig.json` are the same files as the paired flavor's. The predecessor mapping, the options table, the tree and the
 installation caveat live once, in [`eslint-oxlint/ts/README.md`](../../eslint-oxlint/ts/README.md).
 
 ## Install

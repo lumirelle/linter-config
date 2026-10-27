@@ -9,10 +9,10 @@ Compared with the paired flavor, [`eslint-oxlint/ts`](../../eslint-oxlint/ts/REA
 - `eslint.config.js` — there is no ESLint Emission, so no Bridge either;
 - `eslint` and `@lumirelle/linter-plugins-eslint` from [`package.json`](./package.json).
 
-It keeps the paired flavor's `oxlint: { typeAware: true }` entry in [`options.ts`](./options.ts):
-that entry is what makes Oxlint implement the type-aware rules, while the Bridge it also enables
-exists only on the ESLint side. The rest of the options module, the source tree and `tsconfig.json`
-are the same files as the paired flavor's.
+Its [`oxlint.config.ts`](./oxlint.config.ts) writes the options inline, the way a project with one
+tool does, and keeps the paired flavor's `oxlint: { typeAware: true }` entry: that entry is what
+makes Oxlint implement the type-aware rules, while the Bridge it also enables exists only on the
+ESLint side. The source tree and `tsconfig.json` are the same files as the paired flavor's.
 
 The packages Oxlint loads through `jsPlugins` are ESLint plugins that declare `eslint` as a peer, so
 a real Oxlint-only project may still need `eslint` installed even though this Emission imports

@@ -43,20 +43,23 @@ Each example is a directory under `playground/<flavor>/<stack>/` with:
 
 - `package.json` — a private package declaring the peers its Modules need, plus that flavor's tool
   packages;
-- `options.ts` — the one options object the flavor's config modules are built from;
 - the linter config modules its flavor runs — `eslint.config.js` for `eslint` and `eslint-oxlint`,
   `oxlint.config.ts` for `oxlint` and `eslint-oxlint`;
+- `options.ts` — only in the paired flavor: two configs read one object, so it is extracted. A
+  single-tool flavor writes the same options inline where it calls its one factory, the way a
+  project that runs one tool does;
 - `tsconfig.json` — the example's project file, documentation rather than part of this repository's
   type check;
 - a minimal representative source tree and a README.
 
-A stack's three directories are identical apart from the linter config modules, the `oxlint` entry of
-the options module, the tool packages in the manifest and the README. `test/examples/layout.test.ts`
-asserts that file set and compares the remaining files byte for byte, so drift is a failing test
-rather than a review responsibility.
+A stack's three directories are identical apart from the linter config modules, the options module
+(present in the paired flavor, inline elsewhere), the tool packages in the manifest and the README.
+`test/examples/layout.test.ts` asserts that file set and compares the remaining files byte for byte,
+so drift is a failing test rather than a review responsibility.
 
 [`examples.ts`](./examples.ts) is the registry: it discovers examples by reading
-`playground/*/*/package.json` and resolves one by importing its options and config modules. Adding a
+`playground/*/*/package.json` and resolves one by importing the config modules it ships, plus the
+options module when the flavor keeps one. Adding a
 stack or a flavor is adding its directory; no registry, task or unused-dependency edit is needed.
 
 [`index.ts`](./index.ts) is the runner behind `mise run play`.

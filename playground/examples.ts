@@ -37,8 +37,14 @@ export interface Example {
   stack: string
   /** Absolute path of the example package. */
   directory: string
-  /** The one options module the example's config modules read. */
-  options: Options
+  /**
+   * The options module the example ships, when it has one.
+   *
+   * Only the paired flavor keeps options in a module, because its two configs read one object. A
+   * single-tool flavor writes the same options where it calls its one factory, as a consumer with
+   * one tool does, so there is no module here to read.
+   */
+  options?: Options
   /** The ESLint Emission, awaited from the example's `eslint.config.js`, when the flavor ships one. */
   eslint?: readonly Linter.Config[]
   /** The Oxlint Emission, awaited from the example's `oxlint.config.ts`, when the flavor ships one. */
@@ -148,11 +154,11 @@ async function exampleDirectories(directory: string): Promise<string[]> {
   return entries.filter(entry => entry.isDirectory() && entry.name !== 'node_modules').map(entry => entry.name)
 }
 
-/** Load one location's options module and the config modules its flavor ships. */
+/** Load one location's options module, when it ships one, and the config modules it ships. */
 async function load(location: ExampleLocation): Promise<Example> {
   const { directory, flavor, stack } = location
-  const [{ options }, eslint, oxlint] = await Promise.all([
-    importModule<{ options: Options }>(join(directory, 'options.ts')),
+  const [options, eslint, oxlint] = await Promise.all([
+    optionalOptions(join(directory, 'options.ts')),
     optionalEmission<readonly Linter.Config[]>(join(directory, 'eslint.config.js')),
     optionalEmission<OxlintConfig>(join(directory, 'oxlint.config.ts')),
   ])
@@ -162,12 +168,27 @@ async function load(location: ExampleLocation): Promise<Example> {
     flavor,
     stack,
     directory,
-    options,
-    // Only the Emission the flavor ships is present: a caller that needs one asks for the flavor
-    // that has it instead of narrowing afterwards.
+    // Only what the flavor actually ships is present: a caller that needs one Emission asks for the
+    // flavor that has it instead of narrowing afterwards.
+    ...(options ? { options } : {}),
     ...(eslint ? { eslint } : {}),
     ...(oxlint ? { oxlint } : {}),
   }
+}
+
+/**
+ * The options a paired example keeps in `options.ts`, or nothing when the flavor writes them inline.
+ *
+ * The module exists so two configs can read one object. A single-tool flavor has one config, so it
+ * carries no module at all; the Emission relation in `test/examples/flavors.test.ts` is what proves
+ * it was built from the stack's options.
+ */
+async function optionalOptions(path: string): Promise<Options | undefined> {
+  if (!existsSync(path)) {
+    return undefined
+  }
+  const module = await importModule<{ options: Options }>(path)
+  return module.options
 }
 
 /** An example's public name. */

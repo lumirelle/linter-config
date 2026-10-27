@@ -10,7 +10,8 @@ const PLAYGROUND = join(dirname(fileURLToPath(import.meta.url)), '..', '..', 'pl
 
 /**
  * The files a stack's flavors are allowed to differ in: the two config modules, the options module
- * they read, the manifest and the README.
+ * (present only in the paired flavor, which is the one with two configs to share it), the manifest
+ * and the README.
  *
  * Everything else — the source tree, the project file, the stack's own config files — belongs to the
  * stack rather than to the flavor, so it is byte-identical in all three directories.

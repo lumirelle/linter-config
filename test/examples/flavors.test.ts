@@ -1,4 +1,5 @@
 import type { ModuleId, Options } from '@lumirelle/linter-config/eslint'
+import type { Example } from '../../playground/examples'
 import { describe, expect, it } from 'vitest'
 import { listExamples, resolveStack } from '../../playground/examples'
 import {
@@ -8,6 +9,7 @@ import {
   exampleTables,
   expectNoModules,
   objectsOfModule,
+  optionsByStack,
   oxlintRuleKeys,
   ruleCarryingOverrides,
 } from './helpers/emission'
@@ -54,6 +56,18 @@ function disabledModules(enabled: readonly ModuleId[]): ModuleId[] {
 /** Every example the playground ships, and every stack with the three flavors it ships. */
 const { examples: EXAMPLES, stacks: STACKS } = await exampleTables()
 
+/** Each stack's options, read from the paired flavor, which is the one example that keeps a module. */
+const STACK_OPTIONS = optionsByStack(STACKS)
+
+/** The options the stack ships, whichever flavor is asking. */
+function optionsOf(example: Example): Options {
+  const options = STACK_OPTIONS.get(example.stack)
+  if (!options) {
+    throw new Error(`The "${example.stack}" stack has no options module.`)
+  }
+  return options
+}
+
 describe('the flavor contract', () => {
   it('resolves every example the playground lists', async () => {
     const names = await listExamples()
@@ -71,10 +85,10 @@ describe('the flavor contract', () => {
     // The three rules below are the flavor dimension of the contract, so each applies to one flavor
     // and is skipped for the other two rather than folded into a branch the reader has to trace.
     it.skipIf(example.flavor !== 'eslint')('appends no Bridge, because it sets no `oxlint` option', () => {
-      // The Bridge is enabled by the `oxlint` entry alone. An ESLint-only example that kept the
-      // entry would document rules switched off for a tool the project does not run, which is
-      // indistinguishable from Source's own severities.
-      expect(example.options).not.toHaveProperty('oxlint')
+      // The Bridge is enabled by the `oxlint` entry alone. A project that runs no Oxlint has nothing
+      // to bridge, and it writes its options inline rather than keeping a module for a second config
+      // that does not exist.
+      expect(example.options).toBeUndefined()
       expect(configNames(example.eslint ?? []).filter(name => name.endsWith('/oxlint-bridge'))).toEqual([])
     })
 
@@ -101,7 +115,7 @@ describe('the flavor contract', () => {
       expect(example.oxlint).toBeDefined()
       const pairs = ruleCarryingOverrides(example.oxlint!).length
 
-      expect(tail).toHaveLength(example.options.oxlint ? pairs : 0)
+      expect(tail).toHaveLength(optionsOf(example).oxlint ? pairs : 0)
       expect(tail.every(config => config.name?.endsWith('/oxlint-bridge'))).toBe(true)
     })
 
@@ -109,14 +123,14 @@ describe('the flavor contract', () => {
       // The expectation comes from the options module, so this holds for every example the
       // playground ships, not only for the ones with a per-stack spec: an option that leaked
       // between examples shows up as an object of a Module its own options never enable.
-      expectNoModules(example.eslint ?? [], disabledModules(enabledModules(example.options)))
+      expectNoModules(example.eslint ?? [], disabledModules(enabledModules(optionsOf(example))))
     })
 
-    it.skipIf(example.flavor !== 'eslint-oxlint' || enabledModules(example.options).length === 0)('carries the framework Modules its options enable', () => {
+    it.skipIf(example.flavor !== 'eslint-oxlint' || enabledModules(optionsOf(example)).length === 0)('carries the framework Modules its options enable', () => {
       // Once per example, on the flavor that builds every Module's objects: the absence above is
       // only meaningful while the Modules the options module does enable still put objects in an
       // Emission. A stack that enables no framework Module has nothing to assert here.
-      for (const module of enabledModules(example.options)) {
+      for (const module of enabledModules(optionsOf(example))) {
         expect(objectsOfModule(example.eslint ?? [], module), `the Emission drops the ${module} objects`).not.toEqual([])
       }
     })
@@ -131,14 +145,13 @@ describe('the flavor contract', () => {
       expect(examples.map(example => example.flavor)).toEqual(['eslint', 'oxlint', 'eslint-oxlint'])
     })
 
-    it('builds all three flavors from one options module, modulo its `oxlint` entry', () => {
-      // The options module is the one input every flavor shares: only the `oxlint` entry may differ,
-      // and only the ESLint flavor may drop it.
-      const withoutOxlint = { ...paired!.options }
-      delete withoutOxlint.oxlint
-
-      expect(eslintFlavor!.options).toEqual(withoutOxlint)
-      expect(oxlintFlavor!.options).toEqual(paired!.options)
+    it('keeps the options module in the paired flavor alone', () => {
+      // The module exists so two configs can read one object. A single-tool flavor has one config, so
+      // it writes the same options inline where it calls that factory, which is what a consumer with
+      // one tool does; the Emission relations below are what prove the options match.
+      expect(paired!.options).toBeDefined()
+      expect(eslintFlavor!.options).toBeUndefined()
+      expect(oxlintFlavor!.options).toBeUndefined()
     })
 
     it('makes the Bridge the only difference between the two ESLint flavors', () => {

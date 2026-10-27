@@ -12,9 +12,10 @@ Compared with the paired flavor, [`eslint-oxlint/next`](../../eslint-oxlint/next
 It keeps all three plugin peers the paired flavor declares. Source's peer check runs for both
 Adapters, so an Oxlint-only Next project still installs `@eslint-react/eslint-plugin`,
 `eslint-plugin-react-refresh` and `@next/eslint-plugin-next`; the Emission maps the React and Next
-rules onto Oxlint's own `react` and `nextjs` plugin scopes instead of loading the plugins. The rest
-of [`options.ts`](./options.ts), the source tree and `tsconfig.json` are the same files as the
-paired flavor's.
+rules onto Oxlint's own `react` and `nextjs` plugin scopes instead of loading the plugins. The options
+are written inline in [`oxlint.config.ts`](./oxlint.config.ts), the way a project with one tool
+writes them, and they repeat the paired flavor's `options.ts` entries; the source tree and
+`tsconfig.json` are the same files as the paired flavor's.
 
 The packages Oxlint loads through `jsPlugins` are ESLint plugins that declare `eslint` as a peer, so
 a real Oxlint-only project may still need `eslint` installed even though this Emission imports

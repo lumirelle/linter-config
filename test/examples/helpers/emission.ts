@@ -1,4 +1,4 @@
-import type { ModuleId } from '@lumirelle/linter-config/eslint'
+import type { ModuleId, Options } from '@lumirelle/linter-config/eslint'
 import type { Linter } from 'eslint'
 import type { OxlintConfig } from 'oxlint'
 import type { Example } from '../../../playground/examples'
@@ -7,6 +7,7 @@ import { listExamples, listStacks, resolveExample, resolveStack } from '../../..
 
 /** One example as a stack spec loads it: its options module plus both Emissions. */
 export type ExampleEmissions = Example & {
+  options: Options
   eslint: readonly Linter.Config[]
   oxlint: OxlintConfig
 }
@@ -39,6 +40,24 @@ export async function exampleTables(): Promise<{ examples: Example[], stacks: St
 }
 
 /**
+ * Each stack's options, keyed by stack name.
+ *
+ * The paired flavor is the only example that keeps them in a module, because its two configs read one
+ * object. A single-tool flavor writes the same options where it calls its one factory, the way a
+ * consumer with one tool does, so there is no module to read there: the Emission relation is what
+ * proves it built from the stack's options.
+ */
+export function optionsByStack(stacks: readonly StackExamples[]): Map<string, Options> {
+  return new Map(stacks.map(({ stack, examples }) => {
+    const paired = examples.find(example => example.flavor === 'eslint-oxlint')
+    if (!paired?.options) {
+      throw new Error(`The "${stack}" stack ships no paired flavor with an options module.`)
+    }
+    return [stack, paired.options] as const
+  }))
+}
+
+/**
  * Load one example exactly as `mise run play` does: through the registry, which imports the
  * example's own config modules, so the Emission is the one a consumer's file would build.
  *
@@ -55,11 +74,11 @@ export async function exampleTables(): Promise<{ examples: Example[], stacks: St
  */
 export async function loadExample(name: string): Promise<ExampleEmissions> {
   const example = await resolveExample(name)
-  const { eslint, oxlint } = example
-  if (!eslint || !oxlint) {
-    throw new Error(`The example "${example.name}" ships only one config module, so it has no paired Emission pair.`)
+  const { eslint, options, oxlint } = example
+  if (!eslint || !oxlint || !options) {
+    throw new Error(`The example "${example.name}" is not a paired flavor: it ships neither two config modules nor an options module.`)
   }
-  return { ...example, eslint, oxlint }
+  return { ...example, options, eslint, oxlint }
 }
 
 /**

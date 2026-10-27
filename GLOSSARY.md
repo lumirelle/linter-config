@@ -47,3 +47,11 @@ _Avoid_: unsupported list, gap report
 **Upstream**:
 `@antfu/eslint-config`, used as the comparison baseline; the pinned tag and versions live in [`upstream/pin.json`](upstream/pin.json), and `mise run upstream:diff` renders the comparison.
 _Avoid_: base config, parent config
+
+**Flavor**:
+The linter dimension of an example: which tools it configures, and therefore which Emissions it ships. A Flavor and a Stack together identify an example; see [ADR 0005](docs/adr/0005-flavor-first-playground.md).
+_Avoid_: variant, mode, preset
+
+**Stack**:
+The technology snapshot dimension of an example: the kind of project the Emission is shown against.
+_Avoid_: framework, template, scaffold

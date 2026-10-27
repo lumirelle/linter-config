@@ -6,10 +6,10 @@ import { listExamples, listStacks, resolveExample, resolveStack } from '../../pl
 const STACKS = ['next', 'nuxt', 'react', 'ts', 'ts-monorepo', 'vue', 'webext']
 
 /**
- * The example names the playground ships, sorted.
+ * The example names the playground ships, sorted: every stack in each of the three flavors.
  *
- * A flat directory is the paired flavor, so its name is `eslint-oxlint/<stack>`; a converted stack
- * contributes one name per flavor, and the other stacks gain theirs as they are converted.
+ * Written out rather than derived from the stack list, so a lost directory or a renamed flavor is
+ * a failure here instead of a shorter list that still agrees with itself.
  */
 const EXAMPLE_NAMES = [
   'eslint-oxlint/next',
@@ -53,18 +53,8 @@ describe('the example registry', () => {
     expect(example.directory.endsWith(join('playground', 'eslint-oxlint', 'ts'))).toBe(true)
   })
 
-  it('still resolves a bare stack name, as that stack\'s paired flavor', async () => {
-    // The pre-flavor spelling of an example name, kept only until every stack ships one directory
-    // per flavor; a stack spec can load a stack without naming its flavor.
-    const [bare, qualified] = await Promise.all([resolveExample('ts'), resolveExample('eslint-oxlint/ts')])
-
-    expect(bare.name).toBe('eslint-oxlint/ts')
-    expect(bare.directory).toBe(qualified.directory)
-    expect(bare.options).toEqual(qualified.options)
-  })
-
   it('resolves every stack into its three flavors in flavor order', async () => {
-    // Every stack now ships one directory per flavor, and the runner prints a bare stack name in
+    // Every stack ships one directory per flavor, and the runner prints a bare stack name in
     // this order. Asserting it per stack is what makes a lost directory or a wrong flavor order
     // fail here rather than in a printed Emission.
     const resolved = await Promise.all(STACKS.map(async stack => ({ stack, flavors: await resolveStack(stack) })))
@@ -89,21 +79,23 @@ describe('the example registry', () => {
     expect(example.options.type).toBe('lib')
   })
 
-  it('fails an unknown name, naming every stack and every example', async () => {
-    // Both vocabularies, because a caller may have meant a stack the runner expands or one example,
-    // and neither is guessable from the shape of the other.
+  it('fails an unknown example name, naming only the flavor-qualified names', async () => {
+    // One vocabulary: an example is `<flavor>/<stack>`, so a stack name is not a near miss to list.
     const failure = await resolveExample('nope').then(() => undefined, (error: Error) => error)
 
-    expect(failure?.message).toBe(
-      `Unknown example "nope". Valid stacks: ${STACKS.join(', ')}. Valid examples: ${EXAMPLE_NAMES.join(', ')}`,
-    )
+    expect(failure?.message).toBe(`Unknown example "nope". Valid examples: ${EXAMPLE_NAMES.join(', ')}`)
   })
 
-  it('fails an unknown stack the same way', async () => {
+  it('fails a bare stack name, because one stack is three examples', async () => {
+    // The compatibility alias is gone: `ts` names no example, and the failure lists the names that do.
+    const failure = await resolveExample('ts').then(() => undefined, (error: Error) => error)
+
+    expect(failure?.message).toBe(`Unknown example "ts". Valid examples: ${EXAMPLE_NAMES.join(', ')}`)
+  })
+
+  it('fails an unknown stack, naming only the stack names', async () => {
     const failure = await resolveStack('nope').then(() => undefined, (error: Error) => error)
 
-    expect(failure?.message).toBe(
-      `Unknown example "nope". Valid stacks: ${STACKS.join(', ')}. Valid examples: ${EXAMPLE_NAMES.join(', ')}`,
-    )
+    expect(failure?.message).toBe(`Unknown stack "nope". Valid stacks: ${STACKS.join(', ')}`)
   })
 })

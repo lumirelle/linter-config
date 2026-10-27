@@ -15,7 +15,7 @@ const ESLINT_ONLY_DOMAINS = ['jsonc', 'yaml', 'toml', 'markdown'] as const
 /** Every example the playground ships, resolved the way the runner resolves it. */
 const EXAMPLES = await Promise.all((await listExamples()).map(name => resolveExample(name)))
 
-/** Every stack, with the flavors it ships today. */
+/** Every stack, with the three flavors it ships. */
 const STACKS = await Promise.all(
   (await listStacks()).map(async stack => ({ stack, examples: await resolveStack(stack) })),
 )
@@ -85,18 +85,15 @@ describe('the flavor contract', () => {
   })
 
   describe.each(STACKS)('the $stack stack', ({ examples }) => {
-    const converted = examples.length === 3
     const [eslintFlavor, oxlintFlavor, paired] = examples
 
-    it('ships the paired flavor, and all three once it is converted', () => {
-      // A flat stack is the paired flavor; a converted stack ships one directory per flavor. Two
-      // flavors is the half-converted state this fails on.
-      expect(examples.map(example => example.flavor)).toEqual(
-        converted ? ['eslint', 'oxlint', 'eslint-oxlint'] : ['eslint-oxlint'],
-      )
+    it('ships one directory per flavor', () => {
+      // Every stack is the same 3×7 matrix row, so a stack that lost a directory fails here rather
+      // than shrinking to the flavors it kept, which would make every relation below compare fewer.
+      expect(examples.map(example => example.flavor)).toEqual(['eslint', 'oxlint', 'eslint-oxlint'])
     })
 
-    it.runIf(converted)('builds all three flavors from one options module, modulo its `oxlint` entry', () => {
+    it('builds all three flavors from one options module, modulo its `oxlint` entry', () => {
       // The options module is the one input every flavor shares: only the `oxlint` entry may differ,
       // and only the ESLint flavor may drop it.
       const withoutOxlint = { ...paired!.options }
@@ -106,7 +103,7 @@ describe('the flavor contract', () => {
       expect(oxlintFlavor!.options).toEqual(paired!.options)
     })
 
-    it.runIf(converted)('makes the Bridge the only difference between the two ESLint flavors', () => {
+    it('makes the Bridge the only difference between the two ESLint flavors', () => {
       // Subtracting the tail the Emission carries itself is what makes this a relation rather than a
       // pinned snapshot: a stack with no `oxlint` entry has no tail, so its two ESLint flavors emit
       // the same objects and the flavor difference there is the Oxlint config module alone.
@@ -117,14 +114,8 @@ describe('the flavor contract', () => {
       expect(comparableEmission(eslintFlavor!.eslint!)).toEqual(comparableEmission(head))
     })
 
-    it.runIf(converted)('gives the Oxlint flavor the paired flavor\'s Oxlint Emission exactly', () => {
+    it('gives the Oxlint flavor the paired flavor\'s Oxlint Emission exactly', () => {
       expect(oxlintFlavor!.oxlint).toEqual(paired!.oxlint)
     })
-  })
-
-  // A stack that has not been converted yet would make every relation above vacuous, so the table
-  // itself is asserted: the tracer stack is what proves the relations run against real siblings.
-  it('ships at least one converted stack for the relations to compare', () => {
-    expect(STACKS.filter(row => row.examples.length === 3).map(row => row.stack)).not.toEqual([])
   })
 })

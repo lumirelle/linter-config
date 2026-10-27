@@ -27,9 +27,6 @@ export const options = {
     // example's own lint configs, options module, manifest, tsconfig and README sit at its root,
     // where this repository's root config does lint them; its framework config files are the
     // exception, listed below.
-    'playground/*/src/**',
-    'playground/*/app/**',
-    'playground/*/packages/*/src/**',
     'playground/*/*/src/**',
     'playground/*/*/app/**',
     'playground/*/*/packages/*/src/**',
@@ -38,9 +35,8 @@ export const options = {
     // outside the TypeScript project and a rule that needs type information throws on it rather
     // than reporting. The example's other root config files — `uno.config.ts`, `vite.config.ts`,
     // its lint config and its options module — import nothing, are in the project below, and are
-    // linted on purpose, including in a flavour that ships no ESLint config module and therefore
+    // linted on purpose, including in a flavor that ships no ESLint config module and therefore
     // leaves them to this config rather than to a nested one.
-    'playground/*/nuxt.config.ts',
     'playground/*/*/nuxt.config.ts',
   ],
   overrides: {

@@ -9,24 +9,22 @@
 
 Lumirelle's opinionated linter config: one set of preferences, emitted for ESLint and for Oxlint.
 
-One hand-written Source produces two Emissions. `@lumirelle/linter-config/eslint` returns an `eslint-flat-config-utils` composer, `@lumirelle/linter-config/oxlint` returns an `oxlint-flat-config` composer, and the same options object configures both, so the two tools cannot drift by configuration. Both factories are thenable: neither config file needs a top-level `await`.
-
-The vocabulary (Source, Config object, Module, Emission, Plugin Bundle, Bridge, Coverage report) is defined in [GLOSSARY.md][glossary]; the decisions behind the shape are [ADR 0001][adr-1] and [ADR 0002][adr-2], and the field-level reference is [docs/design/source-schema.md][schema].
-
 ## Install
 
 ```sh
+nub add -D @lumirelle/linter-config
+# Or PNPM
+pnpm add -D @lumirelle/linter-config
+# Or NPM
 npm install -D @lumirelle/linter-config
 ```
 
-The plugins are optional peers, so a project only installs the ones its Modules use:
+The default plugins setup for different linter are optional peers, pick as your need:
 
-- `@lumirelle/linter-plugins-eslint` forwards the ESLint plugin objects Source references by Plugin id. It is needed by `@lumirelle/linter-config/eslint` only.
-- `@lumirelle/linter-plugins-oxlint` carries the `jsPlugins` specifiers and the built-in plugin list. It is needed by `@lumirelle/linter-config/oxlint` only.
-- The packages Upstream treats as optional peers (framework and language plugins, parsers, formatters) stay yours to install; enabling a Module without them throws an error naming every missing package.
-- Oxlint resolves a `jsPlugins` specifier from the config file's directory, never from this package's `node_modules`, so those plugins must be among your own dependencies.
+- `@lumirelle/linter-plugins-eslint`: If you want to use `@lumirelle/linter-config/eslint`.
+- `@lumirelle/linter-plugins-oxlint`: If you want to use `@lumirelle/linter-config/oxlint`.
 
-The three packages are released in lockstep, so their versions always match.
+If you want to use some optional options, such as `eslint({ react: true })`, you may need to install the corresponding plugin.
 
 ## ESLint
 
@@ -40,26 +38,30 @@ export default eslint({
 })
 ```
 
-The `stylistic` Module is off by default: this config is meant to be paired with `oxfmt` (`objectWrap: 'preserve'`), and `@stylistic` would rewrap object literals the formatter keeps. Turn it on with `stylistic: true` when formatting-as-lint is what you want.
-
-`jsonc`, `yaml`, `toml`, `markdown` and — unless `oxlint: { typeAware: true }` is set — every type-aware rule are ESLint-only, because Oxlint can add neither a parser nor a processor and reads type information only in its own type-aware mode.
-
-## Oxlint
+## OxLint
 
 ```ts
 // oxlint.config.ts
 import { oxlint } from '@lumirelle/linter-config/oxlint'
 
 export default oxlint({
+  // Type-aware rules need the project's TypeScript config.
   typescript: { tsconfigPath: 'tsconfig.json' },
 })
 ```
 
-Oxlint discovers `oxlint.config.ts` without a `-c` flag. Do not keep an `.oxlintrc.json` beside it: Oxlint refuses to load when both config files exist in one directory. Oxlint's `jsPlugins` are alpha and outside semver, so a JS plugin can change behaviour between Oxlint releases even when this config does not.
-
 ## Composition and overrides
 
-Both composers support `append`, `override`, `insertAfter` and `remove`. A Config object is addressed by its stable `name`, `lumirelle/<upstream tail>`, or by its Module for the factory's own `overrides` option.
+Both composers of ESLint and OxLint support `append`, `override`, `insertAfter` and `remove`. 
+
+For ESLint, it uses [`eslint-flat-config-utils`](https://github.com/antfu/eslint-flat-config-utils) under the hood; for OxLint, it uses [`@oxlint-flat-config/composer`](https://github.com/liangmiQwQ/oxlint-flat-config/tree/main/packages/composer) under the hood.
+
+A Config object is addressed by its stable `name`, `lumirelle/<upstream tail>`:
+
+> [!Note]
+> Only the ESLint side has the Bridge option: `oxlint: true` (or its object form), and [`oxlintBridge()`][bridge] used to turn off the rules of ESLint which is already handled by OxLint.
+>
+> They are designed for mixed use, because of OxLint does not support custom language parser yet.
 
 ```js
 // eslint.config.js
@@ -76,7 +78,7 @@ export default eslint(options)
   .append(...oxlintBridge(options))
 ```
 
-The same overrides through the factory, which keeps them in one object for both tools:
+Or by its Module for the factory's own `overrides` option:
 
 ```js
 eslint({
@@ -89,24 +91,44 @@ eslint({
 })
 ```
 
-`oxlint()` takes the same `overrides` keys, so a Module-level override lands in both Emissions. Only the ESLint side has the Bridge: `oxlint: true` (or its object form) appends it, and [`oxlintBridge()`][bridge] is exported so you can re-append it after appending your own configs.
+For more usage details, please refer to below two composer package:
+- [`eslint-flat-config-utils`](https://github.com/antfu/eslint-flat-config-utils)
+- [`@oxlint-flat-config/composer`](https://github.com/liangmiQwQ/oxlint-flat-config/tree/main/packages/composer)
 
 ## Examples
 
-[`playground/`][playground] holds seven private example workspaces, one per kind of project this config is meant for: a Next.js application, a Nuxt application, a React and a Vue single-page application, a TypeScript library, a TypeScript monorepo and a browser extension. Each example keeps one options module that both its ESLint and Oxlint configs read, and its README maps the project's previous configuration onto that module, so a migration is a diff rather than a guess.
+[`playground/`][playground] holds seven example projects:
+
+- A Next.js application
+- A Nuxt application
+- A React single-page application
+- A Vue single-page application
+- A TypeScript library
+- A TypeScript monorepo
+- A browser extension
+
+You can run `mise run play {example_id}` to see the emissions for each example:
 
 ```sh
-mise run play ts     # print both Emissions for one example
-mise run play --all  # print every example
+mise run play ts     # Print both Emissions for one example
+mise run play --all  # Print for every example
 ```
 
 See the [playground index][playground] for the table of examples and the options each one demonstrates.
 
 ## Coverage report and upstream comparison
 
-- The Coverage report — the rules the Oxlint Emission cannot implement, per Module, with the reason — is committed at [`packages/config/coverage.json`][coverage] and guarded by a snapshot test.
+This configuration is highly inspired by the upstream package [`@antfu/eslint-config`](https://github.com/antfu/eslint-config). It introduces a mechanism to compare with upstream.
+
+- The Coverage report includes the rules the Oxlint Emission cannot implement, per Module, with the reason, which is committed at [`packages/config/coverage.json`][coverage] and guarded by a snapshot test.
 - The Upstream comparison is rendered by `mise run upstream:diff`, which writes `reports/upstream-diff.md`; `mise run upstream:check` fails only when the pinned submodule tag and the installed `@antfu/eslint-config` version disagree.
 - The repository dogfoods both subpaths in [`eslint.config.js`][dogfood-eslint] and [`oxlint.config.ts`][dogfood-oxlint].
+
+## Thanks To
+
+- [`eslint-flat-config-utils`](https://github.com/antfu/eslint-flat-config-utils): ESLint composer API support.
+- [`@oxlint-flat-config/composer`](https://github.com/liangmiQwQ/oxlint-flat-config/tree/main/packages/composer): OxLint composer API support.
+- [`@antfu/eslint-config`](https://github.com/antfu/eslint-config): ESLint & OxLint config source reference.
 
 ## Sponsors
 

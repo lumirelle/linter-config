@@ -29,9 +29,13 @@ export const options = {
     'playground/*/src/**',
     'playground/*/app/**',
     'playground/*/packages/*/src/**',
+    'playground/*/*/src/**',
+    'playground/*/*/app/**',
+    'playground/*/*/packages/*/src/**',
     // The one framework config that does not survive this repository's own lint: `nuxt.config.ts`
     // calls `defineNuxtConfig` from the Nuxt runtime the example deliberately does not install.
     'playground/*/nuxt.config.ts',
+    'playground/*/*/nuxt.config.ts',
   ],
   overrides: {
     // Two type-aware rules do not describe this repository, and turning them off here — in Source,

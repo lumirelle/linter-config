@@ -5,8 +5,11 @@ import type { Example } from '../../../playground/examples'
 import { expect } from 'vitest'
 import { resolveExample } from '../../../playground/examples'
 
-/** One example as the registry resolves it: its options module plus both Emissions. */
-export type ExampleEmissions = Example
+/** One example as a stack spec loads it: its options module plus both Emissions. */
+export type ExampleEmissions = Example & {
+  eslint: readonly Linter.Config[]
+  oxlint: OxlintConfig
+}
 
 /**
  * Load one example exactly as `mise run play` does: through the registry, which imports the
@@ -14,6 +17,9 @@ export type ExampleEmissions = Example
  *
  * Both Emissions come back resolved, so every test that loads an example has also loaded the
  * Oxlint side: a missing peer, parser or processor throws here, not in a consumer's repository.
+ * A stack spec asserts stack semantics, which do not vary by flavor, so it loads the stack's paired
+ * flavor — the one that ships both config modules — and this is where that is required rather than
+ * in every spec.
  *
  * The assertions read Config object names rather than pinning `.gitignore` discovery and editor
  * detection the way `houseOptions()` does for the repository's own config: those two inputs change
@@ -21,7 +27,12 @@ export type ExampleEmissions = Example
  * consumer-realistic object a reader copies.
  */
 export async function loadExample(name: string): Promise<ExampleEmissions> {
-  return resolveExample(name)
+  const example = await resolveExample(name)
+  const { eslint, oxlint } = example
+  if (!eslint || !oxlint) {
+    throw new Error(`The example "${example.name}" ships only one config module, so it has no paired Emission pair.`)
+  }
+  return { ...example, eslint, oxlint }
 }
 
 /** The Config object names an ESLint Emission carries, in emission order. */

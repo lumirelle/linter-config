@@ -14,7 +14,8 @@
     "packages": [
       "docs",
       "packages/*",
-      "playground/*"
+      "playground/*",
+      "playground/*/*"
     ],
     "catalogs": {
       "dev": {

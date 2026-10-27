@@ -28,8 +28,8 @@ KNIP_DISABLE_RAW_TRANSFER = 1
 [task_config.input_groups]
 deps = ["**/package.json", "nub.lock"]
 src = ["packages/**/src/**/*"]
-check = ["*.js", "*.mjs", "*.cjs", "*.jsx", "*.ts", "*.mts", "*.cts", "*.tsx", "*.vue", "*.json", "*.jsonc", "*.yaml", "*.yml", "*.toml", "*.md", "*.mdc", "*.mdx", "*.lua", "hk.pkl", "playground/*.ts", "playground/*/*.{js,ts,json,md}", "playground/*/packages/**"]
-test = ["packages/**/test/**/*", "packages/**/dist/**/*", "playground/*.ts", "playground/*/*.{js,ts,json,md}", "test/**", "scripts/**", "vitest.config.ts"]
+check = ["*.js", "*.mjs", "*.cjs", "*.jsx", "*.ts", "*.mts", "*.cts", "*.tsx", "*.vue", "*.json", "*.jsonc", "*.yaml", "*.yml", "*.toml", "*.md", "*.mdc", "*.mdx", "*.lua", "hk.pkl", "playground/*.ts", "playground/*/*.{js,ts,json,md}", "playground/*/*/*.{js,ts,json,md}", "playground/*/packages/**", "playground/*/*/packages/**"]
+test = ["packages/**/test/**/*", "packages/**/dist/**/*", "playground/*.ts", "playground/*/*.{js,ts,json,md}", "playground/*/*/*.{js,ts,json,md}", "test/**", "scripts/**", "vitest.config.ts"]
 
 [tasks.dev]
 description = "Run the development build with hot reloading."

@@ -3,6 +3,7 @@ import { options } from '../lint-options'
 import { eslint } from '../packages/config/src/eslint'
 import { oxlint } from '../packages/config/src/oxlint'
 import { pluginDefinition, pluginIdOfRuleKey } from '../packages/config/src/plugins'
+import { bridgeOf } from '../packages/config/test/helpers/emission'
 
 /**
  * Oxlint's spelling of a Source rule key, read from the Plugin registry both Emissions map with:
@@ -43,11 +44,13 @@ async function eslintEnabledRules(): Promise<string[]> {
   return [...enabled]
 }
 
-/** The rule keys the Bridge turns off, in Oxlint spelling, as the tail `oxlint` adds to this Emission. */
+/**
+ * The rule keys the Bridge turns off, in Oxlint spelling, as the tail `oxlint` adds to this Emission.
+ * The helper pins the cwd-reading flags; the Bridge depends only on Config objects that carry rules,
+ * so neither the `.gitignore` ignores nor editor detection can change it.
+ */
 async function bridgeDisabledRules(): Promise<string[]> {
-  const without = await eslintEnabledConfigs()
-  const withBridge = await eslint(options)
-  const disabled = withBridge.slice(without.length).flatMap(config => Object.keys(config.rules ?? {}))
+  const disabled = (await bridgeOf(options)).flatMap(config => Object.keys(config.rules ?? {}))
   return [...new Set(disabled.map(oxlintRuleKey))].sort()
 }
 

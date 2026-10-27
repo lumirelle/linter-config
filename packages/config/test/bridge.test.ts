@@ -7,18 +7,19 @@ import { afterAll, describe, expect, it } from 'vitest'
 import { eslint } from '../src/eslint'
 import { oxlint } from '../src/oxlint'
 import { pluginDefinition, pluginIdOfRuleKey } from '../src/plugins'
-import { houseOptions } from './helpers/emission'
+import { bridgeOf, houseOptions } from './helpers/emission'
 import { lint, project, scratchDirectory } from './helpers/oxlint-binary'
 
 const FIXTURES = fileURLToPath(new URL('./fixtures/javascript/', import.meta.url))
 
-/** Option points that move rules between the two Emissions: Modules on and off, and the slices. */
+/** Option points that move rules between the two Emissions: Modules on and off, the slices, and the type-aware mode. */
 const OPTION_POINTS: Options[] = [
   {},
   { stylistic: true },
   { vue: true },
   { test: true, perfectionist: true },
   { imports: false, jsdoc: false, node: false, unicorn: false },
+  { oxlint: { typeAware: true } },
 ]
 
 /** Oxlint's spelling of a Source rule key, read from the Plugin registry the Emission maps with. */
@@ -78,16 +79,6 @@ async function emissionOf(options: Options): Promise<Linter.Config[]> {
   return eslint(houseOptions({ ...options, oxlint: false }))
 }
 
-/**
- * The Bridge of `options`: the tail that enabling `oxlint` adds to the very same options resolved
- * without it. Deriving it through the Composer keeps this file on the public seam — the Bridge
- * builder is never imported, so it stays free to change.
- */
-async function bridgeOf(options: Options = {}): Promise<Linter.Config[]> {
-  const withOxlint = await eslint(houseOptions({ ...options, oxlint: options.oxlint ?? true }))
-  return withOxlint.slice((await emissionOf(options)).length)
-}
-
 /** The rules a Bridge turns off, per scope, spelled the way Oxlint spells them. */
 function scopesOf(bridge: readonly Linter.Config[]): Map<string, Set<string>> {
   const scopes = new Map<string, Set<string>>()
@@ -118,7 +109,7 @@ function severity(entry: unknown): unknown {
 }
 
 /**
- * A config as the resolved array's contract: name, scope and rules.
+ * A config as the resolved array's contract: its name, its scope and its rules.
  *
  * Two resolutions cannot be compared whole: a processor is glue the Bundle builds per call, so its
  * methods are fresh closures. Order and severity are what a consumer observes, so they are what
@@ -254,6 +245,17 @@ describe('a type-aware rule', () => {
   it('is unaffected by `typeCheck` alone, which is Oxlint root options only', async () => {
     expect(await bridgeOf({ ...TYPE_AWARE, oxlint: { typeCheck: true } }))
       .toEqual(await bridgeOf({ ...TYPE_AWARE, oxlint: true }))
+  })
+})
+
+describe('a renamed plugin prefix', () => {
+  it('is renamed in the Bridge too, so renaming a plugin cannot re-open a rule it bridged', async () => {
+    const renamed = await eslint(houseOptions({ oxlint: true })).renamePlugins({ ts: 'tsx' })
+
+    // The Emission spells the rule `tsx/...` now; the Bridge follows it instead of staying on `ts/...`.
+    expect(severity(effectiveRules(renamed, 'src/index.ts')['tsx/no-require-imports'])).toBe('off')
+    // Source enables it either way, so the rule is only silent because the Bridge moved with the rename.
+    expect(severity(effectiveRules(await eslint(houseOptions()), 'src/index.ts')['ts/no-require-imports'])).toBe('error')
   })
 })
 

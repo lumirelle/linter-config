@@ -28,11 +28,12 @@ const BRIDGE_NAME_SUFFIX = '/oxlint-bridge'
  * `ignores` of the Config object it silences so nothing is disabled where Oxlint does not look, and
  * a type-aware rule stays on unless Oxlint runs type-aware (`oxlint: { typeAware: true }`).
  *
- * @param configs - The Config objects the ESLint Emission was built from, in Source order.
+ * @param configs - Source's Config objects for the same options; the Oxlint-readable ones are
+ * selected here, so the callers do not filter first.
  * @param options - The same options object, whose `oxlint` entry selects the type-aware mode.
  * @returns Plain ESLint config objects, in Source order, closing the Emission.
  */
-export function bridgeObjects(configs: readonly ConfigObject[], options: Options = {}): Linter.Config[] {
+export function bridgeObjects(configs: readonly ConfigObject[], options: Options): Linter.Config[] {
   const typeAware = isTypeAware(options)
 
   return configs
@@ -55,4 +56,37 @@ export function bridgeObjects(configs: readonly ConfigObject[], options: Options
 /** Whether {@link Options.oxlint} asks for the Bridge: the boolean form is the flag, the object form carries Oxlint's options. */
 export function isBridgeEnabled(option: Options['oxlint']): boolean {
   return option !== undefined && option !== false
+}
+
+/**
+ * The Bridge spelled the way the resolved Emission spells its rules.
+ *
+ * The composer's `renamePlugins` rewrites rule prefixes before the resolution hook runs, while the
+ * Bridge is derived from Source keys: a renamed Emission would carry `tsx/no-require-imports` and
+ * the Bridge `ts/no-require-imports`, silencing nothing. A rename only replaces the prefix, so the
+ * rest of the key identifies the same rule; when the mirrored Config object no longer carries a
+ * Source key but carries exactly one key with that suffix, that is the renamed spelling. An
+ * ambiguous match keeps the Source key rather than guessing which rule the consumer meant.
+ */
+export function renameBridge(bridge: readonly Linter.Config[], resolved: readonly Linter.Config[]): Linter.Config[] {
+  const byName = new Map(resolved.map(config => [config.name, config]))
+
+  return bridge.map((object) => {
+    const mirrored = object.name === undefined ? undefined : byName.get(object.name.slice(0, -BRIDGE_NAME_SUFFIX.length))
+    const keys = Object.keys(mirrored?.rules ?? {})
+
+    return {
+      ...object,
+      rules: Object.fromEntries(Object.entries(object.rules ?? {}).map(([key, severity]) => {
+        // A core rule's key has no prefix to rename, and an unchanged key needs no lookup.
+        const suffix = key.slice(key.indexOf('/'))
+        if (!key.includes('/') || keys.includes(key)) {
+          return [key, severity]
+        }
+
+        const renamed = keys.filter(candidate => candidate.endsWith(suffix))
+        return [renamed.length === 1 ? renamed[0]! : key, severity]
+      })),
+    }
+  })
 }

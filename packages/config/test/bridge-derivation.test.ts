@@ -1,4 +1,5 @@
 import { describe, expect, it, vi } from 'vitest'
+import { houseOptions } from './helpers/emission'
 
 /**
  * `vi.mock` is file-scoped, so this counting wrapper lives in its own file: the one thing it
@@ -22,7 +23,7 @@ const { eslint } = await import('../src/eslint')
 describe('one factory call', () => {
   it('builds Source once when `oxlint` asks for the Bridge', async () => {
     counts.source = 0
-    await eslint({ gitignore: false, isInEditor: false, oxlint: true })
+    await eslint(houseOptions({ oxlint: true }))
 
     // Both Emissions come from the same Config objects, so the Bridge costs no second Source build.
     expect(counts.source).toBe(1)
@@ -30,7 +31,7 @@ describe('one factory call', () => {
 
   it('builds Source once without `oxlint` as well', async () => {
     counts.source = 0
-    await eslint({ gitignore: false, isInEditor: false })
+    await eslint(houseOptions())
 
     expect(counts.source).toBe(1)
   })

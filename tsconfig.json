@@ -8,14 +8,16 @@
   "include": [
     "scripts/**/*",
     "test/**/*",
-    // The example registry and runner, plus each example's options module and Oxlint config: root
-    // ESLint lints them with the type-aware parser, so they must be in a project. The examples'
-    // own tsconfigs and source trees stay out of this repository's type check.
+    // The example registry and runner, plus each example's options module, Oxlint config and UnoCSS
+    // config: root ESLint lints them with the type-aware parser, so they must be in a project. The
+    // examples' own tsconfigs and source trees stay out of this repository's type check.
     "playground/*.ts",
     "playground/*/options.ts",
     "playground/*/oxlint.config.ts",
+    "playground/*/uno.config.ts",
     "playground/*/*/options.ts",
     "playground/*/*/oxlint.config.ts",
+    "playground/*/*/uno.config.ts",
     "*.config.js",
     "*.config.ts",
     "lint-options.ts"

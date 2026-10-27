@@ -4,7 +4,7 @@ The ESLint-only flavor of the `webext` stack: [`eslint.config.js`](./eslint.conf
 linter configuration, and the Emission it produces is the one ESLint reports in a project that runs
 no Oxlint.
 
-Compared with the paired flavor, [`eslint-oxlint/webext`](../eslint-oxlint/webext/README.md), it
+Compared with the paired flavor, [`eslint-oxlint/webext`](../../eslint-oxlint/webext/README.md), it
 strips:
 
 - `oxlint.config.ts` — there is no Oxlint Emission;
@@ -18,7 +18,7 @@ flavors that ship an ESLint config.
 
 Everything else — the source tree, `tsconfig.json`, `vite.config.ts` — is the same file as the paired
 flavor's. The predecessor mapping, the options table, the tree and the installation caveat live once,
-in [`eslint-oxlint/webext/README.md`](../eslint-oxlint/webext/README.md).
+in [`eslint-oxlint/webext/README.md`](../../eslint-oxlint/webext/README.md).
 
 ## Install
 

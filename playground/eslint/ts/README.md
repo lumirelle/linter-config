@@ -4,7 +4,7 @@ The ESLint-only flavor of the `ts` stack: [`eslint.config.js`](./eslint.config.j
 linter configuration, and the Emission it produces is the one ESLint reports in a project that runs
 no Oxlint.
 
-Compared with the paired flavor, [`eslint-oxlint/ts`](../eslint-oxlint/ts/README.md), it strips:
+Compared with the paired flavor, [`eslint-oxlint/ts`](../../eslint-oxlint/ts/README.md), it strips:
 
 - `oxlint.config.ts` — there is no Oxlint Emission;
 - the `oxlint` entry of [`options.ts`](./options.ts) — the Bridge is enabled by that entry alone, so
@@ -13,7 +13,7 @@ Compared with the paired flavor, [`eslint-oxlint/ts`](../eslint-oxlint/ts/README
 
 Everything else — the options module's other entries, the source tree, `tsconfig.json` — is the
 same file as the paired flavor's. The predecessor mapping, the options table, the tree and the
-installation caveat live once, in [`eslint-oxlint/ts/README.md`](../eslint-oxlint/ts/README.md).
+installation caveat live once, in [`eslint-oxlint/ts/README.md`](../../eslint-oxlint/ts/README.md).
 
 ## Install
 

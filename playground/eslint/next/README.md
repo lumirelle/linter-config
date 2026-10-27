@@ -4,7 +4,7 @@ The ESLint-only flavor of the `next` stack: [`eslint.config.js`](./eslint.config
 linter configuration, and the Emission it produces is the one ESLint reports in a Next.js project
 that runs no Oxlint.
 
-Compared with the paired flavor, [`eslint-oxlint/next`](../eslint-oxlint/next/README.md), it strips:
+Compared with the paired flavor, [`eslint-oxlint/next`](../../eslint-oxlint/next/README.md), it strips:
 
 - `oxlint.config.ts` — there is no Oxlint Emission;
 - `oxlint` and `@lumirelle/linter-plugins-oxlint` from [`package.json`](./package.json).
@@ -16,7 +16,7 @@ files as the paired flavor's, and the three plugin peers — `@eslint-react/esli
 `eslint-plugin-react-refresh` and `@next/eslint-plugin-next` — stay declared.
 
 The predecessor mapping, the options table, the tree, the React-pair explanation and the
-installation caveat live once, in [`eslint-oxlint/next/README.md`](../eslint-oxlint/next/README.md).
+installation caveat live once, in [`eslint-oxlint/next/README.md`](../../eslint-oxlint/next/README.md).
 
 ## Install
 

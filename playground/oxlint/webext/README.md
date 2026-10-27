@@ -4,7 +4,7 @@ The Oxlint-only flavor of the `webext` stack: [`oxlint.config.ts`](./oxlint.conf
 linter configuration, and the Emission it produces is the one Oxlint reports in a project that runs
 no ESLint.
 
-Compared with the paired flavor, [`eslint-oxlint/webext`](../eslint-oxlint/webext/README.md), it
+Compared with the paired flavor, [`eslint-oxlint/webext`](../../eslint-oxlint/webext/README.md), it
 strips:
 
 - `eslint.config.js` — there is no ESLint Emission, so no Bridge either;
@@ -21,7 +21,7 @@ a real Oxlint-only project may still need `eslint` installed even though this Em
 nothing from it. The example states its own flavor's tools and leaves that to your project.
 
 The predecessor mapping, the options table and the tree live once, in
-[`eslint-oxlint/webext/README.md`](../eslint-oxlint/webext/README.md).
+[`eslint-oxlint/webext/README.md`](../../eslint-oxlint/webext/README.md).
 
 ## Install
 

@@ -5,7 +5,7 @@ A Next.js App Router project. `react: true` adds the React Module, `nextjs: true
 the application rule set, and `test: true` lints `app/page.test.tsx`.
 
 It is the second half of the React-family pair: it emits the same three React Config objects as the
-[`react`](../../react/README.md) example and adds the two Next ones, so the boundary between the
+[`react`](../react/README.md) example and adds the two Next ones, so the boundary between the
 React Module and the Next Module is visible in one Emission.
 
 This is the paired flavor of the `next` stack and the stack's canonical README: the predecessor
@@ -181,7 +181,7 @@ stays a lint target rather than an application. One rule reads whether `next` is
 `generateMetadata`, `revalidate`, ...) only then. This example has no `next`, so `app/layout.tsx`
 exports the component alone; in a real project, which always has `next`, the same file keeps the
 `metadata` export a route layout normally carries. The same rule allows constant exports only when
-`vite` is installed, which is the matching difference from [`react`](../../react/README.md).
+`vite` is installed, which is the matching difference from [`react`](../react/README.md).
 
 The Next plugin also warns that `Pages directory cannot be found at <root>/pages` while this tree is
 linted: it looks for the legacy `pages` route directory, which an App Router project does not have.

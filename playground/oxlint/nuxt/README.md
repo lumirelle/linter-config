@@ -4,7 +4,7 @@ The Oxlint-only flavor of the `nuxt` stack: [`oxlint.config.ts`](./oxlint.config
 linter configuration, and the Emission it produces is the one Oxlint reports in a Nuxt project that
 runs no ESLint.
 
-Compared with the paired flavor, [`eslint-oxlint/nuxt`](../eslint-oxlint/nuxt/README.md), it strips:
+Compared with the paired flavor, [`eslint-oxlint/nuxt`](../../eslint-oxlint/nuxt/README.md), it strips:
 
 - `eslint.config.js` — there is no ESLint Emission, so no Bridge either;
 - `eslint` and `@lumirelle/linter-plugins-eslint` from [`package.json`](./package.json).
@@ -19,7 +19,7 @@ The rest of [`options.ts`](./options.ts), the source tree, `tsconfig.json`, `nux
 `uno.config.ts` are the same files as the paired flavor's.
 
 The predecessor mapping, the options table and the tree live once, in
-[`eslint-oxlint/nuxt/README.md`](../eslint-oxlint/nuxt/README.md).
+[`eslint-oxlint/nuxt/README.md`](../../eslint-oxlint/nuxt/README.md).
 
 ## Install
 

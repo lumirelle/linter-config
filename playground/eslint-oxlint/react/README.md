@@ -12,7 +12,7 @@ link back here — [`eslint/react`](../../eslint/react/README.md) has no Oxlint 
 `oxlint` entry, so no flavor carries a Bridge and both ESLint flavors emit the same Config objects.
 
 It is also the React half of the React-family pair: the same `react: true` emits the same three
-React Config objects in the [`next`](../../next/README.md) example, and only that one adds Next
+React Config objects in the [`next`](../next/README.md) example, and only that one adds Next
 objects.
 
 Predecessor: **canonical consumer, no starter snapshot.** There is no React starter to take a
@@ -115,12 +115,12 @@ needs them, but two rules read whether they are present, and a real project noti
   in a Vite project the same export is accepted.
 - The same rule allows the Next, Remix and React Router route export names when those packages are
   installed. None of them is, which is the difference between this example and
-  [`next`](../../next/README.md).
+  [`next`](../next/README.md).
 
 The one UnoCSS file the example does keep is `uno.config.ts`, without presets: `@unocss/eslint-plugin`
 refuses to order class names without a config file, and the file imports nothing, because the preset
 packages are the runtimes the example does not install. The
-[`eslint-oxlint/vue`](../../eslint-oxlint/vue/README.md) and [`nuxt`](../../nuxt/README.md) examples
+[`eslint-oxlint/vue`](../../eslint-oxlint/vue/README.md) and [`nuxt`../nuxt/README.md) examples
 ship the same file for the same reason, and every flavor of this stack ships it byte-identically.
 
 A Vite project also has a `vite.config.ts` next to this file. The example leaves it out because it

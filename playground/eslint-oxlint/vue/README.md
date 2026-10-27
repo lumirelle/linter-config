@@ -132,7 +132,7 @@ also has a `vite.config.ts` and a `uno.config.ts`. The example ships the second 
 presets, importing nothing — because `@unocss/eslint-plugin` refuses to order class names without a
 config file to read. `vite.config.ts` is the file it leaves out, because it would import `vite` and
 the Vue plugin, which are exactly the packages the example does not install. The
-[`eslint-oxlint/react`](../../eslint-oxlint/react/README.md) and [`nuxt`](../../nuxt/README.md)
+[`eslint-oxlint/react`](../../eslint-oxlint/react/README.md) and [`nuxt`](../nuxt/README.md)
 examples ship the same `uno.config.ts` for the same reason, and every flavor of this stack ships it
 byte-identically.
 

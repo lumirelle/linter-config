@@ -33,20 +33,15 @@ export const options = {
     'playground/*/*/src/**',
     'playground/*/*/app/**',
     'playground/*/*/packages/*/src/**',
-    // The example-root framework and bundler config files, which do not survive this repository's
-    // own lint: they import the framework or bundler the example deliberately does not install, so
-    // they are outside this repository's TypeScript project, and one that needs type information
-    // throws on them rather than reporting a rule. `nuxt.config.ts` calls `defineNuxtConfig`,
-    // `uno.config.ts` imports `unocss` and `vite.config.ts` imports `vite`. The example's own lint
-    // config and its options module are deliberately *not* here: those are the linter inputs this
-    // repository type-checks on purpose. A flavor that ships no ESLint config module leaves these
-    // files to this config rather than to a nested one, which is why the list names them.
+    // The one example-root config file this repository cannot lint: `nuxt.config.ts` calls
+    // `defineNuxtConfig` from the Nuxt runtime the example deliberately does not install, so it is
+    // outside the TypeScript project and a rule that needs type information throws on it rather
+    // than reporting. The example's other root config files — `uno.config.ts`, `vite.config.ts`,
+    // its lint config and its options module — import nothing, are in the project below, and are
+    // linted on purpose, including in a flavour that ships no ESLint config module and therefore
+    // leaves them to this config rather than to a nested one.
     'playground/*/nuxt.config.ts',
-    'playground/*/uno.config.ts',
-    'playground/*/vite.config.ts',
     'playground/*/*/nuxt.config.ts',
-    'playground/*/*/uno.config.ts',
-    'playground/*/*/vite.config.ts',
   ],
   overrides: {
     // Two type-aware rules do not describe this repository, and turning them off here — in Source,

@@ -4,7 +4,7 @@ The Oxlint-only flavor of the `next` stack: [`oxlint.config.ts`](./oxlint.config
 linter configuration, and the Emission it produces is the one Oxlint reports in a Next.js project
 that runs no ESLint.
 
-Compared with the paired flavor, [`eslint-oxlint/next`](../eslint-oxlint/next/README.md), it strips:
+Compared with the paired flavor, [`eslint-oxlint/next`](../../eslint-oxlint/next/README.md), it strips:
 
 - `eslint.config.js` — there is no ESLint Emission, so no Bridge either;
 - `eslint` and `@lumirelle/linter-plugins-eslint` from [`package.json`](./package.json).
@@ -21,7 +21,7 @@ a real Oxlint-only project may still need `eslint` installed even though this Em
 nothing from it. The example states its own flavor's tools and leaves that to your project.
 
 The predecessor mapping, the options table and the tree live once, in
-[`eslint-oxlint/next/README.md`](../eslint-oxlint/next/README.md).
+[`eslint-oxlint/next/README.md`](../../eslint-oxlint/next/README.md).
 
 ## Install
 

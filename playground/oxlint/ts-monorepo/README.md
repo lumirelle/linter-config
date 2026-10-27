@@ -5,7 +5,7 @@ whole linter configuration, and the Emission it produces is the one Oxlint repor
 that runs no ESLint.
 
 Compared with the paired flavor,
-[`eslint-oxlint/ts-monorepo`](../eslint-oxlint/ts-monorepo/README.md), it strips:
+[`eslint-oxlint/ts-monorepo`](../../eslint-oxlint/ts-monorepo/README.md), it strips:
 
 - `eslint.config.js` — there is no ESLint Emission, so no Bridge either;
 - `eslint` and `@lumirelle/linter-plugins-eslint` from [`package.json`](./package.json).
@@ -23,7 +23,7 @@ a real Oxlint-only workspace may still need `eslint` installed even though this 
 nothing from it. The example states its own flavor's tools and leaves that to your project.
 
 The predecessor mapping, the options table and the tree live once, in
-[`eslint-oxlint/ts-monorepo/README.md`](../eslint-oxlint/ts-monorepo/README.md).
+[`eslint-oxlint/ts-monorepo/README.md`](../../eslint-oxlint/ts-monorepo/README.md).
 
 ## Install
 

@@ -80,9 +80,10 @@ export function project(
 }
 
 /**
- * Oxlint loads a bare `jsPlugins` specifier from the config file's directory, so the scratch project
- * links the packages a consumer would have installed. A specifier a Bundle already resolved to an
- * absolute path needs no link: this project never installs it, and the path has to exist already.
+ * A bare `jsPlugins` specifier is the consumer's own install, which Oxlint resolves the way Node
+ * would from the project it runs in, so the scratch project links the package there. A specifier a
+ * Bundle already resolved to an absolute path needs no link: this project never installs it, and
+ * the path has to exist already.
  */
 function linkPlugin(directory: string, entry: JsPluginEntry): void {
   const specifier = typeof entry === 'string' ? entry : entry.specifier

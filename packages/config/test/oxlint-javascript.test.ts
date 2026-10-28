@@ -2,6 +2,7 @@ import type { OxlintConfig } from 'oxlint'
 import { describe, expect, it } from 'vitest'
 import { GLOB_EXCLUDE } from '../src/globs'
 import { oxlint } from '../src/oxlint'
+import { jsPluginsOf } from './helpers/emission'
 import { rulesFor } from './helpers/oxlint-emission'
 
 type OxlintOptions = Parameters<typeof oxlint>[0]
@@ -42,12 +43,11 @@ describe('oxlint() JavaScript rules', () => {
     // Scoped Modules — `test`, `disables` — also set some of these rules, so read the rules the
     // way Oxlint applies them to a plain JavaScript file.
     const emitted = rulesFor(config, JS_EXTENSIONS)
-    const jsPlugins = (config.overrides ?? []).flatMap(override => override.jsPlugins ?? [])
 
     expect(emitted['antfu/no-top-level-await']).toBe('error')
     expect(emitted['unused-imports/no-unused-imports']).toBe('error')
     expect(emitted['unused-imports/no-unused-vars']).toEqual(['error', expect.objectContaining({ args: 'after-used' })])
-    expect(jsPlugins).toEqual(expect.arrayContaining([
+    expect(await jsPluginsOf()).toEqual(expect.arrayContaining([
       { name: 'antfu', specifier: 'eslint-plugin-antfu' },
       { name: 'unused-imports', specifier: 'eslint-plugin-unused-imports' },
     ]))

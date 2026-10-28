@@ -50,6 +50,6 @@ README.
 
 ## Scope
 
-Examples install only the lint-time packages their enabled Modules require: the peers, and the
-bundled plugins a `jsPlugins` entry makes Oxlint resolve from the project. The technologies they
+Examples install only the lint-time packages their enabled Modules require: the peers. The
+`jsPlugins` packages themselves arrive with the Oxlint plugin Bundle. The technologies they
 simulate (Vue, React, Next, Vite, UnoCSS) are deliberately **not** installed.

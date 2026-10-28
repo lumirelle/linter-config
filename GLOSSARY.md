@@ -36,6 +36,10 @@ _Avoid_: plugin package, dependency bundle
 The canonical identifier used for rule prefixes and plugin references in Source, decoupled from npm package names; the [registry](packages/config/src/plugins.ts) is its authoritative list.
 _Avoid_: scope, namespace
 
+**Plugin specifier**:
+How an Oxlint `jsPlugins` entry names the package behind a Plugin id: a bare package name the consumer installs, or the absolute path a Plugin Bundle resolved from its own copy. See [ADR 0006](docs/adr/0006-the-oxlint-bundle-resolves-its-jsplugins.md).
+_Avoid_: plugin path, plugin name
+
 **Bridge**:
 A set of Config objects on the ESLint side that turns off rules already handled by Oxlint: one config object per Config object the Oxlint Emission takes, with the same file scopes, closing the ESLint Emission at resolution time. The `oxlint` option is the one way to enable it. Its algorithm is in the [Source schema](docs/design/source-schema.md) and the decision in [ADR 0004](docs/adr/0004-oxlint-bridge-closes-the-emission.md).
 _Avoid_: interop, disable list

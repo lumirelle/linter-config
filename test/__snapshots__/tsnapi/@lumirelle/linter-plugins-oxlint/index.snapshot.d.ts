@@ -5,6 +5,10 @@
 export type BuiltinPlugin = NonNullable<OxlintConfig['plugins']>[number];
 // #endregion
 
+// #region Functions
+export declare function resolveJsPlugin(_: string): string | undefined;
+// #endregion
+
 // #region Variables
 export declare const builtinPlugins: readonly BuiltinPlugin[];
 export declare const jsPlugins: Readonly<Record<string, string>>;

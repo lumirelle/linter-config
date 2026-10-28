@@ -1,5 +1,6 @@
 import type { Linter } from 'eslint'
 import type { OxlintConfig } from 'oxlint'
+import { pluginPackageName } from '../../../../playground/specifiers'
 import { eslint } from '../../src/eslint'
 import { oxlint } from '../../src/oxlint'
 
@@ -53,9 +54,14 @@ export function jsPluginDeclarations(config: OxlintConfig): Array<{ name: string
   ))
 }
 
-/** The same declarations, for an Emission built from `options`. */
+/**
+ * The same declarations, for an Emission built from `options`, each specifier named as the package
+ * it points at: a bare name stays as written, and a Bundle-resolved path maps back to its package,
+ * so the assertion is about which plugin rather than where this machine installed it.
+ */
 export async function jsPluginsOf(options: Options = {}): Promise<Array<{ name: string, specifier: string }>> {
   return jsPluginDeclarations(await oxlint(houseOptions(options)))
+    .map(entry => ({ ...entry, specifier: pluginPackageName(entry.specifier) }))
 }
 
 /**

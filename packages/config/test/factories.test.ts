@@ -4,6 +4,7 @@ import { dirname, join } from 'node:path'
 import { describe, expect, it } from 'vitest'
 import { eslint } from '../src/eslint'
 import { oxlint } from '../src/oxlint'
+import { jsPluginDeclarations } from './helpers/emission'
 
 const oxlintSchema = JSON.parse(
   readFileSync(join(dirname(createRequire(import.meta.url).resolve('oxlint/package.json')), 'configuration_schema.json'), 'utf8'),
@@ -65,5 +66,17 @@ describe('oxlint()', () => {
 
   it('accepts the options the ESLint factory takes', async () => {
     await expect(oxlint({ type: 'lib', gitignore: false })).resolves.toBeTypeOf('object')
+  })
+
+  it('overrides and removes the awaitable jsPlugins declaration by Config object name', async () => {
+    const name = 'lumirelle/oxlint/jsPlugins'
+    const overridden = await oxlint().override(name, config => ({
+      ...config,
+      jsPlugins: [{ name: 'antfu', specifier: 'eslint-plugin-antfu' }],
+    }))
+    const removed = await oxlint().remove(name)
+
+    expect(jsPluginDeclarations(overridden)).toEqual([{ name: 'antfu', specifier: 'eslint-plugin-antfu' }])
+    expect(jsPluginDeclarations(removed)).toEqual([])
   })
 })

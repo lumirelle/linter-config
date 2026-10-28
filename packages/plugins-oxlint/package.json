@@ -43,6 +43,14 @@
       "optional": true
     }
   },
+  "dependencies": {
+    "@e18e/eslint-plugin": "catalog:bundle",
+    "eslint-plugin-antfu": "catalog:bundle",
+    "eslint-plugin-command": "catalog:bundle",
+    "eslint-plugin-perfectionist": "catalog:bundle",
+    "eslint-plugin-regexp": "catalog:bundle",
+    "eslint-plugin-unused-imports": "catalog:bundle"
+  },
   "devDependencies": {
     "@lumirelle/tsconfig": "catalog:types",
     "oxlint": "catalog:check",

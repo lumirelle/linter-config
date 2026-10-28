@@ -1,6 +1,7 @@
 import type { Example } from './examples'
 import process from 'node:process'
 import { listStacks, resolveExample, resolveStack } from './examples'
+import { pluginPackageName } from './specifiers'
 
 const USAGE = 'Usage: mise run play <name> | mise run play --all'
 
@@ -19,17 +20,58 @@ async function examplesNamed(name: string): Promise<Example[]> {
   return [example]
 }
 
+/** True for a plain object, the shape every config object in an Emission has. */
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === 'object' && value !== null && !Array.isArray(value)
+}
+
+/** One `jsPlugins` entry with its specifier replaced by the package it names, in its own spelling. */
+function withEntryPackageName(entry: unknown): unknown {
+  if (typeof entry === 'string') {
+    return pluginPackageName(entry)
+  }
+  if (isRecord(entry) && typeof entry.specifier === 'string') {
+    return { ...entry, specifier: pluginPackageName(entry.specifier) }
+  }
+  return entry
+}
+
+/**
+ * An Emission as the runner prints it: the same shape, with every Plugin specifier it carries — in the
+ * root object or in an override — naming its package.
+ *
+ * The Emission is free to hold the absolute path a Bundle resolved a plugin to, but printed output is
+ * read and diffed across machines, so the path a store happens to use never reaches it.
+ */
+function withPackageNames(value: unknown): unknown {
+  if (Array.isArray(value)) {
+    return value.map(withPackageNames)
+  }
+  if (!isRecord(value)) {
+    return value
+  }
+
+  const rendered: Record<string, unknown> = { ...value }
+  if (Array.isArray(rendered.jsPlugins)) {
+    rendered.jsPlugins = rendered.jsPlugins.map(withEntryPackageName)
+  }
+  if (Array.isArray(rendered.overrides)) {
+    rendered.overrides = rendered.overrides.map(withPackageNames)
+  }
+  return rendered
+}
+
 /** Print one example's block: its name, then only the Emissions its flavor ships. */
 function printExample(example: Example): void {
   // oxlint-disable-next-line no-console
   console.log(`Example: ${example.name}`)
   if (example.eslint) {
     // oxlint-disable-next-line no-console
-    console.log('ESLint emission:', example.eslint)
+    console.log('ESLint emission:', withPackageNames(example.eslint))
   }
   if (example.oxlint) {
     // oxlint-disable-next-line no-console
-    console.log('Oxlint emission:', example.oxlint)
+    console.log('Oxlint emission:', withPackageNames(example.oxlint))
   }
 }
 

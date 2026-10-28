@@ -23,8 +23,9 @@ function workspace(): { directory: string, remove: () => void } {
   const manifest = JSON.parse(readFileSync(join(PACKAGE_ROOT, 'package.json'), 'utf8')) as {
     dependencies: Record<string, string>
   }
-  // The Plugin Bundles come with the package, so the default Emission still loads; only the
-  // framework peers stay out, which is the situation a consumer without them is in.
+  // The ESLint Bundle comes with the package, so its Emission still loads; only the framework
+  // peers stay out, which is the situation a consumer without them is in. The Oxlint Bundle is
+  // deliberately left out, so its factory is the one that has to name it.
   for (const name of [...Object.keys(manifest.dependencies), '@lumirelle/linter-plugins-eslint']) {
     const link = join(directory, 'node_modules', name)
     mkdirSync(dirname(link), { recursive: true })
@@ -39,6 +40,7 @@ const CASES = {
   react: { react: true },
   angular: { angular: true },
   vueA11y: { vue: { a11y: true } },
+  stylistic: { stylistic: true },
   none: {},
 } as const
 
@@ -51,10 +53,12 @@ type Case = keyof typeof CASES
  * One process for every case, because booting Node and ESLint is the expensive part and the
  * composition itself reads nothing but the options.
  */
-function factoryResults(directory: string): Record<Case, string> {
-  const entry = pathToFileURL(join(directory, 'node_modules/@lumirelle/linter-config/dist/eslint.mjs')).href
+function factoryResults(directory: string): Record<Case | 'oxlint', string> {
+  const eslintEntry = pathToFileURL(join(directory, 'node_modules/@lumirelle/linter-config/dist/eslint.mjs')).href
+  const oxlintEntry = pathToFileURL(join(directory, 'node_modules/@lumirelle/linter-config/dist/oxlint.mjs')).href
   const script = `
-    const { eslint } = await import(${JSON.stringify(entry)})
+    const { eslint } = await import(${JSON.stringify(eslintEntry)})
+    const { oxlint } = await import(${JSON.stringify(oxlintEntry)})
     const results = {}
     for (const [name, options] of Object.entries(${JSON.stringify(CASES)})) {
       try {
@@ -63,6 +67,12 @@ function factoryResults(directory: string): Record<Case, string> {
       } catch (error) {
         results[name] = error.message
       }
+    }
+    try {
+      oxlint({ gitignore: false, isInEditor: false, typescript: false })
+      results.oxlint = 'NO ERROR'
+    } catch (error) {
+      results.oxlint = error.message
     }
     console.log(JSON.stringify(results))
   `
@@ -73,11 +83,11 @@ function factoryResults(directory: string): Record<Case, string> {
   if (result.error || result.status !== 0) {
     throw new Error(`the Emission could not run in the fixture workspace: ${result.stderr}`)
   }
-  return JSON.parse(result.stdout) as Record<Case, string>
+  return JSON.parse(result.stdout) as Record<Case | 'oxlint', string>
 }
 
 describe('a Module whose peer packages are missing', () => {
-  let results: Record<Case, string>
+  let results: Record<Case | 'oxlint', string>
   let remove: () => void
 
   beforeAll(() => {
@@ -107,7 +117,18 @@ describe('a Module whose peer packages are missing', () => {
         + 'Install it to enable the Module.')
   })
 
+  it('names the stylistic peer the Module turns on', () => {
+    expect(results.stylistic)
+      .toBe('The "stylistic" Module needs a package this project has not installed: "@stylistic/eslint-plugin". '
+        + 'Install it to enable the Module.')
+  })
+
   it('stays quiet for a Module whose peers are not asked for', () => {
     expect(results.none).toBe('NO ERROR')
+  })
+
+  it('names the Oxlint Bundle instead of failing to resolve it from the Emission', () => {
+    expect(results.oxlint)
+      .toBe('Cannot resolve "@lumirelle/linter-plugins-oxlint". Install it in your project.')
   })
 })

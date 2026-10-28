@@ -36,10 +36,9 @@ This design draws reference from `@antfu/eslint-config`.
 > [Milestone 3][oxlint-js-plugins-milestone]).
 >
 > The remaining plugins that do not depend on a parser and have no native implementation are presented as `jsPlugins`
-> specifiers. Oxlint resolves the specifier against `node_modules` from your project root, so you have to install
-> them yourself. The [bundle README][plugins-oxlint] lists these plugins and records a workaround: an absolute
-> `require.resolve` specifier resolved from the Oxlint plugins package bundle, which we plan to offer in a later version
-> so this bundle can ship the plugins instead of you.
+> specifiers. The [Oxlint plugins bundle][plugins-oxlint] ships the packages those specifiers name and resolves each
+> one to an absolute path while the config loads, so you install the bundle and nothing else for them; the peer
+> plugins stay yours to install when you enable their Module.
 >
 > The [Coverage report][coverage] lists the rules Oxlint still does not support.
 

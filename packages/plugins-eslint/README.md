@@ -9,7 +9,7 @@ This bundle is an optional peer of the config package. A project that only runs 
 ## Usage
 
 > [!Note]
-> The packages which the Upstream (`@antfu/eslint-config`) treats as optional peers (some framework and language plugins, parsers, formatters) are not in this bundle; install the ones their enabled Modules need.
+> The packages which the Upstream (`@antfu/eslint-config`) treats as optional peers (some framework and language plugins, parsers, formatters) are not in this bundle; install the ones their enabled Modules need. Neither is `@stylistic/eslint-plugin`: its Module is off by default, so it is an optional peer of the config package ([ADR 0007](../../docs/adr/0007-stylistic-is-a-peer-on-both-emissions.md)).
 
 Install this package and use this with `@lumirelle/linter-config/eslint`:
 

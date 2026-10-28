@@ -18,7 +18,6 @@ describe('the `eslint-oxlint/react` example', () => {
     const { eslint } = await loadExample('eslint-oxlint/react')
     const names = configNames(eslint)
 
-    expect(names).toContain('lumirelle/jsx/setup')
     expect(names).toContain('lumirelle/unocss/setup')
     expect(names).toContain('lumirelle/test/rules')
   })

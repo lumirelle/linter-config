@@ -1,4 +1,5 @@
 import type { ConfigObject, StylisticOptions } from '../types'
+import { requirePeerPackages } from '../packages'
 import { pluginRef } from '../plugins'
 import { stylisticCustomizeRules } from './stylistic-rules'
 
@@ -30,6 +31,7 @@ const CUSTOMIZE_DEFAULTS = {
  */
 export function stylistic(options: StylisticOptions = {}): ConfigObject[] {
   const { lessOpinionated = false, overrides = {} } = options
+  requirePeerPackages('stylistic', ['style'])
   const customize = {
     braceStyle: options.braceStyle ?? CUSTOMIZE_DEFAULTS.braceStyle,
     experimental: options.experimental ?? CUSTOMIZE_DEFAULTS.experimental,

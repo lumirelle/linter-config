@@ -11,8 +11,13 @@ import { toPosixPath } from './paths'
 const REPO_ROOT = fileURLToPath(new URL('../../../', import.meta.url))
 const OXLINT_BIN = join(dirname(createRequire(import.meta.url).resolve('oxlint/package.json')), 'bin', 'oxlint')
 
-/** Where this repository keeps the packages a consumer would install for `jsPlugins`. */
-const PLUGIN_ROOTS = [REPO_ROOT, join(REPO_ROOT, 'packages/plugins-eslint')]
+/**
+ * Where this repository keeps the packages a consumer would install for `jsPlugins`.
+ *
+ * A peer's package is linked from the consumer side, so `packages/config` — the package whose
+ * Modules ask the consumer for it — is one of the roots.
+ */
+const PLUGIN_ROOTS = [REPO_ROOT, join(REPO_ROOT, 'packages/plugins-eslint'), join(REPO_ROOT, 'packages/config')]
 
 /** Diagnostic filenames are relative to the project, with an optional leading `./`. */
 const LEADING_DOT_SLASH = /^\.?\//u

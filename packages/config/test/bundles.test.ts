@@ -36,7 +36,6 @@ describe('plugin bundles', () => {
       'perfectionist',
       'pnpm',
       'regexp',
-      'style',
       'test',
       'toml',
       'ts',

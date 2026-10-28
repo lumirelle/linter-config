@@ -122,7 +122,7 @@ const registry = {
     oxlint: { jsPlugin: 'eslint-plugin-sonarjs', alias: 'sonar' },
   },
   'style': {
-    from: 'bundle',
+    from: 'peer',
     eslint: { plugin: '@stylistic/eslint-plugin' },
     oxlint: { jsPlugin: '@stylistic/eslint-plugin', alias: 'style' },
   },

@@ -29,12 +29,17 @@
     "vue",
     // Referenced as an Oxlint jsPlugins specifier string, which knip cannot follow
     "@eslint-community/eslint-plugin-eslint-comments",
+    // Resolved by the Oxlint Bundle from its own dependencies by package name, so knip sees no import
+    "@e18e/eslint-plugin",
+    "eslint-plugin-antfu",
+    "eslint-plugin-command",
+    "eslint-plugin-perfectionist",
+    "eslint-plugin-regexp",
+    "eslint-plugin-unused-imports",
     // Peer packages loaded by a plugin's own resolution at runtime (eslint-plugin-jsx-a11y by
     // Upstream's react preset, `svelte` by svelte-eslint-parser), never imported by name here
     "eslint-plugin-jsx-a11y",
     "svelte",
-    "eslint-plugin-command",
-    "eslint-plugin-perfectionist",
     "eslint-plugin-slop",
     "eslint-plugin-sonarjs",
     // Node.js dependencies manager

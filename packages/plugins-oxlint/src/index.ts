@@ -1,4 +1,5 @@
 import type { OxlintConfig } from 'oxlint'
+import { fileURLToPath } from 'node:url'
 
 /** One of Oxlint's built-in plugins, as accepted by its `plugins` field. */
 export type BuiltinPlugin = NonNullable<OxlintConfig['plugins']>[number]
@@ -23,17 +24,13 @@ export const builtinPlugins: readonly BuiltinPlugin[] = [
 ]
 
 /**
- * ESLint plugins loaded through Oxlint's `jsPlugins`, keyed by Plugin id; the value is
- * the specifier Oxlint resolves. The alias Oxlint sees is the key itself, so supported
- * rule keys are identical in ESLint and Oxlint.
+ * ESLint plugins Oxlint can load through `jsPlugins`, keyed by Plugin id; the value is the package
+ * name the id stands for. The alias Oxlint sees is the key itself, so supported rule keys are
+ * identical in ESLint and Oxlint.
  *
- * These are package names, and the Consumer installs them: Oxlint resolves a `jsPlugins` specifier
- * from the config file's own directory, never from this Bundle's `node_modules`, so a project that
- * runs the Oxlint Emission needs the plugins of the Modules it enables among its own dependencies.
- * With the default Modules that is a small, fixed set (`eslint-plugin-antfu`,
- * `eslint-plugin-command`, `@e18e/eslint-plugin`, `eslint-plugin-perfectionist`,
- * `eslint-plugin-regexp`, `eslint-plugin-unused-imports`), and a Module whose peers are missing
- * names them when it is enabled.
+ * The map is data, not the last word on the specifier: {@link resolveJsPlugin} turns an id into the
+ * absolute path of the package this Bundle ships, and an id it cannot resolve — a peer, or one this
+ * Bundle predates — stays a bare package name for the consumer to install.
  */
 export const jsPlugins: Readonly<Record<string, string>> = {
   'antfu': 'eslint-plugin-antfu',
@@ -48,4 +45,25 @@ export const jsPlugins: Readonly<Record<string, string>> = {
   'style': '@stylistic/eslint-plugin',
   'unocss': '@unocss/eslint-plugin',
   'unused-imports': 'eslint-plugin-unused-imports',
+}
+
+/**
+ * Resolves a Plugin id to the absolute path of the package this Bundle ships for it.
+ *
+ * Resolution starts at this module, so only the Bundle's own `dependencies` are reachable; an id
+ * whose package is not one of them — a peer, a blacklisted plugin, or an id a newer registry knows
+ * and this Bundle does not — returns `undefined`, and the caller keeps the bare package name.
+ */
+export function resolveJsPlugin(id: string): string | undefined {
+  const packageName = jsPlugins[id]
+  if (!packageName) {
+    return undefined
+  }
+
+  try {
+    return fileURLToPath(import.meta.resolve(packageName))
+  }
+  catch {
+    return undefined
+  }
 }

@@ -39,6 +39,7 @@ const CASES = {
   react: { react: true },
   angular: { angular: true },
   vueA11y: { vue: { a11y: true } },
+  stylistic: { stylistic: true },
   none: {},
 } as const
 
@@ -104,6 +105,12 @@ describe('a Module whose peer packages are missing', () => {
   it('names the optional accessibility peer only when the Vue Module asks for it', () => {
     expect(results.vueA11y)
       .toBe('The "vue" Module needs a package this project has not installed: "eslint-plugin-vuejs-accessibility". '
+        + 'Install it to enable the Module.')
+  })
+
+  it('names the stylistic peer the Module turns on', () => {
+    expect(results.stylistic)
+      .toBe('The "stylistic" Module needs a package this project has not installed: "@stylistic/eslint-plugin". '
         + 'Install it to enable the Module.')
   })
 

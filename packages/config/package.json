@@ -43,6 +43,7 @@
   "peerDependencies": {
     "@lumirelle/linter-plugins-eslint": "workspace:^",
     "@lumirelle/linter-plugins-oxlint": "workspace:^",
+    "@stylistic/eslint-plugin": "catalog:peer",
     "eslint": "^9.10.0 || ^10.0.0",
     "oxlint": ">=1.85.0"
   },
@@ -51,6 +52,9 @@
       "optional": true
     },
     "@lumirelle/linter-plugins-oxlint": {
+      "optional": true
+    },
+    "@stylistic/eslint-plugin": {
       "optional": true
     },
     "eslint": {
@@ -79,7 +83,7 @@
     "@lumirelle/linter-plugins-oxlint": "workspace:*",
     "@lumirelle/tsconfig": "catalog:types",
     "@next/eslint-plugin-next": "catalog:peer",
-    "@stylistic/eslint-plugin": "catalog:bundle",
+    "@stylistic/eslint-plugin": "catalog:peer",
     "@unocss/eslint-plugin": "catalog:peer",
     "astro-eslint-parser": "catalog:peer",
     "eslint": "catalog:check",

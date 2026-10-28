@@ -25,7 +25,7 @@ export type * from './types'
  * or `type-aware`, never dropped quietly.
  *
  * The Oxlint Plugin Bundle owns plugin resolution: it ships the packages the default Modules load,
- * and every Plugin id it can resolve becomes an absolute `jsPlugins` specifier, so a consumer
+ * and every id whose package it ships becomes an absolute `jsPlugins` specifier, so a consumer
  * installs the Bundle and nothing else. An id it does not ship — a peer, or a blacklisted plugin —
  * keeps the bare package name for the consumer to install, and a Module whose peer packages are
  * missing names them when it is enabled. Oxlint's `jsPlugins` are alpha and outside semver, so a JS

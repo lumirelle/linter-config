@@ -6,7 +6,7 @@ What a flavor may change inside a stack is deliberately small and is asserted ra
 
 - the linter config modules — `eslint.config.js` only, `oxlint.config.ts` only, or both;
 - the options themselves — the paired flavor keeps them in `options.ts` because its two configs read one object, while a single-tool flavor writes them inline where it calls its one factory, as a project that runs one tool does; the ESLint-only flavor therefore states no `oxlint` entry at all;
-- the declared dependencies — the shared set plus the packages the flavor owns: its tool packages (`eslint` and the ESLint plugin Bundle, or `oxlint` and the Oxlint plugin Bundle); a flavor declares no plugin packages, because an Oxlint Emission resolves the Bundle's own copies of them ([ADR 0006](0006-the-oxlint-bundle-resolves-its-jsplugins.md)); the peers the stack's Modules require stay in all three because Source's peer check runs for both Adapters;
+- the declared dependencies — the shared set plus the packages the flavor owns: its tool packages (`eslint` and the ESLint plugin Bundle, or `oxlint` and the Oxlint plugin Bundle); the peers the stack's Modules require stay in all three because Source's peer check runs for both Adapters;
 - the README.
 
 Everything else — the source tree, the project file, the stack's config files, the ignore and override entries of the options module, a monorepo example's nested package sources — is byte-identical across a stack's three directories. `test/examples/layout.test.ts` is the filesystem invariant that says so.

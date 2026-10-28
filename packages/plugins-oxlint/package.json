@@ -1,7 +1,7 @@
 {
   "name": "@lumirelle/linter-plugins-oxlint",
   "type": "module",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Oxlint plugin data for @lumirelle/linter-config.",
   "author": "Lumirelle <lumirelle@outlook.com>",
   "license": "MIT",

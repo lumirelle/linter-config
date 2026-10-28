@@ -1,5 +1,6 @@
 import type { OxlintConfig } from 'oxlint'
-import { readFileSync } from 'node:fs'
+import { existsSync, readFileSync } from 'node:fs'
+import { isAbsolute } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { describe, expect, it } from 'vitest'
 import { oxlint } from '../src/oxlint'
@@ -47,12 +48,44 @@ describe('the Emission jsPlugins declarations', () => {
       expect(entry, 'a string entry cannot name a scoped package').toBeTypeOf('object')
       const { name, specifier } = entry as { name: string, specifier: string }
 
+      expect(specifier).toBeTypeOf('string')
       if (!isPluginId(name)) {
         throw new Error(`"${name}" is not a registered Plugin id.`)
       }
       // The alias is the id, so a rule key reads the same in both Emissions.
-      expect(pluginDefinition(name).oxlint).toEqual({ alias: name, jsPlugin: specifier })
+      expect(pluginDefinition(name).oxlint).toMatchObject({ alias: name })
     }
+  })
+
+  it('resolves a Bundle-owned package to an absolute path that exists on disk', async () => {
+    const entries = jsPluginDeclarations(await house({ stylistic: true }))
+    const bundleOwned = entries.filter(entry =>
+      ['antfu', 'command', 'e18e', 'perfectionist', 'regexp', 'unused-imports'].includes(entry.name),
+    )
+
+    expect(bundleOwned.map(entry => entry.name).sort())
+      .toEqual(['antfu', 'command', 'e18e', 'perfectionist', 'regexp', 'unused-imports'])
+    for (const entry of bundleOwned) {
+      expect(isAbsolute(entry.specifier), `${entry.name} is an absolute path`).toBe(true)
+      expect(existsSync(entry.specifier), `${entry.specifier} exists on disk`).toBe(true)
+    }
+  })
+
+  it('falls back to the bare package name for a peer id the Bundle does not ship', async () => {
+    const entries = jsPluginDeclarations(await house({ antislop: true, stylistic: true }))
+    const peers = Object.fromEntries(entries.map(entry => [entry.name, entry.specifier]))
+
+    expect(peers).toMatchObject({
+      'style': '@stylistic/eslint-plugin',
+      'slop': 'eslint-plugin-slop',
+      'sonar': 'eslint-plugin-sonarjs',
+    })
+  })
+
+  it('keeps the single jsPlugins declaration first', async () => {
+    const config = await house({ stylistic: true })
+
+    expect(config.overrides?.[0]?.jsPlugins).toBeDefined()
   })
 
   it('never takes a name Oxlint already answers to, `eslint` included', async () => {

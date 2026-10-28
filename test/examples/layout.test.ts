@@ -3,6 +3,7 @@ import { readdir, readFile } from 'node:fs/promises'
 import { dirname, join, relative, sep } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { describe, expect, it } from 'vitest'
+import { PLUGIN_IDS, pluginDefinition } from '../../packages/config/src/plugins'
 import { exampleTables } from './helpers/emission'
 
 /** Where the examples live, so a package name can be read off its directory. */
@@ -30,8 +31,24 @@ const TOOL_PACKAGES: Record<Flavor, readonly string[]> = {
   ],
 }
 
-/** Every package any flavor installs as a tool, so a manifest's shared set is the rest. */
+/** Every package any flavor installs as a tool, which no flavor shares with another. */
 const ALL_TOOL_PACKAGES = new Set(Object.values(TOOL_PACKAGES).flat())
+
+/**
+ * The plugin packages a flavor has to install itself, because Oxlint resolves them from the project.
+ *
+ * A bundle-backed plugin is inlined on the ESLint side: `@lumirelle/linter-plugins-eslint` depends on
+ * the package and re-exports its object, so no consumer installs one. `@lumirelle/linter-plugins-oxlint`
+ * only forwards the specifier, and Oxlint resolves it from the config file's directory, so a flavor that
+ * runs Oxlint installs the ones its Emission declares. Every other `jsPlugins` package is an optional
+ * peer, which Source's peer check already keeps in all three flavors of a stack.
+ */
+const PROJECT_JSPLUGIN_PACKAGES = new Set(
+  PLUGIN_IDS.flatMap((id) => {
+    const { from, oxlint } = pluginDefinition(id)
+    return from === 'bundle' && oxlint && 'jsPlugin' in oxlint && oxlint.jsPlugin ? [oxlint.jsPlugin] : []
+  }),
+)
 
 /** The packages every example declares, whatever its flavor and stack. */
 const SHARED_PACKAGES = ['@lumirelle/linter-config', '@lumirelle/tsconfig', 'typescript']
@@ -67,6 +84,23 @@ async function manifestOf(example: Example): Promise<Manifest> {
 /** The packages an example declares. */
 async function declaredPackages(example: Example): Promise<string[]> {
   return Object.keys((await manifestOf(example)).devDependencies ?? {})
+}
+
+/**
+ * The project-resolved `jsPlugins` packages an example's Oxlint Emission loads.
+ *
+ * The Adapter declares all of them once, in the `lumirelle/oxlint/jsPlugins` object, which the composer
+ * carries as an override; a flavor that ships no Oxlint config loads none. The peer ones are left out
+ * here, because their install is already the peer check's business.
+ */
+function projectJsPlugins(example: Example): string[] {
+  const entries = [
+    ...(example.oxlint?.jsPlugins ?? []),
+    ...(example.oxlint?.overrides ?? []).flatMap(override => override.jsPlugins ?? []),
+  ]
+  const specifiers = entries.map(entry => typeof entry === 'string' ? entry : entry.specifier)
+
+  return [...new Set(specifiers)].filter(name => PROJECT_JSPLUGIN_PACKAGES.has(name))
 }
 
 describe('the flavor directories', () => {
@@ -113,6 +147,15 @@ describe('the flavor directories', () => {
       expect(tools).toEqual([...TOOL_PACKAGES[example.flavor]].sort())
     })
 
+    it('installs exactly the plugins its Oxlint Emission resolves from the project', async () => {
+      // The Bundle forwards a specifier, never an object, so the package has to be in the project's own
+      // `node_modules`. Resolving one from the workspace root instead is what this test exists to catch:
+      // the example would print an Emission that loads and then fail in a repository that copied it.
+      const declared = (await declaredPackages(example)).filter(name => PROJECT_JSPLUGIN_PACKAGES.has(name))
+
+      expect(declared.sort()).toEqual(projectJsPlugins(example).sort())
+    })
+
     it('is named after its directory', async () => {
       // The directory token is the example-name segment and the package-name segment, so a package
       // can be found from its path and a reader can copy the name the playground prints.
@@ -123,14 +166,17 @@ describe('the flavor directories', () => {
   })
 
   describe.each(STACKS)('the $stack manifests', ({ examples }) => {
-    it('share one dependency set outside the tool packages', async () => {
+    it('share one dependency set outside the flavor-owned packages', async () => {
       const shared = await Promise.all(examples.map(async (example) => {
-        return (await declaredPackages(example)).filter(name => !ALL_TOOL_PACKAGES.has(name)).sort()
+        // Two groups belong to the flavor rather than to the stack: the linter and its plugin Bundle,
+        // and the bundled plugins only an Oxlint flavor installs itself.
+        const owned = new Set([...TOOL_PACKAGES[example.flavor], ...projectJsPlugins(example)])
+        return (await declaredPackages(example)).filter(name => !owned.has(name)).sort()
       }))
 
       // The peers the stack's Modules require stay in every flavor because Source's peer check runs
-      // for both Adapters, so the only dependency difference between flavors is the tool packages
-      // themselves.
+      // for both Adapters, and a bundled plugin never does, so what the three flavors share is the
+      // stack's own dependency set.
       for (const packages of shared.slice(1)) {
         expect(packages).toEqual(shared[0])
       }

@@ -32,8 +32,9 @@ internals.
 
 Each example is a directory under `playground/<flavor>/<stack>/` with:
 
-- `package.json` — a private package declaring the peers its Modules need, plus that flavor's tool
-  packages.
+- `package.json` — a private package declaring the peers its Modules need, that flavor's tool
+  packages, and — only in a flavor that runs Oxlint — the bundled plugins Oxlint resolves from the
+  project instead of from the Plugin Bundle.
 - the linter config modules its flavor runs — `eslint.config.js` for `eslint` and `eslint-oxlint`,
   `oxlint.config.ts` for `oxlint` and `eslint-oxlint`.
 - `options.ts` — only in the paired flavor: two configs read one object, so it is extracted. A
@@ -44,9 +45,11 @@ Each example is a directory under `playground/<flavor>/<stack>/` with:
 - a minimal representative source tree and a README.
 
 A stack's three directories are identical apart from the linter config modules, the options module
-(present in the paired flavor, inline elsewhere), the tool packages in the manifest and the README.
+(present in the paired flavor, inline elsewhere), the flavor-owned packages in the manifest and the
+README.
 
 ## Scope
 
-Examples install only the lint-time peers their enabled Modules require. The technologies they
+Examples install only the lint-time packages their enabled Modules require: the peers, and the
+bundled plugins a `jsPlugins` entry makes Oxlint resolve from the project. The technologies they
 simulate (Vue, React, Next, Vite, UnoCSS) are deliberately **not** installed.

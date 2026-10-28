@@ -3,10 +3,16 @@
   "type": "module",
   "private": true,
   "devDependencies": {
+    "@e18e/eslint-plugin": "catalog:bundle",
     "@lumirelle/linter-config": "workspace:*",
     "@lumirelle/linter-plugins-oxlint": "workspace:*",
     "@lumirelle/tsconfig": "catalog:types",
     "@unocss/eslint-plugin": "catalog:peer",
+    "eslint-plugin-antfu": "catalog:bundle",
+    "eslint-plugin-command": "catalog:bundle",
+    "eslint-plugin-perfectionist": "catalog:bundle",
+    "eslint-plugin-regexp": "catalog:bundle",
+    "eslint-plugin-unused-imports": "catalog:bundle",
     "eslint-plugin-vuejs-accessibility": "catalog:peer",
     "oxlint": "catalog:check",
     "typescript": "catalog:types"

@@ -3,12 +3,18 @@
   "type": "module",
   "private": true,
   "devDependencies": {
+    "@e18e/eslint-plugin": "catalog:bundle",
     "@eslint-react/eslint-plugin": "catalog:peer",
     "@lumirelle/linter-config": "workspace:*",
     "@lumirelle/linter-plugins-oxlint": "workspace:*",
     "@lumirelle/tsconfig": "catalog:types",
     "@next/eslint-plugin-next": "catalog:peer",
+    "eslint-plugin-antfu": "catalog:bundle",
+    "eslint-plugin-command": "catalog:bundle",
+    "eslint-plugin-perfectionist": "catalog:bundle",
     "eslint-plugin-react-refresh": "catalog:peer",
+    "eslint-plugin-regexp": "catalog:bundle",
+    "eslint-plugin-unused-imports": "catalog:bundle",
     "oxlint": "catalog:check",
     "typescript": "catalog:types",
     "vitest": "catalog:test"

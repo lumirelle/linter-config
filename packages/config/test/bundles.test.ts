@@ -17,7 +17,7 @@ const packageJson = JSON.parse(
 const BUNDLES = ['@lumirelle/linter-plugins-eslint', '@lumirelle/linter-plugins-oxlint']
 
 /** One jsPlugin package the Oxlint Bundle is responsible for shipping. */
-interface ShippedJsPlugin {
+interface ShippedJsPluginPackage {
   id: string
   packageName: string
 }
@@ -27,7 +27,7 @@ interface ShippedJsPlugin {
  * to load. A blacklisted id keeps its `jsPlugins` entry but is not shipped, because the Emission
  * never asks Oxlint to load it.
  */
-const SHIPPED: ShippedJsPlugin[] = PLUGIN_IDS.flatMap((id) => {
+const SHIPPED_JS_PLUGIN_PACKAGES: ShippedJsPluginPackage[] = PLUGIN_IDS.flatMap((id) => {
   const { from, oxlint } = pluginDefinition(id)
   if (from !== 'bundle' || blacklistEntry(id) || !oxlint || !('jsPlugin' in oxlint) || !oxlint.jsPlugin) {
     return []
@@ -94,18 +94,18 @@ describe('plugin bundles', () => {
   })
 
   it('depends on exactly the jsPlugin packages it is meant to ship', () => {
-    expect(Object.keys(OXLINT_BUNDLE_DEPENDENCIES).sort()).toEqual(SHIPPED.map(entry => entry.packageName).sort())
+    expect(Object.keys(OXLINT_BUNDLE_DEPENDENCIES).sort()).toEqual(SHIPPED_JS_PLUGIN_PACKAGES.map(entry => entry.packageName).sort())
   })
 
   it('pins the jsPlugin packages at the catalog entry the ESLint Bundle uses', () => {
-    for (const { packageName } of SHIPPED) {
+    for (const { packageName } of SHIPPED_JS_PLUGIN_PACKAGES) {
       expect(OXLINT_BUNDLE_DEPENDENCIES[packageName], `${packageName} in the Oxlint Bundle`).toBeDefined()
       expect(OXLINT_BUNDLE_DEPENDENCIES[packageName], `${packageName} in the Oxlint Bundle`).toBe(ESLINT_BUNDLE_DEPENDENCIES[packageName])
     }
   })
 
   it('resolves every jsPlugin package it ships from its own module graph', () => {
-    for (const { id, packageName } of SHIPPED) {
+    for (const { id, packageName } of SHIPPED_JS_PLUGIN_PACKAGES) {
       const resolved = resolveJsPlugin(id)
 
       expect(resolved, `the Oxlint Bundle should resolve "${id}" (${packageName})`).toBeTypeOf('string')

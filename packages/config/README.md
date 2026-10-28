@@ -36,9 +36,9 @@ This design draws reference from `@antfu/eslint-config`.
 > [Milestone 3][oxlint-js-plugins-milestone]).
 >
 > The remaining plugins that do not depend on a parser and have no native implementation are presented as `jsPlugins`
-> specifiers. The [Oxlint plugins bundle][plugins-oxlint] ships the packages those specifiers name and resolves each
-> one to an absolute path while the config loads, so you install the bundle and nothing else for them; the peer
-> plugins stay yours to install when you enable their Module.
+> specifiers. The [Oxlint plugins bundle][plugins-oxlint] ships the packages the default Modules' specifiers name and
+> resolves each one to an absolute path while the config loads, so you install the bundle and nothing else for those;
+> the peer plugins stay yours to install when you enable their Module.
 >
 > The [Coverage report][coverage] lists the rules Oxlint still does not support.
 

@@ -4,6 +4,7 @@ import { dirname, join, relative, sep } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { describe, expect, it } from 'vitest'
 import { PLUGIN_IDS, pluginDefinition } from '../../packages/config/src/plugins'
+import { pluginPackageName } from '../../playground/specifiers'
 import { exampleTables } from './helpers/emission'
 
 /** Where the examples live, so a package name can be read off its directory. */
@@ -92,13 +93,16 @@ async function declaredPackages(example: Example): Promise<string[]> {
  * The Adapter declares all of them once, in the `lumirelle/oxlint/jsPlugins` object, which the composer
  * carries as an override; a flavor that ships no Oxlint config loads none. The peer ones are left out
  * here, because their install is already the peer check's business.
+ *
+ * A specifier is read as the package it names, because the Emission spells one either as a bare
+ * package name or as the path a Bundle resolved it to, and the manifest declares the package.
  */
 function projectJsPlugins(example: Example): string[] {
   const entries = [
     ...(example.oxlint?.jsPlugins ?? []),
     ...(example.oxlint?.overrides ?? []).flatMap(override => override.jsPlugins ?? []),
   ]
-  const specifiers = entries.map(entry => typeof entry === 'string' ? entry : entry.specifier)
+  const specifiers = entries.map(entry => pluginPackageName(typeof entry === 'string' ? entry : entry.specifier))
 
   return [...new Set(specifiers)].filter(name => PROJECT_JSPLUGIN_PACKAGES.has(name))
 }

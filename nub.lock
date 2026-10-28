@@ -658,9 +658,6 @@ importers:
 
   playground/eslint-oxlint/next:
     devDependencies:
-      '@e18e/eslint-plugin':
-        specifier: catalog:bundle
-        version: 0.8.1(eslint@10.12.0)(oxlint@1.88.0(oxlint-tsgolint@7.0.2004))
       '@eslint-react/eslint-plugin':
         specifier: catalog:peer
         version: 5.28.0(eslint@10.12.0)(typescript@6.0.3-bridge.18.tsgo.7.0.2)
@@ -682,24 +679,9 @@ importers:
       eslint:
         specifier: catalog:check
         version: 10.12.0
-      eslint-plugin-antfu:
-        specifier: catalog:bundle
-        version: 3.2.3(eslint@10.12.0)
-      eslint-plugin-command:
-        specifier: catalog:bundle
-        version: 4.0.0(@typescript-eslint/typescript-estree@8.71.2(typescript@6.0.3-bridge.18.tsgo.7.0.2))(@typescript-eslint/utils@8.71.2(eslint@10.12.0)(typescript@6.0.3-bridge.18.tsgo.7.0.2))(eslint@10.12.0)
-      eslint-plugin-perfectionist:
-        specifier: catalog:bundle
-        version: 5.12.1(@typescript-eslint/types@8.71.2)(eslint@10.12.0)(typescript@6.0.3-bridge.18.tsgo.7.0.2)
       eslint-plugin-react-refresh:
         specifier: catalog:peer
         version: 0.5.7(eslint@10.12.0)
-      eslint-plugin-regexp:
-        specifier: catalog:bundle
-        version: 3.3.1(eslint@10.12.0)
-      eslint-plugin-unused-imports:
-        specifier: catalog:bundle
-        version: 4.4.1(@typescript-eslint/eslint-plugin@8.71.2(@typescript-eslint/parser@8.71.2(eslint@10.12.0)(typescript@6.0.3-bridge.18.tsgo.7.0.2))(eslint@10.12.0)(typescript@6.0.3-bridge.18.tsgo.7.0.2))(eslint@10.12.0)
       oxlint:
         specifier: catalog:check
         version: 1.88.0(oxlint-tsgolint@7.0.2004)
@@ -712,9 +694,6 @@ importers:
 
   playground/eslint-oxlint/nuxt:
     devDependencies:
-      '@e18e/eslint-plugin':
-        specifier: catalog:bundle
-        version: 0.8.1(eslint@10.12.0)(oxlint@1.88.0(oxlint-tsgolint@7.0.2004))
       '@lumirelle/linter-config':
         specifier: workspace:*
         version: link:../../../packages/config
@@ -733,21 +712,6 @@ importers:
       eslint:
         specifier: catalog:check
         version: 10.12.0
-      eslint-plugin-antfu:
-        specifier: catalog:bundle
-        version: 3.2.3(eslint@10.12.0)
-      eslint-plugin-command:
-        specifier: catalog:bundle
-        version: 4.0.0(@typescript-eslint/typescript-estree@8.71.2(typescript@6.0.3-bridge.18.tsgo.7.0.2))(@typescript-eslint/utils@8.71.2(eslint@10.12.0)(typescript@6.0.3-bridge.18.tsgo.7.0.2))(eslint@10.12.0)
-      eslint-plugin-perfectionist:
-        specifier: catalog:bundle
-        version: 5.12.1(@typescript-eslint/types@8.71.2)(eslint@10.12.0)(typescript@6.0.3-bridge.18.tsgo.7.0.2)
-      eslint-plugin-regexp:
-        specifier: catalog:bundle
-        version: 3.3.1(eslint@10.12.0)
-      eslint-plugin-unused-imports:
-        specifier: catalog:bundle
-        version: 4.4.1(@typescript-eslint/eslint-plugin@8.71.2(@typescript-eslint/parser@8.71.2(eslint@10.12.0)(typescript@6.0.3-bridge.18.tsgo.7.0.2))(eslint@10.12.0)(typescript@6.0.3-bridge.18.tsgo.7.0.2))(eslint@10.12.0)
       oxlint:
         specifier: catalog:check
         version: 1.88.0(oxlint-tsgolint@7.0.2004)
@@ -757,9 +721,6 @@ importers:
 
   playground/eslint-oxlint/react:
     devDependencies:
-      '@e18e/eslint-plugin':
-        specifier: catalog:bundle
-        version: 0.8.1(eslint@10.12.0)(oxlint@1.88.0(oxlint-tsgolint@7.0.2004))
       '@eslint-react/eslint-plugin':
         specifier: catalog:peer
         version: 5.28.0(eslint@10.12.0)(typescript@6.0.3-bridge.18.tsgo.7.0.2)
@@ -781,24 +742,9 @@ importers:
       eslint:
         specifier: catalog:check
         version: 10.12.0
-      eslint-plugin-antfu:
-        specifier: catalog:bundle
-        version: 3.2.3(eslint@10.12.0)
-      eslint-plugin-command:
-        specifier: catalog:bundle
-        version: 4.0.0(@typescript-eslint/typescript-estree@8.71.2(typescript@6.0.3-bridge.18.tsgo.7.0.2))(@typescript-eslint/utils@8.71.2(eslint@10.12.0)(typescript@6.0.3-bridge.18.tsgo.7.0.2))(eslint@10.12.0)
-      eslint-plugin-perfectionist:
-        specifier: catalog:bundle
-        version: 5.12.1(@typescript-eslint/types@8.71.2)(eslint@10.12.0)(typescript@6.0.3-bridge.18.tsgo.7.0.2)
       eslint-plugin-react-refresh:
         specifier: catalog:peer
         version: 0.5.7(eslint@10.12.0)
-      eslint-plugin-regexp:
-        specifier: catalog:bundle
-        version: 3.3.1(eslint@10.12.0)
-      eslint-plugin-unused-imports:
-        specifier: catalog:bundle
-        version: 4.4.1(@typescript-eslint/eslint-plugin@8.71.2(@typescript-eslint/parser@8.71.2(eslint@10.12.0)(typescript@6.0.3-bridge.18.tsgo.7.0.2))(eslint@10.12.0)(typescript@6.0.3-bridge.18.tsgo.7.0.2))(eslint@10.12.0)
       oxlint:
         specifier: catalog:check
         version: 1.88.0(oxlint-tsgolint@7.0.2004)
@@ -811,9 +757,6 @@ importers:
 
   playground/eslint-oxlint/ts:
     devDependencies:
-      '@e18e/eslint-plugin':
-        specifier: catalog:bundle
-        version: 0.8.1(eslint@10.12.0)(oxlint@1.88.0(oxlint-tsgolint@7.0.2004))
       '@lumirelle/linter-config':
         specifier: workspace:*
         version: link:../../../packages/config
@@ -829,21 +772,6 @@ importers:
       eslint:
         specifier: catalog:check
         version: 10.12.0
-      eslint-plugin-antfu:
-        specifier: catalog:bundle
-        version: 3.2.3(eslint@10.12.0)
-      eslint-plugin-command:
-        specifier: catalog:bundle
-        version: 4.0.0(@typescript-eslint/typescript-estree@8.71.2(typescript@6.0.3-bridge.18.tsgo.7.0.2))(@typescript-eslint/utils@8.71.2(eslint@10.12.0)(typescript@6.0.3-bridge.18.tsgo.7.0.2))(eslint@10.12.0)
-      eslint-plugin-perfectionist:
-        specifier: catalog:bundle
-        version: 5.12.1(@typescript-eslint/types@8.71.2)(eslint@10.12.0)(typescript@6.0.3-bridge.18.tsgo.7.0.2)
-      eslint-plugin-regexp:
-        specifier: catalog:bundle
-        version: 3.3.1(eslint@10.12.0)
-      eslint-plugin-unused-imports:
-        specifier: catalog:bundle
-        version: 4.4.1(@typescript-eslint/eslint-plugin@8.71.2(@typescript-eslint/parser@8.71.2(eslint@10.12.0)(typescript@6.0.3-bridge.18.tsgo.7.0.2))(eslint@10.12.0)(typescript@6.0.3-bridge.18.tsgo.7.0.2))(eslint@10.12.0)
       oxlint:
         specifier: catalog:check
         version: 1.88.0(oxlint-tsgolint@7.0.2004)
@@ -856,9 +784,6 @@ importers:
 
   playground/eslint-oxlint/ts-monorepo:
     devDependencies:
-      '@e18e/eslint-plugin':
-        specifier: catalog:bundle
-        version: 0.8.1(eslint@10.12.0)(oxlint@1.88.0(oxlint-tsgolint@7.0.2004))
       '@lumirelle/linter-config':
         specifier: workspace:*
         version: link:../../../packages/config
@@ -874,21 +799,6 @@ importers:
       eslint:
         specifier: catalog:check
         version: 10.12.0
-      eslint-plugin-antfu:
-        specifier: catalog:bundle
-        version: 3.2.3(eslint@10.12.0)
-      eslint-plugin-command:
-        specifier: catalog:bundle
-        version: 4.0.0(@typescript-eslint/typescript-estree@8.71.2(typescript@6.0.3-bridge.18.tsgo.7.0.2))(@typescript-eslint/utils@8.71.2(eslint@10.12.0)(typescript@6.0.3-bridge.18.tsgo.7.0.2))(eslint@10.12.0)
-      eslint-plugin-perfectionist:
-        specifier: catalog:bundle
-        version: 5.12.1(@typescript-eslint/types@8.71.2)(eslint@10.12.0)(typescript@6.0.3-bridge.18.tsgo.7.0.2)
-      eslint-plugin-regexp:
-        specifier: catalog:bundle
-        version: 3.3.1(eslint@10.12.0)
-      eslint-plugin-unused-imports:
-        specifier: catalog:bundle
-        version: 4.4.1(@typescript-eslint/eslint-plugin@8.71.2(@typescript-eslint/parser@8.71.2(eslint@10.12.0)(typescript@6.0.3-bridge.18.tsgo.7.0.2))(eslint@10.12.0)(typescript@6.0.3-bridge.18.tsgo.7.0.2))(eslint@10.12.0)
       oxlint:
         specifier: catalog:check
         version: 1.88.0(oxlint-tsgolint@7.0.2004)
@@ -901,9 +811,6 @@ importers:
 
   playground/eslint-oxlint/vue:
     devDependencies:
-      '@e18e/eslint-plugin':
-        specifier: catalog:bundle
-        version: 0.8.1(eslint@10.12.0)(oxlint@1.88.0(oxlint-tsgolint@7.0.2004))
       '@lumirelle/linter-config':
         specifier: workspace:*
         version: link:../../../packages/config
@@ -922,21 +829,6 @@ importers:
       eslint:
         specifier: catalog:check
         version: 10.12.0
-      eslint-plugin-antfu:
-        specifier: catalog:bundle
-        version: 3.2.3(eslint@10.12.0)
-      eslint-plugin-command:
-        specifier: catalog:bundle
-        version: 4.0.0(@typescript-eslint/typescript-estree@8.71.2(typescript@6.0.3-bridge.18.tsgo.7.0.2))(@typescript-eslint/utils@8.71.2(eslint@10.12.0)(typescript@6.0.3-bridge.18.tsgo.7.0.2))(eslint@10.12.0)
-      eslint-plugin-perfectionist:
-        specifier: catalog:bundle
-        version: 5.12.1(@typescript-eslint/types@8.71.2)(eslint@10.12.0)(typescript@6.0.3-bridge.18.tsgo.7.0.2)
-      eslint-plugin-regexp:
-        specifier: catalog:bundle
-        version: 3.3.1(eslint@10.12.0)
-      eslint-plugin-unused-imports:
-        specifier: catalog:bundle
-        version: 4.4.1(@typescript-eslint/eslint-plugin@8.71.2(@typescript-eslint/parser@8.71.2(eslint@10.12.0)(typescript@6.0.3-bridge.18.tsgo.7.0.2))(eslint@10.12.0)(typescript@6.0.3-bridge.18.tsgo.7.0.2))(eslint@10.12.0)
       eslint-plugin-vuejs-accessibility:
         specifier: catalog:peer
         version: 2.6.2(eslint@10.12.0)(globals@17.13.0)
@@ -949,9 +841,6 @@ importers:
 
   playground/eslint-oxlint/webext:
     devDependencies:
-      '@e18e/eslint-plugin':
-        specifier: catalog:bundle
-        version: 0.8.1(eslint@10.12.0)(oxlint@1.88.0(oxlint-tsgolint@7.0.2004))
       '@lumirelle/linter-config':
         specifier: workspace:*
         version: link:../../../packages/config
@@ -967,21 +856,6 @@ importers:
       eslint:
         specifier: catalog:check
         version: 10.12.0
-      eslint-plugin-antfu:
-        specifier: catalog:bundle
-        version: 3.2.3(eslint@10.12.0)
-      eslint-plugin-command:
-        specifier: catalog:bundle
-        version: 4.0.0(@typescript-eslint/typescript-estree@8.71.2(typescript@6.0.3-bridge.18.tsgo.7.0.2))(@typescript-eslint/utils@8.71.2(eslint@10.12.0)(typescript@6.0.3-bridge.18.tsgo.7.0.2))(eslint@10.12.0)
-      eslint-plugin-perfectionist:
-        specifier: catalog:bundle
-        version: 5.12.1(@typescript-eslint/types@8.71.2)(eslint@10.12.0)(typescript@6.0.3-bridge.18.tsgo.7.0.2)
-      eslint-plugin-regexp:
-        specifier: catalog:bundle
-        version: 3.3.1(eslint@10.12.0)
-      eslint-plugin-unused-imports:
-        specifier: catalog:bundle
-        version: 4.4.1(@typescript-eslint/eslint-plugin@8.71.2(@typescript-eslint/parser@8.71.2(eslint@10.12.0)(typescript@6.0.3-bridge.18.tsgo.7.0.2))(eslint@10.12.0)(typescript@6.0.3-bridge.18.tsgo.7.0.2))(eslint@10.12.0)
       oxlint:
         specifier: catalog:check
         version: 1.88.0(oxlint-tsgolint@7.0.2004)
@@ -1162,9 +1036,6 @@ importers:
 
   playground/oxlint/next:
     devDependencies:
-      '@e18e/eslint-plugin':
-        specifier: catalog:bundle
-        version: 0.8.1(eslint@10.12.0)(oxlint@1.88.0(oxlint-tsgolint@7.0.2004))
       '@eslint-react/eslint-plugin':
         specifier: catalog:peer
         version: 5.28.0(eslint@10.12.0)(typescript@6.0.3-bridge.18.tsgo.7.0.2)
@@ -1180,24 +1051,9 @@ importers:
       '@next/eslint-plugin-next':
         specifier: catalog:peer
         version: 16.4.2(eslint@10.12.0)
-      eslint-plugin-antfu:
-        specifier: catalog:bundle
-        version: 3.2.3(eslint@10.12.0)
-      eslint-plugin-command:
-        specifier: catalog:bundle
-        version: 4.0.0(@typescript-eslint/typescript-estree@8.71.2(typescript@6.0.3-bridge.18.tsgo.7.0.2))(@typescript-eslint/utils@8.71.2(eslint@10.12.0)(typescript@6.0.3-bridge.18.tsgo.7.0.2))(eslint@10.12.0)
-      eslint-plugin-perfectionist:
-        specifier: catalog:bundle
-        version: 5.12.1(@typescript-eslint/types@8.71.2)(eslint@10.12.0)(typescript@6.0.3-bridge.18.tsgo.7.0.2)
       eslint-plugin-react-refresh:
         specifier: catalog:peer
         version: 0.5.7(eslint@10.12.0)
-      eslint-plugin-regexp:
-        specifier: catalog:bundle
-        version: 3.3.1(eslint@10.12.0)
-      eslint-plugin-unused-imports:
-        specifier: catalog:bundle
-        version: 4.4.1(@typescript-eslint/eslint-plugin@8.71.2(@typescript-eslint/parser@8.71.2(eslint@10.12.0)(typescript@6.0.3-bridge.18.tsgo.7.0.2))(eslint@10.12.0)(typescript@6.0.3-bridge.18.tsgo.7.0.2))(eslint@10.12.0)
       oxlint:
         specifier: catalog:check
         version: 1.88.0(oxlint-tsgolint@7.0.2004)
@@ -1210,9 +1066,6 @@ importers:
 
   playground/oxlint/nuxt:
     devDependencies:
-      '@e18e/eslint-plugin':
-        specifier: catalog:bundle
-        version: 0.8.1(eslint@10.12.0)(oxlint@1.88.0(oxlint-tsgolint@7.0.2004))
       '@lumirelle/linter-config':
         specifier: workspace:*
         version: link:../../../packages/config
@@ -1225,21 +1078,6 @@ importers:
       '@unocss/eslint-plugin':
         specifier: catalog:peer
         version: 66.11.0(eslint@10.12.0)(typescript@6.0.3-bridge.18.tsgo.7.0.2)
-      eslint-plugin-antfu:
-        specifier: catalog:bundle
-        version: 3.2.3(eslint@10.12.0)
-      eslint-plugin-command:
-        specifier: catalog:bundle
-        version: 4.0.0(@typescript-eslint/typescript-estree@8.71.2(typescript@6.0.3-bridge.18.tsgo.7.0.2))(@typescript-eslint/utils@8.71.2(eslint@10.12.0)(typescript@6.0.3-bridge.18.tsgo.7.0.2))(eslint@10.12.0)
-      eslint-plugin-perfectionist:
-        specifier: catalog:bundle
-        version: 5.12.1(@typescript-eslint/types@8.71.2)(eslint@10.12.0)(typescript@6.0.3-bridge.18.tsgo.7.0.2)
-      eslint-plugin-regexp:
-        specifier: catalog:bundle
-        version: 3.3.1(eslint@10.12.0)
-      eslint-plugin-unused-imports:
-        specifier: catalog:bundle
-        version: 4.4.1(@typescript-eslint/eslint-plugin@8.71.2(@typescript-eslint/parser@8.71.2(eslint@10.12.0)(typescript@6.0.3-bridge.18.tsgo.7.0.2))(eslint@10.12.0)(typescript@6.0.3-bridge.18.tsgo.7.0.2))(eslint@10.12.0)
       oxlint:
         specifier: catalog:check
         version: 1.88.0(oxlint-tsgolint@7.0.2004)
@@ -1249,9 +1087,6 @@ importers:
 
   playground/oxlint/react:
     devDependencies:
-      '@e18e/eslint-plugin':
-        specifier: catalog:bundle
-        version: 0.8.1(eslint@10.12.0)(oxlint@1.88.0(oxlint-tsgolint@7.0.2004))
       '@eslint-react/eslint-plugin':
         specifier: catalog:peer
         version: 5.28.0(eslint@10.12.0)(typescript@6.0.3-bridge.18.tsgo.7.0.2)
@@ -1267,24 +1102,9 @@ importers:
       '@unocss/eslint-plugin':
         specifier: catalog:peer
         version: 66.11.0(eslint@10.12.0)(typescript@6.0.3-bridge.18.tsgo.7.0.2)
-      eslint-plugin-antfu:
-        specifier: catalog:bundle
-        version: 3.2.3(eslint@10.12.0)
-      eslint-plugin-command:
-        specifier: catalog:bundle
-        version: 4.0.0(@typescript-eslint/typescript-estree@8.71.2(typescript@6.0.3-bridge.18.tsgo.7.0.2))(@typescript-eslint/utils@8.71.2(eslint@10.12.0)(typescript@6.0.3-bridge.18.tsgo.7.0.2))(eslint@10.12.0)
-      eslint-plugin-perfectionist:
-        specifier: catalog:bundle
-        version: 5.12.1(@typescript-eslint/types@8.71.2)(eslint@10.12.0)(typescript@6.0.3-bridge.18.tsgo.7.0.2)
       eslint-plugin-react-refresh:
         specifier: catalog:peer
         version: 0.5.7(eslint@10.12.0)
-      eslint-plugin-regexp:
-        specifier: catalog:bundle
-        version: 3.3.1(eslint@10.12.0)
-      eslint-plugin-unused-imports:
-        specifier: catalog:bundle
-        version: 4.4.1(@typescript-eslint/eslint-plugin@8.71.2(@typescript-eslint/parser@8.71.2(eslint@10.12.0)(typescript@6.0.3-bridge.18.tsgo.7.0.2))(eslint@10.12.0)(typescript@6.0.3-bridge.18.tsgo.7.0.2))(eslint@10.12.0)
       oxlint:
         specifier: catalog:check
         version: 1.88.0(oxlint-tsgolint@7.0.2004)
@@ -1297,9 +1117,6 @@ importers:
 
   playground/oxlint/ts:
     devDependencies:
-      '@e18e/eslint-plugin':
-        specifier: catalog:bundle
-        version: 0.8.1(eslint@10.12.0)(oxlint@1.88.0(oxlint-tsgolint@7.0.2004))
       '@lumirelle/linter-config':
         specifier: workspace:*
         version: link:../../../packages/config
@@ -1309,21 +1126,6 @@ importers:
       '@lumirelle/tsconfig':
         specifier: catalog:types
         version: 0.1.6(typescript@6.0.3-bridge.18.tsgo.7.0.2)
-      eslint-plugin-antfu:
-        specifier: catalog:bundle
-        version: 3.2.3(eslint@10.12.0)
-      eslint-plugin-command:
-        specifier: catalog:bundle
-        version: 4.0.0(@typescript-eslint/typescript-estree@8.71.2(typescript@6.0.3-bridge.18.tsgo.7.0.2))(@typescript-eslint/utils@8.71.2(eslint@10.12.0)(typescript@6.0.3-bridge.18.tsgo.7.0.2))(eslint@10.12.0)
-      eslint-plugin-perfectionist:
-        specifier: catalog:bundle
-        version: 5.12.1(@typescript-eslint/types@8.71.2)(eslint@10.12.0)(typescript@6.0.3-bridge.18.tsgo.7.0.2)
-      eslint-plugin-regexp:
-        specifier: catalog:bundle
-        version: 3.3.1(eslint@10.12.0)
-      eslint-plugin-unused-imports:
-        specifier: catalog:bundle
-        version: 4.4.1(@typescript-eslint/eslint-plugin@8.71.2(@typescript-eslint/parser@8.71.2(eslint@10.12.0)(typescript@6.0.3-bridge.18.tsgo.7.0.2))(eslint@10.12.0)(typescript@6.0.3-bridge.18.tsgo.7.0.2))(eslint@10.12.0)
       oxlint:
         specifier: catalog:check
         version: 1.88.0(oxlint-tsgolint@7.0.2004)
@@ -1336,9 +1138,6 @@ importers:
 
   playground/oxlint/ts-monorepo:
     devDependencies:
-      '@e18e/eslint-plugin':
-        specifier: catalog:bundle
-        version: 0.8.1(eslint@10.12.0)(oxlint@1.88.0(oxlint-tsgolint@7.0.2004))
       '@lumirelle/linter-config':
         specifier: workspace:*
         version: link:../../../packages/config
@@ -1348,21 +1147,6 @@ importers:
       '@lumirelle/tsconfig':
         specifier: catalog:types
         version: 0.1.6(typescript@6.0.3-bridge.18.tsgo.7.0.2)
-      eslint-plugin-antfu:
-        specifier: catalog:bundle
-        version: 3.2.3(eslint@10.12.0)
-      eslint-plugin-command:
-        specifier: catalog:bundle
-        version: 4.0.0(@typescript-eslint/typescript-estree@8.71.2(typescript@6.0.3-bridge.18.tsgo.7.0.2))(@typescript-eslint/utils@8.71.2(eslint@10.12.0)(typescript@6.0.3-bridge.18.tsgo.7.0.2))(eslint@10.12.0)
-      eslint-plugin-perfectionist:
-        specifier: catalog:bundle
-        version: 5.12.1(@typescript-eslint/types@8.71.2)(eslint@10.12.0)(typescript@6.0.3-bridge.18.tsgo.7.0.2)
-      eslint-plugin-regexp:
-        specifier: catalog:bundle
-        version: 3.3.1(eslint@10.12.0)
-      eslint-plugin-unused-imports:
-        specifier: catalog:bundle
-        version: 4.4.1(@typescript-eslint/eslint-plugin@8.71.2(@typescript-eslint/parser@8.71.2(eslint@10.12.0)(typescript@6.0.3-bridge.18.tsgo.7.0.2))(eslint@10.12.0)(typescript@6.0.3-bridge.18.tsgo.7.0.2))(eslint@10.12.0)
       oxlint:
         specifier: catalog:check
         version: 1.88.0(oxlint-tsgolint@7.0.2004)
@@ -1375,9 +1159,6 @@ importers:
 
   playground/oxlint/vue:
     devDependencies:
-      '@e18e/eslint-plugin':
-        specifier: catalog:bundle
-        version: 0.8.1(eslint@10.12.0)(oxlint@1.88.0(oxlint-tsgolint@7.0.2004))
       '@lumirelle/linter-config':
         specifier: workspace:*
         version: link:../../../packages/config
@@ -1390,21 +1171,6 @@ importers:
       '@unocss/eslint-plugin':
         specifier: catalog:peer
         version: 66.11.0(eslint@10.12.0)(typescript@6.0.3-bridge.18.tsgo.7.0.2)
-      eslint-plugin-antfu:
-        specifier: catalog:bundle
-        version: 3.2.3(eslint@10.12.0)
-      eslint-plugin-command:
-        specifier: catalog:bundle
-        version: 4.0.0(@typescript-eslint/typescript-estree@8.71.2(typescript@6.0.3-bridge.18.tsgo.7.0.2))(@typescript-eslint/utils@8.71.2(eslint@10.12.0)(typescript@6.0.3-bridge.18.tsgo.7.0.2))(eslint@10.12.0)
-      eslint-plugin-perfectionist:
-        specifier: catalog:bundle
-        version: 5.12.1(@typescript-eslint/types@8.71.2)(eslint@10.12.0)(typescript@6.0.3-bridge.18.tsgo.7.0.2)
-      eslint-plugin-regexp:
-        specifier: catalog:bundle
-        version: 3.3.1(eslint@10.12.0)
-      eslint-plugin-unused-imports:
-        specifier: catalog:bundle
-        version: 4.4.1(@typescript-eslint/eslint-plugin@8.71.2(@typescript-eslint/parser@8.71.2(eslint@10.12.0)(typescript@6.0.3-bridge.18.tsgo.7.0.2))(eslint@10.12.0)(typescript@6.0.3-bridge.18.tsgo.7.0.2))(eslint@10.12.0)
       eslint-plugin-vuejs-accessibility:
         specifier: catalog:peer
         version: 2.6.2(eslint@10.12.0)(globals@17.13.0)
@@ -1417,9 +1183,6 @@ importers:
 
   playground/oxlint/webext:
     devDependencies:
-      '@e18e/eslint-plugin':
-        specifier: catalog:bundle
-        version: 0.8.1(eslint@10.12.0)(oxlint@1.88.0(oxlint-tsgolint@7.0.2004))
       '@lumirelle/linter-config':
         specifier: workspace:*
         version: link:../../../packages/config
@@ -1429,21 +1192,6 @@ importers:
       '@lumirelle/tsconfig':
         specifier: catalog:types
         version: 0.1.6(typescript@6.0.3-bridge.18.tsgo.7.0.2)
-      eslint-plugin-antfu:
-        specifier: catalog:bundle
-        version: 3.2.3(eslint@10.12.0)
-      eslint-plugin-command:
-        specifier: catalog:bundle
-        version: 4.0.0(@typescript-eslint/typescript-estree@8.71.2(typescript@6.0.3-bridge.18.tsgo.7.0.2))(@typescript-eslint/utils@8.71.2(eslint@10.12.0)(typescript@6.0.3-bridge.18.tsgo.7.0.2))(eslint@10.12.0)
-      eslint-plugin-perfectionist:
-        specifier: catalog:bundle
-        version: 5.12.1(@typescript-eslint/types@8.71.2)(eslint@10.12.0)(typescript@6.0.3-bridge.18.tsgo.7.0.2)
-      eslint-plugin-regexp:
-        specifier: catalog:bundle
-        version: 3.3.1(eslint@10.12.0)
-      eslint-plugin-unused-imports:
-        specifier: catalog:bundle
-        version: 4.4.1(@typescript-eslint/eslint-plugin@8.71.2(@typescript-eslint/parser@8.71.2(eslint@10.12.0)(typescript@6.0.3-bridge.18.tsgo.7.0.2))(eslint@10.12.0)(typescript@6.0.3-bridge.18.tsgo.7.0.2))(eslint@10.12.0)
       oxlint:
         specifier: catalog:check
         version: 1.88.0(oxlint-tsgolint@7.0.2004)

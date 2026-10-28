@@ -1,9 +1,7 @@
 # Playground
 
-Twenty-one examples: seven stacks, each shipped in all three flavors of the linter dimension, so
-every example is named `<flavor>/<stack>`. [ADR 0005](../docs/adr/0005-flavor-first-playground.md)
-records the matrix, what a flavor may change and why the directories are duplicated rather than
-shared.
+21 examples: seven stacks, each shipped in all three flavors of the linter dimension, so
+every example is named `<flavor>/<stack>`.
 
 | Stack | Simulates | `eslint` | `oxlint` | `eslint-oxlint` |
 | --- | --- | --- | --- | --- |
@@ -15,11 +13,6 @@ shared.
 | `vue` | A Vite-style Vue single-page application — no starter counterpart | [`eslint/vue`](./eslint/vue/README.md) | [`oxlint/vue`](./oxlint/vue/README.md) | [`eslint-oxlint/vue`](./eslint-oxlint/vue/README.md) |
 | `webext` | [`lumirelle/starter-webext`](https://github.com/lumirelle/starter-webext) — a browser extension | [`eslint/webext`](./eslint/webext/README.md) | [`oxlint/webext`](./oxlint/webext/README.md) | [`eslint-oxlint/webext`](./eslint-oxlint/webext/README.md) |
 
-Each row's three links go to the example directory, whose README carries the options that stack
-demonstrates. The `eslint-oxlint` README is the stack's canonical one — predecessor mapping, options
-table, tree and installation caveats — because that content is stack knowledge; the two single-tool
-READMEs name what their flavor strips and link back to it.
-
 ## Running an example
 
 ```sh
@@ -29,12 +22,10 @@ mise run play --all        # all twenty-one examples
 ```
 
 A bare stack name expands into its flavors in `eslint`, `oxlint`, `eslint-oxlint` order; a
-flavor-qualified name prints one example; `--all` walks every stack in sorted order. One stack is
-three examples, so a bare stack name never means a single Emission and there is no alias that makes
-it one. An unknown name exits non-zero after listing the names that do exist.
+flavor-qualified name prints one example; `--all` walks every stack in sorted order.
 
 The task depends on `mise run build`, because each example's config files import the package's built
-`@lumirelle/linter-config/eslint` and `@lumirelle/linter-config/oxlint` subpaths, never Source
+`@lumirelle/linter-config/eslint` and `@lumirelle/linter-config/oxlint` subpaths, not Source
 internals.
 
 ## Layout
@@ -42,39 +33,20 @@ internals.
 Each example is a directory under `playground/<flavor>/<stack>/` with:
 
 - `package.json` — a private package declaring the peers its Modules need, plus that flavor's tool
-  packages;
+  packages.
 - the linter config modules its flavor runs — `eslint.config.js` for `eslint` and `eslint-oxlint`,
-  `oxlint.config.ts` for `oxlint` and `eslint-oxlint`;
+  `oxlint.config.ts` for `oxlint` and `eslint-oxlint`.
 - `options.ts` — only in the paired flavor: two configs read one object, so it is extracted. A
   single-tool flavor writes the same options inline where it calls its one factory, the way a
-  project that runs one tool does;
+  project that runs one tool does.
 - `tsconfig.json` — the example's project file, documentation rather than part of this repository's
-  type check;
+  type check.
 - a minimal representative source tree and a README.
 
 A stack's three directories are identical apart from the linter config modules, the options module
 (present in the paired flavor, inline elsewhere), the tool packages in the manifest and the README.
-`test/examples/layout.test.ts` asserts that file set and compares the remaining files byte for byte,
-so drift is a failing test rather than a review responsibility.
-
-[`examples.ts`](./examples.ts) is the registry: it discovers examples by reading
-`playground/*/*/package.json` and resolves one by importing the config modules it ships, plus the
-options module when the flavor keeps one. Adding a
-stack or a flavor is adding its directory; no registry, task or unused-dependency edit is needed.
-
-[`index.ts`](./index.ts) is the runner behind `mise run play`.
-
-## Naming
-
-The flavor token is the directory segment, the example-name segment and the package-name segment at
-once, so a package is named after its directory and the name the runner prints is the name of a real
-path. The paired flavor is `eslint-oxlint` rather than `eslint+oxlint` because npm package names
-cannot contain `+`, which would have made the directory token and the package token diverge for the
-one flavor a reader is most likely to copy.
 
 ## Scope
 
 Examples install only the lint-time peers their enabled Modules require. The technologies they
-simulate (Vue, React, Next, Vite, UnoCSS) are deliberately **not** installed: these are lint targets
-and resolution proofs, not applications, and the root dogfood configuration does not lint their
-source trees either.
+simulate (Vue, React, Next, Vite, UnoCSS) are deliberately **not** installed.

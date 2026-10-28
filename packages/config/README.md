@@ -24,17 +24,24 @@ The default plugins setup for different linter are optional peers, pick as your 
 - `@lumirelle/linter-plugins-eslint`: If you want to use `@lumirelle/linter-config/eslint`.
 - `@lumirelle/linter-plugins-oxlint`: If you want to use `@lumirelle/linter-config/oxlint`.
 
-If you want to use some optional options, such as `eslint({ react: true })`, you may need to install the corresponding plugin.
+If you want to use some optional options, such as `eslint({ react: true })`, you may need to install the corresponding
+plugin as the direct dependency of your project, the plugins package does not include them.
+
+This design draws reference from `@antfu/eslint-config`.
 
 > [!NOTE]
-> Oxlint runs most of these plugins natively. One that needs its own parser cannot run through
-> `jsPlugins` yet — Svelte, Astro, Angular, `format` and the `jsonc`/`yaml`/`toml`/`markdown` Modules
-> stay ESLint-only ([docs][oxlint-js-plugins], [Milestone 3][oxlint-js-plugins-milestone]). The rest are
-> `jsPlugins` specifiers Oxlint resolves against your config file, so you install them yourself. The
-> [bundle README][plugins-oxlint] lists them and records the workaround — an absolute `require.resolve`
-> specifier resolved from the package that owns the plugin — which we plan to offer in a later version so
-> this bundle can ship the plugins instead of you. The [Coverage report][coverage] has the rules still
-> missing.
+> Oxlint runs most of the required plugins natively. Some plugins that need their own parser still cannot run through
+> `jsPlugins` yet and have no native implementation: Svelte, Astro, Angular, `format` and the
+> `jsonc`/`yaml`/`toml`/`markdown` Modules stay ESLint-only ([docs][oxlint-js-plugins],
+> [Milestone 3][oxlint-js-plugins-milestone]).
+>
+> The remaining plugins that do not depend on a parser and have no native implementation are presented as `jsPlugins`
+> specifiers. Oxlint resolves the specifier against `node_modules` from your project root, so you have to install
+> them yourself. The [bundle README][plugins-oxlint] lists these plugins and records a workaround: an absolute
+> `require.resolve` specifier resolved from the Oxlint plugins package bundle, which we plan to offer in a later version
+> so this bundle can ship the plugins instead of you.
+>
+> The [Coverage report][coverage] lists the rules Oxlint still does not support.
 
 ## ESLint
 
@@ -48,7 +55,7 @@ export default eslint({
 })
 ```
 
-## OxLint
+## Oxlint
 
 ```ts
 // oxlint.config.ts
@@ -60,20 +67,20 @@ export default oxlint({
 })
 ```
 
-## Composition and overrides
+## Composition and Overrides
 
-Both composers of ESLint and OxLint support `append`, `override`, `insertAfter` and `remove`.
+Both composers of ESLint and Oxlint support `append`, `override`, `insertAfter` and `remove`.
 
-For ESLint, it uses [`eslint-flat-config-utils`](https://github.com/antfu/eslint-flat-config-utils) under the hood; for OxLint, it uses [`@oxlint-flat-config/composer`](https://github.com/liangmiQwQ/oxlint-flat-config/tree/main/packages/composer) under the hood.
+For ESLint, it uses [`eslint-flat-config-utils`](https://github.com/antfu/eslint-flat-config-utils) under the hood; for Oxlint, it uses [`@oxlint-flat-config/composer`](https://github.com/liangmiQwQ/oxlint-flat-config/tree/main/packages/composer) under the hood.
 
 A Config object is addressed by its stable `name`, `lumirelle/<upstream tail>`:
 
 > [!Note]
-> Only the ESLint side has the Bridge: `oxlint: true` (or its object form) turns off the rules of ESLint which is already handled by OxLint.
+> Only the ESLint side has the Bridge: `oxlint: true` (or its object form) turns off the rules of ESLint which is already handled by Oxlint.
 >
-> That option alone enables it, and it always resolves last: the factory owns its position, after every Config object you append, insert or override.
+> That option alone enables the Bridge. It applies to the rules created by the `eslint()` helper and to every Config object you append, insert or override.
 >
-> They are designed for mixed use, because of OxLint does not support custom language parser yet.
+> They are designed for mixed use, because Oxlint does not support some ESLint rules yet.
 
 ```js
 // eslint.config.js
@@ -107,7 +114,7 @@ For more usage details, please refer to below two composer package:
 
 ## Examples
 
-[`playground/`][playground] holds twenty-one examples: seven stacks, each shipped in an
+[`playground/`][playground] holds 21 examples: seven stacks, each shipped in an
 ESLint-only, an Oxlint-only and a paired flavor and named `<flavor>/<stack>`:
 
 - A Next.js application
@@ -127,10 +134,10 @@ mise run play eslint/ts  # One flavor of it
 mise run play --all      # Print every example
 ```
 
-See the [playground index][playground] for the Flavor × Stack matrix and the options each stack
-demonstrates.
+See the [playground index][playground] for the Flavor × Stack matrix and the project each stack
+simulates.
 
-## Coverage report and upstream comparison
+## Coverage Report and Upstream Comparison
 
 This configuration is highly inspired by the upstream package [`@antfu/eslint-config`](https://github.com/antfu/eslint-config). It introduces a mechanism to compare with upstream.
 
@@ -141,8 +148,8 @@ This configuration is highly inspired by the upstream package [`@antfu/eslint-co
 ## Thanks To
 
 - [`eslint-flat-config-utils`](https://github.com/antfu/eslint-flat-config-utils): ESLint composer API support.
-- [`@oxlint-flat-config/composer`](https://github.com/liangmiQwQ/oxlint-flat-config/tree/main/packages/composer): OxLint composer API support.
-- [`@antfu/eslint-config`](https://github.com/antfu/eslint-config): ESLint & OxLint config source reference.
+- [`@oxlint-flat-config/composer`](https://github.com/liangmiQwQ/oxlint-flat-config/tree/main/packages/composer): Oxlint composer API support.
+- [`@antfu/eslint-config`](https://github.com/antfu/eslint-config): ESLint & Oxlint config source reference.
 
 ## Sponsors
 

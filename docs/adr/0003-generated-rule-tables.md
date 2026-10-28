@@ -26,8 +26,8 @@ call: Upstream writes those lists as literals, and Source's copy is a transcript
 `javascript`, `typescript`, `imports`, `unicorn`, `node`, `jsdoc`, `test`, `jsx`, `vue`, `nextjs`,
 `react`, `solid`, `svelte`, `astro`, `angular`, `unocss`, `perfectionist`, `antfu`, `command`,
 `eslint-comments`, `unused-imports`, `antislop`, `jsonc`, `yaml`, `toml`, `markdown`, `pnpm`,
-`formatters` and `disables`; `pnpm` and `disables` transcribe data rather than a plugin config, and
-`disables` is derived from what the Modules actually enabled.
+`sort`, `formatters` and `disables`; `pnpm`, `sort` and `disables` transcribe data rather than a
+plugin config, and `disables` is derived from what the Modules actually enabled.
 
 A framework Module whose peer plugin publishes its recommended set as data (rather than behind an
 API call) stays hand-transcribed on purpose: generating it would add the plugin as a build-time

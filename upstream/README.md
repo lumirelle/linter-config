@@ -3,9 +3,9 @@
 Upstream is [`antfu/eslint-config`](https://github.com/antfu/eslint-config).
 
 `pin.json` is the single source of truth for the baseline: the git tag checked out in this
-submodule and the npm version the repository installs. The submodule provides the source and
-history to read; the exactly pinned npm package is what executes, and both must name the same
-release.
+submodule and the npm version the repository installs.
+
+The submodule provides the source and history to read; the exactly pinned npm package is what executes, and both must name the same release.
 
 | Path | Role |
 | --- | --- |

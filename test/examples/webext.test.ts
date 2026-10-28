@@ -5,8 +5,8 @@ import { configNamed, configNames, expectNoModules, loadExample } from './helper
 
 /**
  * The build output the example keeps out of both tools, written down here rather than read back
- * from the options module: the patterns are what the stack's README documents, and deriving the
- * expectation from the object under test would let a lost list pass.
+ * from the options module: the patterns are the stack's own list, and deriving the expectation from
+ * the object under test would let a lost list pass.
  */
 const BUILD_OUTPUT = ['dist/**', 'extension/**', '.output/**']
 

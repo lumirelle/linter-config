@@ -4,6 +4,7 @@ import { oxlint } from '../src/oxlint'
 import { oxlintRules } from '../src/oxlint/inventory'
 import { coverageReport } from '../src/oxlint/report'
 import { pluginDefinition } from '../src/plugins'
+import { jsPluginsOf } from './helpers/emission'
 import { rulesFor } from './helpers/oxlint-emission'
 
 type Options = Parameters<typeof oxlint>[0]
@@ -51,10 +52,7 @@ describe('oxlint() TypeScript rules', () => {
   })
 
   it('declares no jsPlugin for the typescript scope: Oxlint ships it itself', async () => {
-    const config = await emission()
-    const declared = [...new Set(
-      (config.overrides ?? []).flatMap(override => override.jsPlugins ?? []).map(entry => `${typeof entry === 'string' ? entry : `${entry.name}:${entry.specifier}`}`),
-    )].sort()
+    const declared = (await jsPluginsOf()).map(entry => `${entry.name}:${entry.specifier}`).sort()
 
     // The jsPlugin-backed Modules of the widest Source, and nothing for a built-in scope.
     expect(declared).toEqual([

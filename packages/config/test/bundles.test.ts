@@ -1,8 +1,10 @@
-import { readFileSync } from 'node:fs'
+import { existsSync, readFileSync } from 'node:fs'
+import { isAbsolute } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { eslintParsers, eslintPlugins, eslintProcessors } from '@lumirelle/linter-plugins-eslint'
-import { builtinPlugins, jsPlugins } from '@lumirelle/linter-plugins-oxlint'
+import { builtinPlugins, jsPlugins, resolveJsPlugin } from '@lumirelle/linter-plugins-oxlint'
 import { describe, expect, it } from 'vitest'
+import { blacklistEntry } from '../src/oxlint/blacklist'
 import { isPluginId, PLUGIN_IDS, pluginDefinition } from '../src/plugins'
 
 const packageJson = JSON.parse(
@@ -13,6 +15,34 @@ const packageJson = JSON.parse(
 }
 
 const BUNDLES = ['@lumirelle/linter-plugins-eslint', '@lumirelle/linter-plugins-oxlint']
+
+/** One jsPlugin package the Oxlint Bundle is responsible for shipping. */
+interface ShippedJsPlugin {
+  id: string
+  packageName: string
+}
+
+/**
+ * The jsPlugin packages the Oxlint Bundle must ship: every Bundle-sourced id that Oxlint is allowed
+ * to load. A blacklisted id keeps its `jsPlugins` entry but is not shipped, because the Emission
+ * never asks Oxlint to load it.
+ */
+const SHIPPED: ShippedJsPlugin[] = PLUGIN_IDS.flatMap((id) => {
+  const { from, oxlint } = pluginDefinition(id)
+  if (from !== 'bundle' || blacklistEntry(id) || !oxlint || !('jsPlugin' in oxlint) || !oxlint.jsPlugin) {
+    return []
+  }
+  return [{ id, packageName: oxlint.jsPlugin }]
+})
+
+/** The dependencies a workspace package declares. */
+function dependenciesOf(url: URL): Record<string, string> {
+  const manifest = JSON.parse(readFileSync(fileURLToPath(url), 'utf8')) as { dependencies?: Record<string, string> }
+  return manifest.dependencies ?? {}
+}
+
+const OXLINT_BUNDLE_DEPENDENCIES = dependenciesOf(new URL('../../plugins-oxlint/package.json', import.meta.url))
+const ESLINT_BUNDLE_DEPENDENCIES = dependenciesOf(new URL('../../plugins-eslint/package.json', import.meta.url))
 
 describe('plugin bundles', () => {
   it('are optional peers of the config package', () => {
@@ -36,7 +66,6 @@ describe('plugin bundles', () => {
       'perfectionist',
       'pnpm',
       'regexp',
-      'style',
       'test',
       'toml',
       'ts',
@@ -62,6 +91,27 @@ describe('plugin bundles', () => {
 
     expect([...builtinPlugins].sort()).toEqual([...builtin].sort())
     expect(jsPlugins).toEqual(specifiers)
+  })
+
+  it('depends on exactly the jsPlugin packages it is meant to ship', () => {
+    expect(Object.keys(OXLINT_BUNDLE_DEPENDENCIES).sort()).toEqual(SHIPPED.map(entry => entry.packageName).sort())
+  })
+
+  it('pins the jsPlugin packages at the catalog entry the ESLint Bundle uses', () => {
+    for (const { packageName } of SHIPPED) {
+      expect(OXLINT_BUNDLE_DEPENDENCIES[packageName], `${packageName} in the Oxlint Bundle`).toBeDefined()
+      expect(OXLINT_BUNDLE_DEPENDENCIES[packageName], `${packageName} in the Oxlint Bundle`).toBe(ESLINT_BUNDLE_DEPENDENCIES[packageName])
+    }
+  })
+
+  it('resolves every jsPlugin package it ships from its own module graph', () => {
+    for (const { id, packageName } of SHIPPED) {
+      const resolved = resolveJsPlugin(id)
+
+      expect(resolved, `the Oxlint Bundle should resolve "${id}" (${packageName})`).toBeTypeOf('string')
+      expect(isAbsolute(resolved as string), `${resolved} is an absolute path`).toBe(true)
+      expect(existsSync(resolved as string), `${resolved} exists on disk`).toBe(true)
+    }
   })
 
   it('composes the merged test plugin', () => {

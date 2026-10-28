@@ -15,6 +15,42 @@ const OXLINT_OPTIONS_NAME = 'lumirelle/oxlint/options'
 /** Oxlint-only Config object name for the single `jsPlugins` declaration of an Emission. */
 const OXLINT_JSPLUGINS_NAME = 'lumirelle/oxlint/jsPlugins'
 
+const BUNDLE_PACKAGE = '@lumirelle/linter-plugins-oxlint'
+
+/** What the Bundle exports for resolving a Plugin id, when that Bundle version provides it. */
+interface Bundle {
+  resolveJsPlugin?: (id: string) => string | undefined
+}
+
+let bundle: Promise<Bundle> | undefined
+
+/**
+ * Fails at factory time, not at ESM-resolution time, when the Bundle is not installed.
+ *
+ * `import.meta.resolve` follows the `import` condition the Bundle publishes, which is why
+ * `createRequire().resolve` cannot see it.
+ */
+function requireBundle(): void {
+  try {
+    import.meta.resolve(BUNDLE_PACKAGE)
+  }
+  catch (cause) {
+    throw new Error(`Cannot resolve "${BUNDLE_PACKAGE}". Install it in your project.`, { cause })
+  }
+}
+
+/** Loads the Bundle once; a failed load is retried on the next call. */
+function loadBundle(): Promise<Bundle> {
+  bundle ??= import(BUNDLE_PACKAGE).then(
+    loaded => loaded as Bundle,
+    (cause) => {
+      bundle = undefined
+      throw new Error(`Cannot resolve "${BUNDLE_PACKAGE}". Install it in your project.`, { cause })
+    },
+  )
+  return bundle
+}
+
 /**
  * Turns Source into the Oxlint Emission: keep the Domains Oxlint can read, drop the fields
  * it has no concept of (`plugins`, `languageOptions`, `linterOptions`, `processor`), map
@@ -22,11 +58,12 @@ const OXLINT_JSPLUGINS_NAME = 'lumirelle/oxlint/jsPlugins'
  * `oxlint-flat-config` composer.
  */
 export function composeOxlint(options: Options): Composer {
+  requireBundle()
   const rootOptions = oxlintRootOptions(options.oxlint)
   const typeAware = isTypeAware(options)
 
   const declared = new Set<PluginId>()
-  const items: FlatConfigItem[] = source(options)
+  const items: Array<FlatConfigItem | Promise<FlatConfigItem | undefined>> = source(options)
     .filter(config => isOxlintConfig(config))
     .map((config) => {
       const mapping = mapRules(config.rules, { typeAware })
@@ -36,10 +73,7 @@ export function composeOxlint(options: Options): Composer {
       return toOxlintConfig(config, mapping)
     })
 
-  const jsPlugins = jsPluginsDeclaration(declared)
-  if (jsPlugins) {
-    items.unshift(jsPlugins)
-  }
+  items.unshift(jsPluginsDeclaration(declared))
 
   if (rootOptions) {
     // Oxlint reads `typeAware` / `typeCheck` only in the root config, so the object carries no `files`.
@@ -80,15 +114,24 @@ function toOxlintConfig(config: ConfigObject, { rules }: RuleMapping): FlatConfi
  * copy wins. One unscoped declaration covers every file. The object form is what a scoped package
  * requires, and the alias is the Plugin id, so a rule key reads the same in both Emissions.
  */
-function jsPluginsDeclaration(ids: ReadonlySet<PluginId>): FlatConfigItem | undefined {
-  const entries = PLUGIN_IDS.filter(id => ids.has(id)).flatMap((id) => {
+async function jsPluginsDeclaration(ids: ReadonlySet<PluginId>): Promise<FlatConfigItem | undefined> {
+  const relevant = PLUGIN_IDS.filter((id) => {
     const oxlint = pluginDefinition(id).oxlint
-    return oxlint?.alias && oxlint.jsPlugin ? [{ name: oxlint.alias, specifier: oxlint.jsPlugin }] : []
+    return ids.has(id) && oxlint?.alias && oxlint.jsPlugin
+  })
+  if (relevant.length === 0) {
+    return undefined
+  }
+
+  const { resolveJsPlugin } = await loadBundle()
+  const entries = relevant.map((id) => {
+    const oxlint = pluginDefinition(id).oxlint as { alias: string, jsPlugin: string }
+    // One rule: a package the Bundle ships is a resolved absolute path, anything else stays the
+    // bare name for the consumer to install.
+    return { name: oxlint.alias, specifier: resolveJsPlugin?.(id) ?? oxlint.jsPlugin }
   })
 
-  return entries.length > 0
-    ? { name: OXLINT_JSPLUGINS_NAME, jsPlugins: entries }
-    : undefined
+  return { name: OXLINT_JSPLUGINS_NAME, jsPlugins: entries }
 }
 
 /**

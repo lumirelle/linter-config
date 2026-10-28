@@ -1,5 +1,7 @@
 import type { Linter } from 'eslint'
+import type { OxlintConfig } from 'oxlint'
 import { describe, expect, it } from 'vitest'
+import { pluginPackageName } from '../../../playground/specifiers'
 import { eslint } from '../src/eslint'
 import { oxlint } from '../src/oxlint'
 
@@ -22,6 +24,27 @@ function normalize(configs: Linter.Config[]): unknown {
 /** The name a parser module declares for itself. */
 function parserName(parser: unknown): string {
   return (parser as { meta?: { name?: string } })?.meta?.name ?? '<unnamed parser>'
+}
+
+/**
+ * The Oxlint Emission with every `jsPlugins` specifier named as its package.
+ *
+ * The Emission itself is machine-specific: a Bundle-owned plugin is the absolute path it resolved
+ * to here, which a snapshot cannot compare across machines. Reading it back as a package keeps the
+ * snapshot about the declaration instead of this checkout's layout.
+ */
+function normalizeSpecifiers(config: OxlintConfig): unknown {
+  return sortKeys({
+    ...config,
+    overrides: config.overrides?.map(override => override.jsPlugins
+      ? {
+          ...override,
+          jsPlugins: override.jsPlugins.map(entry => typeof entry === 'string'
+            ? pluginPackageName(entry)
+            : { ...entry, specifier: pluginPackageName(entry.specifier) }),
+        }
+      : override),
+  })
 }
 
 function sortKeys(value: unknown): unknown {
@@ -56,15 +79,15 @@ describe('eslint() emission', () => {
 
 describe('oxlint() emission', () => {
   it('emits the house config', async () => {
-    expect(sortKeys(await oxlint({ gitignore: false, isInEditor: false }))).toMatchSnapshot()
+    expect(normalizeSpecifiers(await oxlint({ gitignore: false, isInEditor: false }))).toMatchSnapshot()
   })
 
   it('emits the root options a type-aware consumer asks for', async () => {
-    expect(sortKeys(await oxlint({ gitignore: false, isInEditor: false, oxlint: { typeAware: true, typeCheck: true } })))
+    expect(normalizeSpecifiers(await oxlint({ gitignore: false, isInEditor: false, oxlint: { typeAware: true, typeCheck: true } })))
       .toMatchSnapshot()
   })
 
   it('emits the stylistic config when the caller turns it on', async () => {
-    expect(sortKeys(await oxlint({ gitignore: false, isInEditor: false, stylistic: true }))).toMatchSnapshot()
+    expect(normalizeSpecifiers(await oxlint({ gitignore: false, isInEditor: false, stylistic: true }))).toMatchSnapshot()
   })
 })

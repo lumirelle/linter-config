@@ -1,3 +1,4 @@
+# --- Node ---
 # Logs
 logs
 *.log
@@ -92,9 +93,8 @@ dist
 # vuepress build output
 .vuepress/dist
 
-# vuepress v2.x temp and cache directory
+# vuepress v2.x temp directory
 .temp
-.cache
 
 # Sveltekit cache directory
 .svelte-kit/
@@ -123,8 +123,11 @@ dist
 # TernJS port file
 .tern-port
 
-# Stores VSCode versions used for testing VSCode extensions
+# Stores Visual Studio Code versions used for testing Visual Studio Code extensions
 .vscode-test
+
+# pnpm
+.pnpm-store
 
 # yarn v3
 .pnp.*
@@ -140,6 +143,13 @@ vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
 .vite/
 
+# Astro generated types
+.astro/
+
+# Turbo Repo
+.turbo
+
+# --- Global/mise ---
 # https://mise.jdx.dev/configuration.html
 # https://mise.jdx.dev/configuration/environments.html
 .mise.*.local.toml
@@ -149,8 +159,10 @@ mise.local.toml
 .mise/*.local.toml
 mise/*.local.toml
 
-# Local tooling output
-reports/
+# https://mise.jdx.dev/dev-tools/mise-lock.html#local-lockfiles
+# https://mise.jdx.dev/dev-tools/mise-lock.html#environment-specific-lockfiles
+mise.local.lock
+mise.*.local.lock
 
 # https://mise.jdx.dev/configuration.html#tool-versions
 #.tool-versions

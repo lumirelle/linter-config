@@ -1,5 +1,14 @@
 import type { OxlintConfig } from 'oxlint'
 import { fileURLToPath } from 'node:url'
+import manifest from '../package.json' with { type: 'json' }
+
+/**
+ * The packages this Bundle ships, straight from its own manifest.
+ *
+ * A package it does not declare as a dependency is not its to resolve, however reachable that
+ * package happens to be from this module.
+ */
+const shipped: ReadonlySet<string> = new Set(Object.keys(manifest.dependencies))
 
 /** One of Oxlint's built-in plugins, as accepted by its `plugins` field. */
 export type BuiltinPlugin = NonNullable<OxlintConfig['plugins']>[number]
@@ -29,8 +38,9 @@ export const builtinPlugins: readonly BuiltinPlugin[] = [
  * identical in ESLint and Oxlint.
  *
  * The map is data, not the last word on the specifier: {@link resolveJsPlugin} turns an id into the
- * absolute path of the package this Bundle ships, and an id it cannot resolve — a peer, or one this
- * Bundle predates — stays a bare package name for the consumer to install.
+ * absolute path of the package this Bundle ships, and an id whose package this Bundle does not
+ * depend on — a peer, or one this Bundle predates — stays a bare package name for the consumer to
+ * install.
  */
 export const jsPlugins: Readonly<Record<string, string>> = {
   'antfu': 'eslint-plugin-antfu',
@@ -50,13 +60,15 @@ export const jsPlugins: Readonly<Record<string, string>> = {
 /**
  * Resolves a Plugin id to the absolute path of the package this Bundle ships for it.
  *
- * Resolution starts at this module, so only the Bundle's own `dependencies` are reachable; an id
- * whose package is not one of them — a peer, a blacklisted plugin, or an id a newer registry knows
- * and this Bundle does not — returns `undefined`, and the caller keeps the bare package name.
+ * "Ships" means the package is one of this Bundle's own `dependencies`, read from its manifest: an
+ * id whose package is not one of them — a peer, a blacklisted plugin, or an id a newer registry
+ * knows and this Bundle does not — returns `undefined`, and the caller keeps the bare package name.
+ * Reachability is not the test: `import.meta.resolve` walks every ancestor `node_modules`, so a
+ * hoisted copy or another workspace package's dependency would otherwise look like the Bundle's.
  */
 export function resolveJsPlugin(id: string): string | undefined {
   const packageName = jsPlugins[id]
-  if (!packageName) {
+  if (!packageName || !shipped.has(packageName)) {
     return undefined
   }
 

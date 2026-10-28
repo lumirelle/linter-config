@@ -77,8 +77,6 @@ The packages Upstream declares as optional peers stay your install, and the Modu
 missing: `eslint-plugin-slop`, `eslint-plugin-solid`, `eslint-plugin-sonarjs`, `@unocss/eslint-plugin`, and
 `@stylistic/eslint-plugin` when you turn `stylistic` on.
 
-`eslint-comments` is not shipped either: it stays blacklisted for Oxlint, as recorded above.
-
 ## License
 
 [MIT](../../LICENSE.md) License © [Lumirelle](https://github.com/lumirelle)

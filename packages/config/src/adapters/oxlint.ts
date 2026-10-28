@@ -35,8 +35,13 @@ function requireBundle(): void {
     import.meta.resolve(BUNDLE_PACKAGE)
   }
   catch (cause) {
-    throw new Error(`Cannot resolve "${BUNDLE_PACKAGE}". Install it in your project.`, { cause })
+    throw bundleError(cause)
   }
+}
+
+/** The one install error naming the Bundle, whichever step failed to reach it. */
+function bundleError(cause: unknown): Error {
+  return new Error(`Cannot resolve "${BUNDLE_PACKAGE}". Install it in your project.`, { cause })
 }
 
 /** Loads the Bundle once; a failed load is retried on the next call. */
@@ -45,7 +50,7 @@ function loadBundle(): Promise<Bundle> {
     loaded => loaded as Bundle,
     (cause) => {
       bundle = undefined
-      throw new Error(`Cannot resolve "${BUNDLE_PACKAGE}". Install it in your project.`, { cause })
+      throw bundleError(cause)
     },
   )
   return bundle

@@ -2,7 +2,7 @@
 
 Status: accepted — implemented. Source, both Adapters and the Bridge live in [`packages/config/src`](../../packages/config/src); this document stays the reference for their field-level shape, invariants and algorithms.
 
-Terms are defined in [GLOSSARY.md](../../GLOSSARY.md). The decisions behind this shape are [ADR 0001](../adr/0001-source-and-composers.md) (Source is a function graph; both artifacts go through a Composer), [ADR 0002](../adr/0002-plugin-bundles.md) (plugin dependencies live in two Bundles), [ADR 0003](../adr/0003-generated-rule-tables.md) (plugin rule tables stay committed data) and [ADR 0004](../adr/0004-oxlint-bridge-closes-the-emission.md) (the Bridge closes the ESLint Emission at resolution time).
+Terms are defined in [GLOSSARY.md](../../GLOSSARY.md). The decisions behind this shape are [ADR 0001](../adr/0001-source-and-composers.md) (Source is a function graph; both artifacts go through a Composer), [ADR 0002](../adr/0002-plugin-bundles.md) (plugin dependencies live in two Bundles), [ADR 0003](../adr/0003-generated-rule-tables.md) (plugin rule tables stay committed data), [ADR 0004](../adr/0004-oxlint-bridge-closes-the-emission.md) (the Bridge closes the ESLint Emission at resolution time), [ADR 0006](../adr/0006-the-oxlint-bundle-resolves-its-jsplugins.md) (the Oxlint Bundle resolves its `jsPlugins` to absolute paths) and [ADR 0007](../adr/0007-stylistic-is-a-peer-on-both-emissions.md) (`stylistic` is a peer on both Emissions).
 
 ## Goals
 
@@ -207,7 +207,7 @@ The Modules as implemented, with the Oxlint realization each Plugin id records. 
 | `eslint-comments` | js | bundle | ESLint only: blacklisted for Oxlint (`no-unlimited-disable` crashes the report shim) |
 | `unused-imports` | js | bundle | `jsPlugins` |
 | `antislop` | js | peer (`eslint-plugin-slop`, `eslint-plugin-sonarjs`) | `jsPlugins` for both, load-tested against Oxlint |
-| `stylistic` | js | bundle | `jsPlugins`, disabled by default |
+| `stylistic` | js | peer (`@stylistic/eslint-plugin`) | `jsPlugins` (bare specifier), disabled by default |
 | `svelte` / `astro` / `angular` | svelte / astro / angular | peer | unsupported |
 | `jsonc` / `yaml` / `toml` | data | bundle | unsupported (no parser) |
 | `markdown` | markup | bundle (`@eslint/markdown`) | unsupported (no processor) |
@@ -248,5 +248,5 @@ For every Config object, take the rules Oxlint can implement and emit `off` entr
 2. `jsPlugins` aliases always equal the Plugin id; a test forbids collisions with the reserved names.
 3. `domain` is required; Adapters filter on it instead of guessing from globs.
 4. v1 ports `formatters` / `sort` / `pnpm` but keeps them disabled by default; they have no Oxlint realization.
-5. Plugin Bundles forward only Upstream's regular lint dependencies. Upstream's optional peers (language and framework plugins, parsers, formatters) remain optional peers of the config package and are installed by the consumer; the registry records this as `from: 'peer'`.
+5. Plugin Bundles forward only Upstream's regular lint dependencies. Upstream's optional peers (language and framework plugins, parsers, formatters) remain optional peers of the config package and are installed by the consumer; the registry records this as `from: 'peer'`. `@stylistic/eslint-plugin` is a peer for the other reason: its Module is off by default ([ADR 0007](../adr/0007-stylistic-is-a-peer-on-both-emissions.md)).
 6. Both factories return Composers and are exported directly. Oxlint awaits the default export before validating it, so `export default oxlint()` needs no top-level `await`, same as ESLint. Oxlint-style array exports are not an option on the Oxlint side (the loader rejects non-object defaults); consumers compose with `extends` / `append`.

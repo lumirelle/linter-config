@@ -24,12 +24,10 @@ export type * from './types'
  * ESLint-only. Whatever Oxlint still lacks is recorded in the Coverage report as `eslint-only-domain`
  * or `type-aware`, never dropped quietly.
  *
- * A plugin is a package name, not something this package loads. The built-in scopes are Oxlint's
- * own, and every other Plugin id becomes a `jsPlugins` entry whose specifier Oxlint resolves from
- * the config file's directory, never from this package's `node_modules`; the consumer installs the
- * plugins of the Modules it enables, which for the default Modules is `eslint-plugin-antfu`,
- * `eslint-plugin-command`, `@e18e/eslint-plugin`, `eslint-plugin-perfectionist`,
- * `eslint-plugin-regexp` and `eslint-plugin-unused-imports`. A Module whose peer packages are
+ * The Oxlint Plugin Bundle owns plugin resolution: it ships the packages the default Modules load,
+ * and every id whose package it ships becomes an absolute `jsPlugins` specifier, so a consumer
+ * installs the Bundle and nothing else. An id it does not ship — a peer, or a blacklisted plugin —
+ * keeps the bare package name for the consumer to install, and a Module whose peer packages are
  * missing names them when it is enabled. Oxlint's `jsPlugins` are alpha and outside semver, so a JS
  * plugin can change behaviour between Oxlint releases even when this package does not.
  *

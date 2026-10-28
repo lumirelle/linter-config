@@ -2,7 +2,6 @@ import type { ESLint, Linter } from 'eslint'
 import e18e from '@e18e/eslint-plugin'
 import eslintComments from '@eslint-community/eslint-plugin-eslint-comments'
 import markdown from '@eslint/markdown'
-import stylistic from '@stylistic/eslint-plugin'
 import tsPlugin from '@typescript-eslint/eslint-plugin'
 import tsParser from '@typescript-eslint/parser'
 import vitestPlugin from '@vitest/eslint-plugin'
@@ -68,7 +67,6 @@ export const eslintPlugins: Record<string, ESLint.Plugin> = {
   'perfectionist': perfectionist,
   'pnpm': pnpm,
   'regexp': regexp,
-  'style': stylistic,
   'test': testPlugin,
   'toml': toml,
   'ts': tsPlugin as unknown as ESLint.Plugin,

@@ -35,12 +35,6 @@ This design draws reference from `@antfu/eslint-config`.
 > `jsonc`/`yaml`/`toml`/`markdown` Modules stay ESLint-only ([docs][oxlint-js-plugins],
 > [Milestone 3][oxlint-js-plugins-milestone]).
 >
-> The remaining plugins that do not depend on a parser and have no native implementation are presented as `jsPlugins`
-> specifiers. Oxlint resolves the specifier against `node_modules` from your project root, so you have to install
-> them yourself. The [bundle README][plugins-oxlint] lists these plugins and records a workaround: an absolute
-> `require.resolve` specifier resolved from the Oxlint plugins package bundle, which we plan to offer in a later version
-> so this bundle can ship the plugins instead of you.
->
 > The [Coverage report][coverage] lists the rules Oxlint still does not support.
 
 ## ESLint
@@ -184,6 +178,5 @@ This configuration is highly inspired by the upstream package [`@antfu/eslint-co
 [coverage]: https://github.com/lumirelle/linter-config/blob/main/packages/config/coverage.json
 [dogfood-eslint]: https://github.com/lumirelle/linter-config/blob/main/eslint.config.js
 [dogfood-oxlint]: https://github.com/lumirelle/linter-config/blob/main/oxlint.config.ts
-[plugins-oxlint]: https://github.com/lumirelle/linter-config/blob/main/packages/plugins-oxlint/README.md
 [oxlint-js-plugins]: https://oxc.rs/docs/guide/usage/linter/js-plugins
 [oxlint-js-plugins-milestone]: https://github.com/oxc-project/oxc/issues/19918

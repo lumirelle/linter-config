@@ -3,7 +3,7 @@ import { spawnSync } from 'node:child_process'
 import { cpSync, existsSync, mkdirSync, mkdtempSync, realpathSync, rmSync, symlinkSync, writeFileSync } from 'node:fs'
 import { createRequire } from 'node:module'
 import { tmpdir } from 'node:os'
-import { dirname, join } from 'node:path'
+import { dirname, isAbsolute, join } from 'node:path'
 import process from 'node:process'
 import { fileURLToPath } from 'node:url'
 import { toPosixPath } from './paths'
@@ -11,8 +11,13 @@ import { toPosixPath } from './paths'
 const REPO_ROOT = fileURLToPath(new URL('../../../', import.meta.url))
 const OXLINT_BIN = join(dirname(createRequire(import.meta.url).resolve('oxlint/package.json')), 'bin', 'oxlint')
 
-/** Where this repository keeps the packages a consumer would install for `jsPlugins`. */
-const PLUGIN_ROOTS = [REPO_ROOT, join(REPO_ROOT, 'packages/plugins-eslint')]
+/**
+ * Where this repository keeps the packages a consumer would install for `jsPlugins`.
+ *
+ * A peer's package is linked from the consumer side, so `packages/config` — the package whose
+ * Modules ask the consumer for it — is one of the roots.
+ */
+const PLUGIN_ROOTS = [REPO_ROOT, join(REPO_ROOT, 'packages/plugins-eslint'), join(REPO_ROOT, 'packages/config')]
 
 /** Diagnostic filenames are relative to the project, with an optional leading `./`. */
 const LEADING_DOT_SLASH = /^\.?\//u
@@ -75,11 +80,19 @@ export function project(
 }
 
 /**
- * Oxlint resolves a `jsPlugins` specifier from the config file's directory, so the scratch project
- * needs the packages a consumer would have installed.
+ * A bare `jsPlugins` specifier is the consumer's own install, which Oxlint resolves the way Node
+ * would from the project it runs in, so the scratch project links the package there. A specifier a
+ * Bundle already resolved to an absolute path needs no link: this project never installs it, and
+ * the path has to exist already.
  */
 function linkPlugin(directory: string, entry: JsPluginEntry): void {
   const specifier = typeof entry === 'string' ? entry : entry.specifier
+  if (isAbsolute(specifier)) {
+    if (!existsSync(specifier)) {
+      throw new Error(`The resolved jsPlugins specifier "${specifier}" does not exist on disk.`)
+    }
+    return
+  }
   const target = PLUGIN_ROOTS
     .map(root => resolvePackageDirectory(root, specifier))
     .find(resolved => resolved !== undefined)

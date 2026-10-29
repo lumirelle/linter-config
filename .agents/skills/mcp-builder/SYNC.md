@@ -1,5 +1,5 @@
 # Sync Info
 
 - **Source:** `vendor/anthropics/skills/mcp-builder`
-- **Git SHA:** `dbd4588f9e1033efb41dad4bef2f7947c8993d44`
-- **Synced:** 2026-10-20
+- **Git SHA:** `ca45fc496a3436251f191354091d557da31c15b5`
+- **Synced:** 2026-10-29

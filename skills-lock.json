@@ -89,7 +89,7 @@
       "source": "lumirelle/skills",
       "sourceType": "github",
       "skillPath": "skills/toolchain/mise/SKILL.md",
-      "computedHash": "e1e96cf4fe72ba27d6bbed1c951138a872855970a94d07b4d66d47f80eb1f782"
+      "computedHash": "6b83c0d419f51c9bc0c376858084f4b5172f0771b4731b572a540a220764faaa"
     },
     "pr": {
       "source": "lumirelle/skills",
@@ -180,6 +180,12 @@
       "sourceType": "github",
       "skillPath": "skills/building/wizard/SKILL.md",
       "computedHash": "52168908fb93c2008f319332a617aed49194e73e4e9468aaf42bc973a5e02f0e"
+    },
+    "worktrunk": {
+      "source": "lumirelle/skills",
+      "sourceType": "github",
+      "skillPath": "skills/toolchain/worktrunk/SKILL.md",
+      "computedHash": "5c625cb1c6bf834c5ffef12d268ab2ad2c8fe23ae712517d40b30b575ad059a5"
     },
     "writing-for-agents": {
       "source": "lumirelle/skills",

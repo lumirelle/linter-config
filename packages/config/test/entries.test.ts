@@ -5,13 +5,16 @@ import { describe, expect, it } from 'vitest'
 
 const root = fileURLToPath(new URL('../', import.meta.url))
 
-const packageJson = JSON.parse(
-  readFileSync(join(root, 'package.json'), 'utf8'),
-) as Record<string, unknown> & { exports: Record<string, unknown> }
+const packageJson = JSON.parse(readFileSync(join(root, 'package.json'), 'utf8')) as Record<
+  string,
+  unknown
+> & { exports: Record<string, unknown> }
 
 describe('package entries', () => {
   it('exports the root entry, the two factories and package.json', () => {
-    expect(Object.keys(packageJson.exports).sort()).toEqual(['.', './eslint', './oxlint', './package.json'].sort())
+    expect(Object.keys(packageJson.exports).sort()).toEqual(
+      ['.', './eslint', './oxlint', './package.json'].sort(),
+    )
   })
 
   it('points the root entry at the built index, and keeps no bare module/typings fields', () => {
@@ -35,8 +38,12 @@ describe('package entries', () => {
   })
 
   it('exposes thenable factories on both built subpaths', async () => {
-    const { eslint } = await import('../dist/eslint.mjs') as { eslint: () => PromiseLike<{ name?: string }[]> }
-    const { oxlint } = await import('../dist/oxlint.mjs') as { oxlint: () => PromiseLike<unknown> }
+    const { eslint } = (await import('../dist/eslint.mjs')) as {
+      eslint: () => PromiseLike<{ name?: string }[]>
+    }
+    const { oxlint } = (await import('../dist/oxlint.mjs')) as {
+      oxlint: () => PromiseLike<unknown>
+    }
 
     const configs = await eslint()
     expect(configs.map(config => config.name)).toContain('lumirelle/javascript/rules')

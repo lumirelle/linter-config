@@ -45,7 +45,7 @@ export interface ModuleDiff {
   /** Whether Source emits this Module at this option point. */
   implemented: boolean
   configs: ConfigDiff[]
-  summary: { added: number, removed: number, severityChanged: number }
+  summary: { added: number; removed: number; severityChanged: number }
 }
 
 export interface OptionPointDiff {
@@ -282,7 +282,11 @@ function configsByName(configs: readonly ComparableConfig[]): Map<string, Normal
   return new Map(normalizeConfigs(configs).map(config => [config.name, config]))
 }
 
-function diffConfig(name: string, source: NormalizedConfig | undefined, upstream: NormalizedConfig | undefined): ConfigDiff {
+function diffConfig(
+  name: string,
+  source: NormalizedConfig | undefined,
+  upstream: NormalizedConfig | undefined,
+): ConfigDiff {
   const module = moduleOfConfigName(name)
   const base = { name, module }
 
@@ -295,8 +299,7 @@ function diffConfig(name: string, source: NormalizedConfig | undefined, upstream
       const sourceSeverity = source.rules[rule]
       if (sourceSeverity === undefined) {
         added.push({ rule, upstream: upstreamSeverity })
-      }
-      else if (sourceSeverity !== upstreamSeverity) {
+      } else if (sourceSeverity !== upstreamSeverity) {
         severityChanged.push({ rule, source: sourceSeverity, upstream: upstreamSeverity })
       }
     }
@@ -313,7 +316,10 @@ function diffConfig(name: string, source: NormalizedConfig | undefined, upstream
     return {
       ...base,
       status: 'upstream-only',
-      added: Object.entries(upstream.rules).map(([rule, severity]) => ({ rule, upstream: severity })),
+      added: Object.entries(upstream.rules).map(([rule, severity]) => ({
+        rule,
+        upstream: severity,
+      })),
       removed: [],
       severityChanged: [],
     }
@@ -323,7 +329,10 @@ function diffConfig(name: string, source: NormalizedConfig | undefined, upstream
     ...base,
     status: 'source-only',
     added: [],
-    removed: Object.entries(source?.rules ?? {}).map(([rule, severity]) => ({ rule, source: severity })),
+    removed: Object.entries(source?.rules ?? {}).map(([rule, severity]) => ({
+      rule,
+      source: severity,
+    })),
     severityChanged: [],
   }
 }
@@ -344,7 +353,7 @@ export function renderReport(report: UpstreamDiffReport): string {
     'and the installed npm package disagree.',
     '',
     'Config objects are aligned by name (`antfu/` is renamed to `lumirelle/`), and rule keys',
-    'are aligned by their normalized plugin prefix: every rename Upstream\'s',
+    "are aligned by their normalized plugin prefix: every rename Upstream's",
     '`defaultPluginRenaming` applies, plus the two Source makes by itself (`markdown` to `md`,',
     '`sonarjs` to `sonar`).',
     '',
@@ -423,8 +432,8 @@ function renderPoint(point: OptionPointDiff): string[] {
 
 function renderModule(module: ModuleDiff): string[] {
   const title = module.implemented
-    ? `### \`${module.module}\` — implemented in Source`
-    : `### \`${module.module}\` — module not yet implemented in Source`
+    ? `### \`${module.module}\`: implemented in Source`
+    : `### \`${module.module}\`: module not yet implemented in Source`
   const lines: string[] = [
     title,
     '',
@@ -444,25 +453,34 @@ function renderConfig(config: ConfigDiff): string[] {
     if (config.added.length === 0) {
       return ['Source does not emit this Config object; it has no rules.']
     }
-    return ['Source does not emit this Config object; every rule it sets is `added`.', '', ...renderRuleTable(config)]
+    return [
+      'Source does not emit this Config object; every rule it sets is `added`.',
+      '',
+      ...renderRuleTable(config),
+    ]
   }
   if (config.status === 'source-only') {
     if (config.removed.length === 0) {
       return ['Upstream does not emit this Config object; it has no rules.']
     }
-    return ['Upstream does not emit this Config object; every rule it sets is `removed`.', '', ...renderRuleTable(config)]
+    return [
+      'Upstream does not emit this Config object; every rule it sets is `removed`.',
+      '',
+      ...renderRuleTable(config),
+    ]
   }
-  if (config.added.length === 0 && config.removed.length === 0 && config.severityChanged.length === 0) {
+  if (
+    config.added.length === 0
+    && config.removed.length === 0
+    && config.severityChanged.length === 0
+  ) {
     return ['No rule differences.']
   }
   return renderRuleTable(config)
 }
 
 function renderRuleTable(config: ConfigDiff): string[] {
-  const lines = [
-    '| Change | Rule | Source | Upstream |',
-    '| --- | --- | --- | --- |',
-  ]
+  const lines = ['| Change | Rule | Source | Upstream |', '| --- | --- | --- | --- |']
 
   for (const [change, rules] of [
     ['added', config.added],
@@ -470,7 +488,9 @@ function renderRuleTable(config: ConfigDiff): string[] {
     ['removed', config.removed],
   ] as const) {
     for (const rule of rules) {
-      lines.push(`| ${change} | \`${rule.rule}\` | ${rule.source ?? '—'} | ${rule.upstream ?? '—'} |`)
+      lines.push(
+        `| ${change} | \`${rule.rule}\` | ${rule.source ?? 'n/a'} | ${rule.upstream ?? 'n/a'} |`,
+      )
     }
   }
 
@@ -488,7 +508,10 @@ export interface OptionPointDefinition {
  * preset. The defaults point passes `stylistic: false` explicitly because that is Source's
  * documented default and both sides must run the same options.
  */
-export function optionPoints(fullOn: Readonly<object>, fullOff: Readonly<object>): OptionPointDefinition[] {
+export function optionPoints(
+  fullOn: Readonly<object>,
+  fullOff: Readonly<object>,
+): OptionPointDefinition[] {
   return [
     { id: 'defaults', options: { stylistic: false, isInEditor: false } },
     { id: 'full-on', options: { ...fullOn, isInEditor: false } },
@@ -523,20 +546,28 @@ export async function main(argv: readonly string[] = process.argv.slice(2)): Pro
   const installedVersion = await readInstalledVersion(pin.package)
   const baseline = { package: pin.package, version: installedVersion ?? pin.version, tag: pin.tag }
 
-  const { antfu, CONFIG_PRESET_FULL_OFF, CONFIG_PRESET_FULL_ON } = await import('@antfu/eslint-config')
+  const { antfu, CONFIG_PRESET_FULL_OFF, CONFIG_PRESET_FULL_ON } =
+    await import('@antfu/eslint-config')
   const { eslint } = await import('@lumirelle/linter-config/eslint')
 
   const points: DiffPointInput[] = []
   for (const point of optionPoints(CONFIG_PRESET_FULL_ON, CONFIG_PRESET_FULL_OFF)) {
-    const sourceConfigs = await eslint(point.options) as ComparableConfig[]
+    const sourceConfigs = (await eslint(point.options)) as ComparableConfig[]
     const implementedModules = normalizeConfigs(sourceConfigs).map(config => config.module)
     const upstreamOptions = gateUpstreamOptions(point.options, implementedModules)
 
     try {
-      const upstreamConfigs = await antfu(upstreamOptions as Parameters<typeof antfu>[0]) as ComparableConfig[]
-      points.push({ id: point.id, sourceOptions: point.options, upstreamOptions, sourceConfigs, upstreamConfigs })
-    }
-    catch (error) {
+      const upstreamConfigs = (await antfu(
+        upstreamOptions as Parameters<typeof antfu>[0],
+      )) as ComparableConfig[]
+      points.push({
+        id: point.id,
+        sourceOptions: point.options,
+        upstreamOptions,
+        sourceConfigs,
+        upstreamConfigs,
+      })
+    } catch (error) {
       points.push({
         id: point.id,
         sourceOptions: point.options,
@@ -557,8 +588,11 @@ export async function main(argv: readonly string[] = process.argv.slice(2)): Pro
   const totals = report.points.reduce(
     (sum, point) => ({
       added: sum.added + point.modules.reduce((total, module) => total + module.summary.added, 0),
-      removed: sum.removed + point.modules.reduce((total, module) => total + module.summary.removed, 0),
-      severityChanged: sum.severityChanged + point.modules.reduce((total, module) => total + module.summary.severityChanged, 0),
+      removed:
+        sum.removed + point.modules.reduce((total, module) => total + module.summary.removed, 0),
+      severityChanged:
+        sum.severityChanged
+        + point.modules.reduce((total, module) => total + module.summary.severityChanged, 0),
     }),
     { added: 0, removed: 0, severityChanged: 0 },
   )

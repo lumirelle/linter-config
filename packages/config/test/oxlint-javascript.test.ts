@@ -33,24 +33,35 @@ describe('oxlint() JavaScript rules', () => {
     const emitted = await rules()
 
     // Recorded in `coverage.json`: Oxlint has a built-in `eslint` scope, but not these rules.
-    for (const missing of ['no-dupe-args', 'no-octal', 'no-octal-escape', 'no-restricted-syntax', 'no-undef-init']) {
+    for (const missing of [
+      'no-dupe-args',
+      'no-octal',
+      'no-octal-escape',
+      'no-restricted-syntax',
+      'no-undef-init',
+    ]) {
       expect(emitted[missing], missing).toBeUndefined()
     }
   })
 
   it('keeps jsPlugin rules under their Plugin id and declares the package Oxlint must load', async () => {
     const config = await house()
-    // Scoped Modules — `test`, `disables` — also set some of these rules, so read the rules the
-    // way Oxlint applies them to a plain JavaScript file.
+    // Scoped Modules such as `test` and `disables` also set some of these rules, so read the rules
+    // the way Oxlint applies them to a plain JavaScript file.
     const emitted = rulesFor(config, JS_EXTENSIONS)
 
     expect(emitted['antfu/no-top-level-await']).toBe('error')
     expect(emitted['unused-imports/no-unused-imports']).toBe('error')
-    expect(emitted['unused-imports/no-unused-vars']).toEqual(['error', expect.objectContaining({ args: 'after-used' })])
-    expect(await jsPluginsOf()).toEqual(expect.arrayContaining([
-      { name: 'antfu', specifier: 'eslint-plugin-antfu' },
-      { name: 'unused-imports', specifier: 'eslint-plugin-unused-imports' },
-    ]))
+    expect(emitted['unused-imports/no-unused-vars']).toEqual([
+      'error',
+      expect.objectContaining({ args: 'after-used' }),
+    ])
+    expect(await jsPluginsOf()).toEqual(
+      expect.arrayContaining([
+        { name: 'antfu', specifier: 'eslint-plugin-antfu' },
+        { name: 'unused-imports', specifier: 'eslint-plugin-unused-imports' },
+      ]),
+    )
   })
 })
 
@@ -102,10 +113,11 @@ describe('oxlint() global ignores', () => {
     expect((config.overrides ?? []).some(override => 'ignores' in override)).toBe(false)
   })
 
-  it('keeps the caller\'s own patterns last, after the house list', async () => {
+  it("keeps the caller's own patterns last, after the house list", async () => {
     const config = await house({ ignores: ['**/vendor', '**/generated'] })
 
-    expect((config.ignorePatterns ?? []).slice(-2).map(pattern => pattern.replace(/^\//, '')))
-      .toEqual(['**/vendor', '**/generated'])
+    expect(
+      (config.ignorePatterns ?? []).slice(-2).map(pattern => pattern.replace(/^\//, '')),
+    ).toEqual(['**/vendor', '**/generated'])
   })
 })

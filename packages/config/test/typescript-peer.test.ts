@@ -11,8 +11,10 @@ vi.mock('eslint-plugin-erasable-syntax-only', () => {
 
 describe('a peer plugin that is not installed', () => {
   it('fails with the package the consumer has to install', async () => {
-    await expect(eslint({ gitignore: false, isInEditor: false, typescript: { erasableOnly: true } }))
-      .rejects
-      .toThrow(/Cannot resolve "eslint-plugin-erasable-syntax-only", which the "erasable-syntax-only" plugin needs\. Install it in your project\./)
+    await expect(
+      eslint({ gitignore: false, isInEditor: false, typescript: { erasableOnly: true } }),
+    ).rejects.toThrow(
+      /Cannot resolve "eslint-plugin-erasable-syntax-only", which the "erasable-syntax-only" plugin needs\. Install it in your project\./,
+    )
   })
 })

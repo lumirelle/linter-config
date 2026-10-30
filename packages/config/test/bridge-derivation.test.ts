@@ -7,7 +7,7 @@ import { houseOptions } from './helpers/emission'
  */
 const counts = vi.hoisted(() => ({ source: 0 }))
 
-vi.mock('../src/source', async (importOriginal) => {
+vi.mock('../src/source', async importOriginal => {
   const actual = await importOriginal<typeof import('../src/source')>()
   return {
     ...actual,

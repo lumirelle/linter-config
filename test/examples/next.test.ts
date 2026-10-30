@@ -1,7 +1,13 @@
 import type { Linter } from 'eslint'
 import { describe, expect, it } from 'vitest'
 import { resolveExample } from '../../playground/examples'
-import { comparableEmission, configNames, expectNoModules, loadExample, objectsOfModule } from './helpers/emission'
+import {
+  comparableEmission,
+  configNames,
+  expectNoModules,
+  loadExample,
+  objectsOfModule,
+} from './helpers/emission'
 
 /**
  * The React Config objects of an ESLint Emission, compared the way two Emissions are compared.
@@ -49,23 +55,31 @@ describe('the `eslint-oxlint/next` example', () => {
   })
 })
 
-describe('the `next` stack\'s React pair relation', () => {
+describe("the `next` stack's React pair relation", () => {
   it.each(['eslint/next', 'eslint-oxlint/next'])(
     'emits the React Config objects of the `react` stack, unchanged, in %s',
-    async (name) => {
+    async name => {
       // The pair relation is a relation between two stacks, so it is compared through the registry:
       // the React Module is one Module, and the Next Module may only add to what it emits. Both
       // ESLint-carrying flavors are checked, because a flavor is what could drift.
-      const [next, react] = await Promise.all([resolveExample(name), resolveExample('eslint-oxlint/react')])
+      const [next, react] = await Promise.all([
+        resolveExample(name),
+        resolveExample('eslint-oxlint/react'),
+      ])
       const emission = next.eslint!
 
       expect(reactObjects(emission)).toEqual(reactObjects(react.eslint!))
-      expect(objectsOfModule(emission, 'nextjs')).toEqual(['lumirelle/nextjs/setup', 'lumirelle/nextjs/rules'])
+      expect(objectsOfModule(emission, 'nextjs')).toEqual([
+        'lumirelle/nextjs/setup',
+        'lumirelle/nextjs/rules',
+      ])
 
       // "Only adds": every Next object comes after the React block the equality above found intact,
       // so the Next Module contributes objects rather than rewriting them.
       const names = configNames(emission)
-      expect(names.indexOf('lumirelle/nextjs/setup')).toBeGreaterThan(names.indexOf('lumirelle/react/typescript'))
+      expect(names.indexOf('lumirelle/nextjs/setup')).toBeGreaterThan(
+        names.indexOf('lumirelle/react/typescript'),
+      )
     },
   )
 })

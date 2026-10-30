@@ -7,11 +7,9 @@ import {
 } from './plugin-rules.generated'
 
 /**
- * Upstream's `configs/e18e.ts`: the plugin's three named rule sets, minus the rules Upstream
- * judges too opinionated to turn on by default.
+ * The sets are the plugin's own `configs`, generated into `./plugin-rules.generated.ts`.
  *
- * The sets are the plugin's own `configs`, generated into `./plugin-rules.generated.ts` because
- * Source imports no plugin package. `moduleReplacements` defaults to a conjunction of two other
+ * `moduleReplacements` defaults to a conjunction of two other
  * options (`type === 'lib' && isInEditor`), which this Module computes at composition time rather
  * than flattening into a single flag.
  *
@@ -30,11 +28,11 @@ export function e18e(options: Pick<Options, 'isInEditor' | 'type'> = {}): Config
       },
       rules: {
         ...E18E_MODERNIZATION_RULES,
-        ...type === 'lib' && isInEditor ? E18E_MODULE_REPLACEMENTS_RULES : {},
+        ...(type === 'lib' && isInEditor ? E18E_MODULE_REPLACEMENTS_RULES : {}),
         ...E18E_PERFORMANCE_IMPROVEMENTS_RULES,
 
         // Too strict for an application, where the performance win is usually negligible.
-        ...type === 'lib' ? {} : { 'e18e/prefer-static-regex': 'off' },
+        ...(type === 'lib' ? {} : { 'e18e/prefer-static-regex': 'off' }),
 
         // Opinionated enough to change behaviour, so off until a project asks for them.
         'e18e/prefer-array-at': 'off',

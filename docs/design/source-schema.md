@@ -14,23 +14,54 @@ Terms are defined in [GLOSSARY.md](../../GLOSSARY.md). The decisions behind this
 
 ```ts
 /** Equals Upstream's post-rename rule prefix, e.g. ts / test / import / style */
-type PluginId
-  = | 'ts' | 'test' | 'import' | 'node' | 'unicorn' | 'jsdoc' | 'vue' | 'vue-a11y'
-    | 'react' | 'react-refresh' | 'next' | 'jsx-a11y' | 'style' | 'perfectionist'
-    | 'regexp' | 'e18e' | 'antfu' | 'command' | 'eslint-comments' | 'unused-imports'
-    | 'sonar' | 'slop' | 'unocss' | 'solid' | 'svelte' | 'astro' | 'format'
-    | 'erasable-syntax-only' | 'angular' | 'angular-template' | 'jsonc' | 'yaml'
-    | 'toml' | 'md' | 'pnpm'
+type PluginId =
+  | 'ts'
+  | 'test'
+  | 'import'
+  | 'node'
+  | 'unicorn'
+  | 'jsdoc'
+  | 'vue'
+  | 'vue-a11y'
+  | 'react'
+  | 'react-refresh'
+  | 'next'
+  | 'jsx-a11y'
+  | 'style'
+  | 'perfectionist'
+  | 'regexp'
+  | 'e18e'
+  | 'antfu'
+  | 'command'
+  | 'eslint-comments'
+  | 'unused-imports'
+  | 'sonar'
+  | 'slop'
+  | 'unocss'
+  | 'solid'
+  | 'svelte'
+  | 'astro'
+  | 'format'
+  | 'erasable-syntax-only'
+  | 'angular'
+  | 'angular-template'
+  | 'jsonc'
+  | 'yaml'
+  | 'toml'
+  | 'md'
+  | 'pnpm'
 // The full list is defined by the registry in src/plugins.ts; this type derives from it
 
 /** Which files a Config object handles; an Adapter uses it as its first filter */
-type Domain
-  = | 'js' // JS / TS / JSX / TSX
-    | 'vue' // Vue SFC (natively supported by Oxlint)
-    | 'svelte' | 'astro' | 'angular' // require a parser; Oxlint cannot
-    | 'data' // JSON / JSONC / YAML / TOML
-    | 'markup' // Markdown / HTML
-    | 'style' // CSS, reserved for a future stylelint adapter
+type Domain =
+  | 'js' // JS / TS / JSX / TSX
+  | 'vue' // Vue SFC (natively supported by Oxlint)
+  | 'svelte'
+  | 'astro'
+  | 'angular' // require a parser; Oxlint cannot
+  | 'data' // JSON / JSONC / YAML / TOML
+  | 'markup' // Markdown / HTML
+  | 'style' // CSS, reserved for a future stylelint adapter
 
 type Glob = string // only * ** {a,b} and character classes
 type RuleKey = `${PluginId}/${string}` | string // unprefixed keys are core rules
@@ -44,9 +75,9 @@ type RuleEntry = RuleSeverity | [RuleSeverity, ...unknown[]]
 interface PluginDefinition {
   from: 'bundle' | 'peer'
   /** ESLint plugin package, plus the parser/processor glue it needs */
-  eslint: { plugin: string, parser?: string, processor?: string }
+  eslint: { plugin: string; parser?: string; processor?: string }
   /** Oxlint realization: built-in scope and/or jsPlugins specifier */
-  oxlint?: { builtin?: string, jsPlugin?: string, alias?: string }
+  oxlint?: { builtin?: string; jsPlugin?: string; alias?: string }
 }
 
 type PluginRef = ReturnType<typeof pluginRef> // branded string, the Plugin id at runtime
@@ -90,16 +121,18 @@ interface ConfigObject {
       processor?: ProcessorRef
     }
     /** false = this object is ESLint-only; the object form carries Oxlint-only fields */
-    oxlint?: false | {
-      env?: Record<string, boolean>
-      jsPlugins?: Array<string | { name: string, specifier: string }>
-    }
+    oxlint?:
+      | false
+      | {
+          env?: Record<string, boolean>
+          jsPlugins?: Array<string | { name: string; specifier: string }>
+        }
   }
 }
 
 interface Options {
   // Same shape as Upstream; the diff feeds the same object to both sides
-  vue?: boolean | { a11y?: boolean, vueVersion?: 2 | 3, sfcBlocks?: boolean }
+  vue?: boolean | { a11y?: boolean; vueVersion?: 2 | 3; sfcBlocks?: boolean }
   react?: boolean
   svelte?: boolean
   astro?: boolean
@@ -127,7 +160,7 @@ interface Options {
   stylistic?: boolean | StylisticOptions
   gitignore?: boolean | FlatGitignoreOptions
   type?: 'lib' | 'app'
-  typescript?: boolean | { tsconfigPath?: string, erasableOnly?: boolean }
+  typescript?: boolean | { tsconfigPath?: string; erasableOnly?: boolean }
   jsx?: boolean
   componentExts?: string[]
   ignores?: string[]
@@ -142,19 +175,49 @@ interface Options {
    * Deep rule/scope merge, equivalent to Upstream's overrides option. A key is either a Module
    * (every object of that Module) or one Config object name, e.g. `lumirelle/typescript/rules`
    */
-  overrides?: Partial<Record<ModuleId | `lumirelle/${string}`, Pick<ConfigObject, 'rules' | 'files' | 'ignores'>>>
+  overrides?: Partial<
+    Record<ModuleId | `lumirelle/${string}`, Pick<ConfigObject, 'rules' | 'files' | 'ignores'>>
+  >
   /** ESLint-side bridge: turn off rules already handled by Oxlint */
   oxlint?: boolean | OxlintOptions
 }
 
 /** The Modules Source emits, in composition order; `src/source.ts` composes them in this order. */
-type ModuleId
-  = | 'ignores' | 'javascript' | 'typescript' | 'imports' | 'unicorn' | 'node'
-    | 'jsdoc' | 'test' | 'jsx' | 'vue' | 'nextjs' | 'react'
-    | 'solid' | 'unocss' | 'regexp' | 'perfectionist' | 'e18e' | 'antfu'
-    | 'command' | 'eslint-comments' | 'unused-imports' | 'antislop' | 'stylistic' | 'svelte'
-    | 'astro' | 'angular' | 'jsonc' | 'yaml' | 'toml' | 'markdown'
-    | 'formatters' | 'sort' | 'pnpm' | 'disables'
+type ModuleId =
+  | 'ignores'
+  | 'javascript'
+  | 'typescript'
+  | 'imports'
+  | 'unicorn'
+  | 'node'
+  | 'jsdoc'
+  | 'test'
+  | 'jsx'
+  | 'vue'
+  | 'nextjs'
+  | 'react'
+  | 'solid'
+  | 'unocss'
+  | 'regexp'
+  | 'perfectionist'
+  | 'e18e'
+  | 'antfu'
+  | 'command'
+  | 'eslint-comments'
+  | 'unused-imports'
+  | 'antislop'
+  | 'stylistic'
+  | 'svelte'
+  | 'astro'
+  | 'angular'
+  | 'jsonc'
+  | 'yaml'
+  | 'toml'
+  | 'markdown'
+  | 'formatters'
+  | 'sort'
+  | 'pnpm'
+  | 'disables'
 
 // The Module option shapes (`FormattersOptions`, `PnpmOptions`, `StylisticOptions`,
 // `StylisticIndent`, `OxlintOptions`) are defined in `src/types.ts` next to `Options`, and each
@@ -185,38 +248,38 @@ export function pluginRef(id: PluginId): PluginRef
 
 The Modules as implemented, with the Oxlint realization each Plugin id records. What an Emission cannot emit is not listed here but derived: the committed [`coverage.json`](../../packages/config/coverage.json) is the per-Module answer for the current Oxlint inventory.
 
-| Module | Domain | ESLint plugin source | Oxlint |
-| --- | --- | --- | --- |
-| `ignores` | js | — | `ignorePatterns` |
-| `javascript` | js | core | built-in `eslint` |
-| `typescript` | js | bundle (`@typescript-eslint`) | built-in `typescript`, type-aware rules excluded |
-| `imports` | js | bundle (`eslint-plugin-import-lite`) | built-in `import` |
-| `unicorn` | js | bundle | built-in `unicorn` |
-| `node` | js | bundle (`eslint-plugin-n`) | built-in `node` |
-| `jsdoc` | js | bundle | built-in `jsdoc` |
-| `test` | js | bundle (`@vitest/eslint-plugin`) | built-in `vitest` |
-| `jsx` | js | parser/settings only | built-in `react` / `jsx-a11y` (partial) |
-| `vue` | vue | bundle + peer (`eslint-plugin-vuejs-accessibility` for a11y) | built-in `vue` |
-| `nextjs` | js | peer (`@next/eslint-plugin-next`) | built-in `nextjs` |
-| `react` | js | peer (`@eslint-react/eslint-plugin`) | built-in `react` |
-| `solid` | js | peer (`eslint-plugin-solid`) | `jsPlugins` (load test required) |
-| `unocss` | js | peer (`@unocss/eslint-plugin`) | `jsPlugins` (load test required) |
-| `regexp` | js | bundle (`eslint-plugin-regexp`) | `jsPlugins` (conformance-tested) |
-| `perfectionist` | js | bundle | `jsPlugins` |
-| `e18e` | js | bundle (`@e18e/eslint-plugin`) | `jsPlugins` (conformance-tested) |
-| `antfu` | js | bundle | `jsPlugins` |
-| `command` | js | bundle | `jsPlugins` |
-| `eslint-comments` | js | bundle | ESLint only: blacklisted for Oxlint (`no-unlimited-disable` crashes the report shim) |
-| `unused-imports` | js | bundle | `jsPlugins` |
-| `antislop` | js | peer (`eslint-plugin-slop`, `eslint-plugin-sonarjs`) | `jsPlugins` for both, load-tested against Oxlint |
-| `stylistic` | js | peer (`@stylistic/eslint-plugin`) | `jsPlugins` (bare specifier), disabled by default |
-| `svelte` / `astro` / `angular` | svelte / astro / angular | peer | unsupported |
-| `jsonc` / `yaml` / `toml` | data | bundle | unsupported (no parser) |
-| `markdown` | markup | bundle (`@eslint/markdown`) | unsupported (no processor) |
-| `formatters` | data / markup | peer (`eslint-plugin-format`) | unsupported |
-| `sort` | data | bundle (`eslint-plugin-jsonc`) | unsupported |
-| `pnpm` | data | bundle (`eslint-plugin-pnpm`) | unsupported |
-| `disables` | js | — | built-in, trimmed by the Coverage report |
+| Module                         | Domain                   | ESLint plugin source                                         | Oxlint                                                                               |
+| ------------------------------ | ------------------------ | ------------------------------------------------------------ | ------------------------------------------------------------------------------------ |
+| `ignores`                      | js                       | —                                                            | `ignorePatterns`                                                                     |
+| `javascript`                   | js                       | core                                                         | built-in `eslint`                                                                    |
+| `typescript`                   | js                       | bundle (`@typescript-eslint`)                                | built-in `typescript`, type-aware rules excluded                                     |
+| `imports`                      | js                       | bundle (`eslint-plugin-import-lite`)                         | built-in `import`                                                                    |
+| `unicorn`                      | js                       | bundle                                                       | built-in `unicorn`                                                                   |
+| `node`                         | js                       | bundle (`eslint-plugin-n`)                                   | built-in `node`                                                                      |
+| `jsdoc`                        | js                       | bundle                                                       | built-in `jsdoc`                                                                     |
+| `test`                         | js                       | bundle (`@vitest/eslint-plugin`)                             | built-in `vitest`                                                                    |
+| `jsx`                          | js                       | parser/settings only                                         | built-in `react` / `jsx-a11y` (partial)                                              |
+| `vue`                          | vue                      | bundle + peer (`eslint-plugin-vuejs-accessibility` for a11y) | built-in `vue`                                                                       |
+| `nextjs`                       | js                       | peer (`@next/eslint-plugin-next`)                            | built-in `nextjs`                                                                    |
+| `react`                        | js                       | peer (`@eslint-react/eslint-plugin`)                         | built-in `react`                                                                     |
+| `solid`                        | js                       | peer (`eslint-plugin-solid`)                                 | `jsPlugins` (load test required)                                                     |
+| `unocss`                       | js                       | peer (`@unocss/eslint-plugin`)                               | `jsPlugins` (load test required)                                                     |
+| `regexp`                       | js                       | bundle (`eslint-plugin-regexp`)                              | `jsPlugins` (conformance-tested)                                                     |
+| `perfectionist`                | js                       | bundle                                                       | `jsPlugins`                                                                          |
+| `e18e`                         | js                       | bundle (`@e18e/eslint-plugin`)                               | `jsPlugins` (conformance-tested)                                                     |
+| `antfu`                        | js                       | bundle                                                       | `jsPlugins`                                                                          |
+| `command`                      | js                       | bundle                                                       | `jsPlugins`                                                                          |
+| `eslint-comments`              | js                       | bundle                                                       | ESLint only: blacklisted for Oxlint (`no-unlimited-disable` crashes the report shim) |
+| `unused-imports`               | js                       | bundle                                                       | `jsPlugins`                                                                          |
+| `antislop`                     | js                       | peer (`eslint-plugin-slop`, `eslint-plugin-sonarjs`)         | `jsPlugins` for both, load-tested against Oxlint                                     |
+| `stylistic`                    | js                       | peer (`@stylistic/eslint-plugin`)                            | `jsPlugins` (bare specifier), disabled by default                                    |
+| `svelte` / `astro` / `angular` | svelte / astro / angular | peer                                                         | unsupported                                                                          |
+| `jsonc` / `yaml` / `toml`      | data                     | bundle                                                       | unsupported (no parser)                                                              |
+| `markdown`                     | markup                   | bundle (`@eslint/markdown`)                                  | unsupported (no processor)                                                           |
+| `formatters`                   | data / markup            | peer (`eslint-plugin-format`)                                | unsupported                                                                          |
+| `sort`                         | data                     | bundle (`eslint-plugin-jsonc`)                               | unsupported                                                                          |
+| `pnpm`                         | data                     | bundle (`eslint-plugin-pnpm`)                                | unsupported                                                                          |
+| `disables`                     | js                       | —                                                            | built-in, trimmed by the Coverage report                                             |
 
 ## Adapter algorithms
 

@@ -40,7 +40,9 @@ function globsOf(globs: Linter.Config['files']): string[] {
  */
 function scopeOf(files?: Linter.Config['files'], ignores?: Linter.Config['files']): string {
   const expand = (globs: Linter.Config['files']): string[] => {
-    const flat = globsOf(globs).flatMap(glob => braceExpand(glob)).sort()
+    const flat = globsOf(globs)
+      .flatMap(glob => braceExpand(glob))
+      .sort()
     return flat.length > 0 ? flat : ['**/*']
   }
   return JSON.stringify({ files: expand(files), ignores: expand(ignores) })
@@ -83,7 +85,11 @@ async function emissionOf(options: Options): Promise<Linter.Config[]> {
 function scopesOf(bridge: readonly Linter.Config[]): Map<string, Set<string>> {
   const scopes = new Map<string, Set<string>>()
   for (const config of bridge) {
-    collect(scopes, scopeOf(config.files, config.ignores), Object.keys(config.rules ?? {}).map(oxlintRuleKey))
+    collect(
+      scopes,
+      scopeOf(config.files, config.ignores),
+      Object.keys(config.rules ?? {}).map(oxlintRuleKey),
+    )
   }
   return scopes
 }
@@ -125,7 +131,11 @@ function shapeOf(configs: readonly Linter.Config[]): unknown[] {
 }
 
 /** A consumer config that re-enables a rule Oxlint owns, for the ordering tests below. */
-const CONSUMER: Linter.Config = { name: 'consumer', files: ['**/*.ts'], rules: { 'no-console': 'error' } }
+const CONSUMER: Linter.Config = {
+  name: 'consumer',
+  files: ['**/*.ts'],
+  rules: { 'no-console': 'error' },
+}
 
 describe('the Emission without `oxlint`', () => {
   it('is the same whether the option is absent or false, and turns nothing off', async () => {
@@ -145,15 +155,18 @@ describe('the Emission with `oxlint`', () => {
       const without = await emissionOf(options)
       const with_ = await eslint(houseOptions({ ...options, oxlint: true }))
 
-      expect(shapeOf(with_).slice(0, without.length), JSON.stringify(options)).toEqual(shapeOf(without))
+      expect(shapeOf(with_).slice(0, without.length), JSON.stringify(options)).toEqual(
+        shapeOf(without),
+      )
       expect(with_.length, JSON.stringify(options)).toBeGreaterThan(without.length)
     }
   })
 
   it('closes with a Bridge that turns off exactly what the Oxlint Emission reports, per scope', async () => {
     for (const options of OPTION_POINTS) {
-      expect(sorted(scopesOf(await bridgeOf(options))), JSON.stringify(options))
-        .toEqual(sorted(await oxlintScopes(options)))
+      expect(sorted(scopesOf(await bridgeOf(options))), JSON.stringify(options)).toEqual(
+        sorted(await oxlintScopes(options)),
+      )
     }
   })
 
@@ -162,17 +175,25 @@ describe('the Emission with `oxlint`', () => {
     const keys = (config: Linter.Config): string[] => Object.keys(config.rules ?? {})
     const global = bridge.filter(config => !config.files).flatMap(keys)
 
-    const vueOnly = bridge.filter(config => config.files && globsOf(config.files).every(glob => glob.endsWith('.vue'))).flatMap(keys)
+    const vueOnly = bridge
+      .filter(config => config.files && globsOf(config.files).every(glob => glob.endsWith('.vue')))
+      .flatMap(keys)
     expect(vueOnly.filter(key => key.startsWith('vue/')).length).toBeGreaterThan(0)
     expect(global.filter(key => key.startsWith('vue/'))).toEqual([])
 
     // The rules of the `.vue`-only object are turned off where Oxlint reads `.vue` files, and nowhere else.
-    expect(effectiveRules(bridge, 'src/component.ts')['vue/no-arrow-functions-in-watch']).toBeUndefined()
-    expect(effectiveRules(bridge, 'src/component.vue')['vue/no-arrow-functions-in-watch']).toBe('off')
+    expect(
+      effectiveRules(bridge, 'src/component.ts')['vue/no-arrow-functions-in-watch'],
+    ).toBeUndefined()
+    expect(effectiveRules(bridge, 'src/component.vue')['vue/no-arrow-functions-in-watch']).toBe(
+      'off',
+    )
   })
 
   it('leaves the objects the Oxlint Emission never takes without Bridge entries', async () => {
-    const keys = (await bridgeOf({ markdown: true, svelte: true })).flatMap(config => Object.keys(config.rules ?? {}))
+    const keys = (await bridgeOf({ markdown: true, svelte: true })).flatMap(config =>
+      Object.keys(config.rules ?? {}),
+    )
 
     // `svelte` and the markup Domain need a parser or processor, so Oxlint never reads those files.
     expect(keys.filter(key => key.startsWith('svelte/'))).toEqual([])
@@ -211,7 +232,11 @@ describe('a consumer config appended after the factory', () => {
   it('holds through any mix of insert, override and append', async () => {
     const bridge = await bridgeOf()
     const base: Linter.Config = { name: 'base', files: ['**/*.ts'], rules: { eqeqeq: 'error' } }
-    const again: Linter.Config = { name: 'again', files: ['**/*.ts'], rules: { 'no-console': 'error' } }
+    const again: Linter.Config = {
+      name: 'again',
+      files: ['**/*.ts'],
+      rules: { 'no-console': 'error' },
+    }
 
     const configs = await eslint(houseOptions({ oxlint: true }))
       .append(CONSUMER)
@@ -229,11 +254,15 @@ describe('a consumer config appended after the factory', () => {
 
 describe('a type-aware rule', () => {
   // Source only emits its type-aware rules with a `tsconfigPath`; Oxlint only reports them in its
-  // type-aware mode, which `typeAware` — and nothing else — turns on.
+  // type-aware mode, which `typeAware`, and nothing else, turns on.
   const TYPE_AWARE: Options = { typescript: { tsconfigPath: 'tsconfig.json' } }
 
   const floating = async (options: Options): Promise<unknown> =>
-    severity(effectiveRules(await eslint(houseOptions(options)), 'src/index.ts')['ts/no-floating-promises'])
+    severity(
+      effectiveRules(await eslint(houseOptions(options)), 'src/index.ts')[
+        'ts/no-floating-promises'
+      ],
+    )
 
   it('stays enabled in ESLint unless the Oxlint object form sets `typeAware`', async () => {
     expect(await floating(TYPE_AWARE)).toBe('error')
@@ -243,8 +272,9 @@ describe('a type-aware rule', () => {
   })
 
   it('is unaffected by `typeCheck` alone, which is Oxlint root options only', async () => {
-    expect(await bridgeOf({ ...TYPE_AWARE, oxlint: { typeCheck: true } }))
-      .toEqual(await bridgeOf({ ...TYPE_AWARE, oxlint: true }))
+    expect(await bridgeOf({ ...TYPE_AWARE, oxlint: { typeCheck: true } })).toEqual(
+      await bridgeOf({ ...TYPE_AWARE, oxlint: true }),
+    )
   })
 })
 
@@ -255,7 +285,11 @@ describe('a renamed plugin prefix', () => {
     // The Emission spells the rule `tsx/...` now; the Bridge follows it instead of staying on `ts/...`.
     expect(severity(effectiveRules(renamed, 'src/index.ts')['tsx/no-require-imports'])).toBe('off')
     // Source enables it either way, so the rule is only silent because the Bridge moved with the rename.
-    expect(severity(effectiveRules(await eslint(houseOptions()), 'src/index.ts')['ts/no-require-imports'])).toBe('error')
+    expect(
+      severity(
+        effectiveRules(await eslint(houseOptions()), 'src/index.ts')['ts/no-require-imports'],
+      ),
+    ).toBe('error')
   })
 })
 
@@ -266,22 +300,43 @@ describe('the Bridge against the real binaries', () => {
     scratch.remove()
   })
 
-  it('leaves ESLint reporting only the rules Oxlint cannot, which Oxlint keeps reporting', { timeout: 30_000 }, async () => {
-    const options = houseOptions({ oxlint: true })
-    const eslintApi = new ESLint({ cwd: FIXTURES, overrideConfig: await eslint(options), overrideConfigFile: true })
+  it(
+    'leaves ESLint reporting only the rules Oxlint cannot, which Oxlint keeps reporting',
+    { timeout: 30_000 },
+    async () => {
+      const options = houseOptions({ oxlint: true })
+      const eslintApi = new ESLint({
+        cwd: FIXTURES,
+        overrideConfig: await eslint(options),
+        overrideConfigFile: true,
+      })
 
-    const ruleIds = async (files: string[]): Promise<string[]> =>
-      (await eslintApi.lintFiles(files)).flatMap(result => result.messages.map(message => message.ruleId ?? '<fatal>'))
+      const ruleIds = async (files: string[]): Promise<string[]> =>
+        (await eslintApi.lintFiles(files)).flatMap(result =>
+          result.messages.map(message => message.ruleId ?? '<fatal>'),
+        )
 
-    // `violations.js` breaks `eqeqeq`, `no-alert`, `no-console` and the unused-import rules, all of
-    // which Oxlint reports; with the Bridge, ESLint says nothing about them.
-    expect(await ruleIds(['violations.js'])).toEqual([])
-    // `dot-notation.js` breaks a rule Oxlint only has in its type-aware mode, so it stays ESLint's.
-    expect(await ruleIds(['dot-notation.js'])).toEqual(['dot-notation'])
+      // `violations.js` breaks `eqeqeq`, `no-alert`, `no-console` and the unused-import rules, all of
+      // which Oxlint reports; with the Bridge, ESLint says nothing about them.
+      expect(await ruleIds(['violations.js'])).toEqual([])
+      // `dot-notation.js` breaks a rule Oxlint only has in its type-aware mode, so it stays ESLint's.
+      expect(await ruleIds(['dot-notation.js'])).toEqual(['dot-notation'])
 
-    const run = lint(project(scratch.directory, 'bridge', await oxlint(options), FIXTURES))
-    expect(run.diagnostics.filter(diagnostic => diagnostic.file === 'fixtures/violations.js').map(diagnostic => diagnostic.ruleId))
-      .toEqual(['no-unused-vars', 'unused-imports/no-unused-imports', 'eqeqeq', 'no-alert', 'no-console'])
-    expect(run.diagnostics.filter(diagnostic => diagnostic.file === 'fixtures/dot-notation.js')).toEqual([])
-  })
+      const run = lint(project(scratch.directory, 'bridge', await oxlint(options), FIXTURES))
+      expect(
+        run.diagnostics
+          .filter(diagnostic => diagnostic.file === 'fixtures/violations.js')
+          .map(diagnostic => diagnostic.ruleId),
+      ).toEqual([
+        'no-unused-vars',
+        'unused-imports/no-unused-imports',
+        'eqeqeq',
+        'no-alert',
+        'no-console',
+      ])
+      expect(
+        run.diagnostics.filter(diagnostic => diagnostic.file === 'fixtures/dot-notation.js'),
+      ).toEqual([])
+    },
+  )
 })

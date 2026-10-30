@@ -145,8 +145,12 @@ describe('eslint() typescript module', () => {
       'lumirelle/typescript/rules',
       'lumirelle/typescript/rules-type-aware',
     ])
-    expect(named(configs, 'lumirelle/typescript/rules-type-aware').rules?.['ts/no-floating-promises']).toBe('error')
-    expect(Object.keys(named(configs, 'lumirelle/typescript/rules-type-aware').rules ?? {})).toHaveLength(21)
+    expect(
+      named(configs, 'lumirelle/typescript/rules-type-aware').rules?.['ts/no-floating-promises'],
+    ).toBe('error')
+    expect(
+      Object.keys(named(configs, 'lumirelle/typescript/rules-type-aware').rules ?? {}),
+    ).toHaveLength(21)
   })
 
   it('points the type-aware parser at the tsconfig from the working directory', async () => {
@@ -164,18 +168,27 @@ describe('eslint() typescript module', () => {
   it('requires an argument list for every function when the project is a library', async () => {
     const rules = named(await emission({ type: 'lib' }), 'lumirelle/typescript/rules').rules ?? {}
 
-    expect(rules['ts/explicit-function-return-type']).toEqual(['error', {
-      allowExpressions: true,
-      allowHigherOrderFunctions: true,
-      allowIIFEs: true,
-    }])
+    expect(rules['ts/explicit-function-return-type']).toEqual([
+      'error',
+      {
+        allowExpressions: true,
+        allowHigherOrderFunctions: true,
+        allowIIFEs: true,
+      },
+    ])
   })
 
   it('widens the scope and the parser extensions through componentExts', async () => {
     const configs = await emission({ componentExts: ['vue'] })
 
-    expect(named(configs, 'lumirelle/typescript/rules').files).toEqual([GLOB_TS, GLOB_TSX, '**/*.vue'])
-    expect(parserOptions(named(configs, 'lumirelle/typescript/parser')).extraFileExtensions).toEqual(['.vue'])
+    expect(named(configs, 'lumirelle/typescript/rules').files).toEqual([
+      GLOB_TS,
+      GLOB_TSX,
+      '**/*.vue',
+    ])
+    expect(
+      parserOptions(named(configs, 'lumirelle/typescript/parser')).extraFileExtensions,
+    ).toEqual(['.vue'])
   })
 
   it('is off when the caller turns typescript off', async () => {

@@ -22,7 +22,7 @@ const OPTIONS: Record<string, Parameters<typeof eslint>[0]> = {
 }
 
 /** What each Module's fixture trips under the real binaries, in the spelling of each engine. */
-const EXPECTATIONS: Record<string, { eslint: Reported[], oxlint: Reported[] }> = {
+const EXPECTATIONS: Record<string, { eslint: Reported[]; oxlint: Reported[] }> = {
   imports: {
     eslint: [
       { file: 'violations.js', ruleId: 'import/no-duplicates', line: 1 },
@@ -116,13 +116,15 @@ async function lintWithEslint(module: string): Promise<Reported[]> {
   })
 
   const results = await eslintApi.lintFiles(['.'])
-  return results.flatMap(result =>
-    result.messages.map((message: Linter.LintMessage) => ({
-      file: toPosixPath(result.filePath.slice(directory.length)),
-      ruleId: message.ruleId ?? '(fatal)',
-      line: message.line ?? 0,
-    })),
-  ).sort(byPosition)
+  return results
+    .flatMap(result =>
+      result.messages.map((message: Linter.LintMessage) => ({
+        file: toPosixPath(result.filePath.slice(directory.length)),
+        ruleId: message.ruleId ?? '(fatal)',
+        line: message.line ?? 0,
+      })),
+    )
+    .sort(byPosition)
 }
 
 /** The real Oxlint over the same fixture project, with `fixtures/` stripped from the file path. */
@@ -134,15 +136,21 @@ async function lintWithOxlint(module: string): Promise<Reported[]> {
     fixtureDirectory(module),
   )
 
-  return lint(directory).diagnostics.map(diagnostic => ({
-    file: diagnostic.file.replace(/^fixtures\//u, ''),
-    ruleId: diagnostic.ruleId,
-    line: diagnostic.line,
-  })).sort(byPosition)
+  return lint(directory)
+    .diagnostics.map(diagnostic => ({
+      file: diagnostic.file.replace(/^fixtures\//u, ''),
+      ruleId: diagnostic.ruleId,
+      line: diagnostic.line,
+    }))
+    .sort(byPosition)
 }
 
 function byPosition(left: Reported, right: Reported): number {
-  return left.file.localeCompare(right.file) || left.line - right.line || left.ruleId.localeCompare(right.ruleId)
+  return (
+    left.file.localeCompare(right.file)
+    || left.line - right.line
+    || left.ruleId.localeCompare(right.ruleId)
+  )
 }
 
 /** The Source rule key an Oxlint rule id stands for, so the two engines can be compared. */
@@ -156,9 +164,10 @@ function sourceKeyOf(oxlintRuleId: string): string {
   return id ? `${id}/${rule}` : oxlintRuleId
 }
 
-describe.each(Object.keys(EXPECTATIONS))('%s fixtures', (module) => {
+describe.each(Object.keys(EXPECTATIONS))('%s fixtures', module => {
   it('reports nothing for house-style code, in either tool', async () => {
-    const clean = (reported: Reported[]): Reported[] => reported.filter(diagnostic => diagnostic.file.startsWith('clean'))
+    const clean = (reported: Reported[]): Reported[] =>
+      reported.filter(diagnostic => diagnostic.file.startsWith('clean'))
 
     expect(clean(await lintWithEslint(module))).toEqual([])
     expect(clean(await lintWithOxlint(module))).toEqual([])
@@ -174,11 +183,13 @@ describe.each(Object.keys(EXPECTATIONS))('%s fixtures', (module) => {
 
   it('leaves no ESLint diagnostic unexplained: Oxlint either reports it or the report records it', async () => {
     const fromEslint = new Set((await lintWithEslint(module)).map(diagnostic => diagnostic.ruleId))
-    const fromOxlint = new Set((await lintWithOxlint(module)).map(diagnostic => sourceKeyOf(diagnostic.ruleId)))
+    const fromOxlint = new Set(
+      (await lintWithOxlint(module)).map(diagnostic => sourceKeyOf(diagnostic.ruleId)),
+    )
     const recorded = new Set(
       Object.values(coverageReport().modules)
         .flat()
-        .flatMap(entry => entry.oxlint ? [entry.key, entry.oxlint] : [entry.key]),
+        .flatMap(entry => (entry.oxlint ? [entry.key, entry.oxlint] : [entry.key])),
     )
 
     const unexplained = [...fromEslint].filter(rule => !fromOxlint.has(rule) && !recorded.has(rule))

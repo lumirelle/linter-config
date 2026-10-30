@@ -3,28 +3,6 @@ import { GLOB_TESTS } from '../globs'
 import { pluginRef } from '../plugins'
 import { rulesEnabledBy } from '../rules'
 
-/** The rules `@vitest/eslint-plugin` contributes, which is the `test` rule prefix. */
-const UPSTREAM_RULES: NonNullable<ConfigObject['rules']> = {
-  'test/consistent-test-it': ['error', { fn: 'it', withinDescribe: 'it' }],
-  'test/no-identical-title': 'error',
-  'test/no-import-node-test': 'error',
-  'test/prefer-hooks-in-order': 'error',
-  'test/prefer-lowercase-title': 'error',
-}
-
-/**
- * Upstream turns these rules off inside test files, because a test file is a different place to
- * write code: assertions are expressions, modules load on import, and callbacks return promises.
- * A Module only carries the entry while another Module of this Source turned the rule on.
- */
-const DISABLED_RULES: NonNullable<ConfigObject['rules']> = {
-  'antfu/no-top-level-await': 'off',
-  'e18e/prefer-static-regex': 'off',
-  'no-unused-expressions': 'off',
-  'node/prefer-global/process': 'off',
-  'ts/explicit-function-return-type': 'off',
-}
-
 /** Options the `test` Module reads; the object form of `Options.test` adds rule overrides. */
 export interface TestOptions {
   files?: Glob[]
@@ -34,18 +12,13 @@ export interface TestOptions {
   enabled?: ReadonlySet<RuleKey>
 }
 
-/**
- * Upstream's `configs/test.ts`: vitest rules for test files, with the house relaxations that make
- * a test file readable.
- *
- * The `test` Plugin id spans two packages — `@vitest/eslint-plugin` plus the `no-only-tests` rule
- * Upstream merges into it — and the Bundle forwards the merged object, so Source names one id.
- * `isInEditor` downgrades `no-only-tests` to a warning like the other autofixable rules.
- *
- * The plugin reads no `settings` and needs no parser, so the Module emits plain rules.
- */
 export function test(options: TestOptions = {}): ConfigObject[] {
-  const { enabled = new Set<RuleKey>(), files = GLOB_TESTS, isInEditor = false, overrides = {} } = options
+  const {
+    enabled = new Set<RuleKey>(),
+    files = GLOB_TESTS,
+    isInEditor = false,
+    overrides = {},
+  } = options
 
   return [
     {
@@ -62,9 +35,23 @@ export function test(options: TestOptions = {}): ConfigObject[] {
       domain: 'js',
       files,
       rules: {
-        ...UPSTREAM_RULES,
+        'test/consistent-test-it': ['error', { fn: 'it', withinDescribe: 'it' }],
+        'test/no-identical-title': 'error',
+        'test/no-import-node-test': 'error',
+        'test/prefer-hooks-in-order': 'error',
+        'test/prefer-lowercase-title': 'error',
+
         'test/no-only-tests': isInEditor ? 'warn' : 'error',
-        ...rulesEnabledBy(DISABLED_RULES, enabled),
+        ...rulesEnabledBy(
+          {
+            'antfu/no-top-level-await': 'off',
+            'e18e/prefer-static-regex': 'off',
+            'no-unused-expressions': 'off',
+            'node/prefer-global/process': 'off',
+            'ts/explicit-function-return-type': 'off',
+          },
+          enabled,
+        ),
         ...overrides,
       },
     },
@@ -78,5 +65,5 @@ export function isTestEnabled(option: Options['test']): boolean {
 
 /** The rule overrides the object form of `Options.test` carries. */
 export function testOverrides(option: Options['test']): NonNullable<ConfigObject['rules']> {
-  return typeof option === 'object' ? option.overrides ?? {} : {}
+  return typeof option === 'object' ? (option.overrides ?? {}) : {}
 }

@@ -1,16 +1,6 @@
 import type { ConfigObject, Options } from '../types'
 import { pluginRef } from '../plugins'
 
-/**
- * Upstream's `configs/imports.ts`: import hygiene, plus the three `antfu` import rules that have
- * no equivalent in `eslint-plugin-import-lite`.
- *
- * `eslint-plugin-import-lite` needs no resolver, so the module carries no `settings` and no
- * parser: both tools read the module as plain rules.
- *
- * Upstream gates `import/newline-after-import` on its stylistic option, which the house turns
- * off by default ({@link Options.stylistic}); the rest of the module is unconditional.
- */
 export function imports(
   options: Pick<Options, 'stylistic'> & { overrides?: ConfigObject['rules'] } = {},
 ): ConfigObject[] {
@@ -36,11 +26,11 @@ export function imports(
         'import/no-mutable-exports': 'error',
         'import/no-named-default': 'error',
 
-        ...stylistic
+        ...(stylistic
           ? {
               'import/newline-after-import': ['error', { count: 1 }],
             }
-          : {},
+          : {}),
 
         ...overrides,
       },

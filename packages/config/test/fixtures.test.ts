@@ -16,7 +16,9 @@ async function lintFixtures(): Promise<Map<string, Linter.LintMessage[]>> {
   })
 
   const results = await eslintApi.lintFiles(['.'])
-  return new Map(results.map(result => [toPosixPath(result.filePath.replace(FIXTURES, '')), result.messages]))
+  return new Map(
+    results.map(result => [toPosixPath(result.filePath.replace(FIXTURES, '')), result.messages]),
+  )
 }
 
 function diagnostics(messages: Linter.LintMessage[]): unknown[] {
@@ -45,21 +47,21 @@ describe('eslint() over the JavaScript fixtures', () => {
         severity: 2,
         line: 1,
         column: 10,
-        message: '\'readFileSync\' is defined but never used.',
+        message: "'readFileSync' is defined but never used.",
       },
       {
         ruleId: 'unused-imports/no-unused-imports',
         severity: 2,
         line: 1,
         column: 10,
-        message: '\'readFileSync\' is defined but never used.',
+        message: "'readFileSync' is defined but never used.",
       },
       {
         ruleId: 'eqeqeq',
         severity: 2,
         line: 4,
         column: 12,
-        message: 'Expected \'===\' and instead saw \'==\'.',
+        message: "Expected '===' and instead saw '=='.",
       },
       {
         ruleId: 'no-alert',
@@ -73,7 +75,8 @@ describe('eslint() over the JavaScript fixtures', () => {
         severity: 2,
         line: 7,
         column: 3,
-        message: 'Unexpected console statement. Only these console methods are allowed: warn, error.',
+        message:
+          'Unexpected console statement. Only these console methods are allowed: warn, error.',
       },
     ])
   })

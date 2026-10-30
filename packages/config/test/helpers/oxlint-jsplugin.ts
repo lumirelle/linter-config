@@ -26,7 +26,7 @@ export interface JsPluginProbe {
  * binary loads the package, and the exact rule key fires on a violating fixture while staying
  * quiet on a clean one.
  *
- * Only diagnostics of `rule` count in either direction — the Emission has hundreds of other rules
+ * Only diagnostics of `rule` count in either direction. The Emission has hundreds of other rules
  * that may report on the same file, and a probe that accepted them would pass for a plugin Oxlint
  * never loaded. A Plugin the blacklist dropped has no declaration to find, so this fails first on
  * the declaration rather than reporting a missing diagnostic.
@@ -36,22 +36,24 @@ export async function expectJsPluginFires(probe: JsPluginProbe): Promise<void> {
   const declared = jsPluginDeclarations(config).filter(entry => entry.name === probe.plugin)
 
   expect(declared, `${probe.plugin} should be declared once`).toHaveLength(1)
-  expect(probe.rule.startsWith(`${probe.plugin}/`), `${probe.rule} is spelled with the ${probe.plugin} alias`).toBe(true)
+  expect(
+    probe.rule.startsWith(`${probe.plugin}/`),
+    `${probe.rule} is spelled with the ${probe.plugin} alias`,
+  ).toBe(true)
 
   const scratch = scratchDirectory('lumirelle-jsplugin-')
   try {
     const directory = project(scratch.directory, probe.plugin, config, probe.fixtures)
-    const fired = lint(directory, [join('fixtures', probe.fixture)])
-      .diagnostics
-      .filter(diagnostic => diagnostic.ruleId === probe.rule)
-    const quiet = lint(directory, [join('fixtures', probe.clean)])
-      .diagnostics
-      .filter(diagnostic => diagnostic.ruleId === probe.rule)
+    const fired = lint(directory, [join('fixtures', probe.fixture)]).diagnostics.filter(
+      diagnostic => diagnostic.ruleId === probe.rule,
+    )
+    const quiet = lint(directory, [join('fixtures', probe.clean)]).diagnostics.filter(
+      diagnostic => diagnostic.ruleId === probe.rule,
+    )
 
     expect(fired.length, `${probe.rule} should fire on ${probe.fixture}`).toBeGreaterThan(0)
     expect(quiet, `${probe.rule} should not fire on ${probe.clean}`).toEqual([])
-  }
-  finally {
+  } finally {
     scratch.remove()
   }
 }

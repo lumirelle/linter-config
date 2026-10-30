@@ -7,7 +7,8 @@ describe('a Plugin specifier', () => {
   })
 
   it('names the scoped package an absolute path into a store resolves to', () => {
-    expect(pluginPackageName('/home/dev/.nub/node_modules/@e18e/eslint-plugin/dist/index.mjs'))
-      .toBe('@e18e/eslint-plugin')
+    expect(
+      pluginPackageName('/home/dev/.nub/node_modules/@e18e/eslint-plugin/dist/index.mjs'),
+    ).toBe('@e18e/eslint-plugin')
   })
 })

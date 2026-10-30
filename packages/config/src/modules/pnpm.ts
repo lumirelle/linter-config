@@ -3,8 +3,7 @@ import { GLOB_JSON } from '../globs'
 import { pluginRef } from '../plugins'
 
 /**
- * The `pnpm-workspace.yaml` keys Upstream orders, as `pathPattern: '^$'` scopes them to the root map.
- * Transcribed from Upstream's `configs/pnpm.ts`, whose groups carry the reading order pnpm documents.
+ * The `pnpm-workspace.yaml` keys orders, as `pathPattern: '^$'` scopes them to the root map.
  */
 const WORKSPACE_YAML_ORDER: readonly string[] = [
   'dedupeInjectedDeps',
@@ -165,25 +164,16 @@ const WORKSPACE_YAML_ORDER: readonly string[] = [
   'catalogs',
 ]
 
-/**
- * Upstream's `configs/pnpm.ts`: `eslint-plugin-pnpm` keeps `package.json` and `pnpm-workspace.yaml`
- * in the shape pnpm expects.
- *
- * The Module is opt-in twice over, exactly as Upstream has it: Source turns it on only when the
- * project has a `pnpm-workspace.yaml` (see {@link Options.pnpm}), and `catalogs` additionally
- * gates `pnpm/json-enforce-catalog` on the workspace actually declaring catalogs.
- *
- * `package.json` is read through the `jsonc` Module's `jsonc/x` language, which the plugin needs
- * and does not register itself; the YAML objects carry the `yaml` Plugin's parser.
- */
-export function pnpm(options: {
-  catalogs?: boolean
-  isInEditor?: boolean
-  json?: boolean
-  sort?: boolean
-  stylistic?: boolean
-  yaml?: boolean
-} = {}): ConfigObject[] {
+export function pnpm(
+  options: {
+    catalogs?: boolean
+    isInEditor?: boolean
+    json?: boolean
+    sort?: boolean
+    stylistic?: boolean
+    yaml?: boolean
+  } = {},
+): ConfigObject[] {
   const {
     catalogs = false,
     isInEditor = false,
@@ -208,14 +198,14 @@ export function pnpm(options: {
         pnpm: pluginRef('pnpm'),
       },
       rules: {
-        ...catalogs
+        ...(catalogs
           ? {
               'pnpm/json-enforce-catalog': [
                 'error',
                 { autofix: !isInEditor, ignores: ['@types/vscode'] },
               ],
             }
-          : {},
+          : {}),
         'pnpm/json-prefer-workspace-settings': ['error', { autofix: !isInEditor }],
         'pnpm/json-valid-catalog': ['error', { autofix: !isInEditor }],
       },
@@ -235,13 +225,16 @@ export function pnpm(options: {
         pnpm: pluginRef('pnpm'),
       },
       rules: {
-        'pnpm/yaml-enforce-settings': ['error', {
-          settings: {
-            minimumReleaseAgeExcludePrune: true,
-            shellEmulator: true,
-            trustPolicy: 'no-downgrade',
+        'pnpm/yaml-enforce-settings': [
+          'error',
+          {
+            settings: {
+              minimumReleaseAgeExcludePrune: true,
+              shellEmulator: true,
+              trustPolicy: 'no-downgrade',
+            },
           },
-        }],
+        ],
         'pnpm/yaml-no-duplicate-catalog-item': 'error',
         'pnpm/yaml-no-unused-catalog-item': 'error',
       },

@@ -29,8 +29,13 @@ export async function eslintObject(name: string, options: Options = {}): Promise
  * Oxlint's configuration has no name field, so the composer keeps Config object names for
  * addressing only and the Emission drops them; a rule key identifies an object instead.
  */
-export async function oxlintObjectWith(ruleKey: string, options: Options = {}): Promise<OxlintObject> {
-  const override = ((await oxlint(houseOptions(options))).overrides ?? []).find(override => ruleKey in (override.rules ?? {}))
+export async function oxlintObjectWith(
+  ruleKey: string,
+  options: Options = {},
+): Promise<OxlintObject> {
+  const override = ((await oxlint(houseOptions(options))).overrides ?? []).find(
+    override => ruleKey in (override.rules ?? {}),
+  )
   if (!override) {
     throw new Error(`oxlint() emitted no override carrying "${ruleKey}"`)
   }
@@ -48,10 +53,14 @@ export function rulesOf(config: { rules?: Record<string, unknown> }): Record<str
  * The Emission declares them once, in one unscoped override, so no object that uses an alias
  * carries a declaration of its own; read them from here rather than from the object under test.
  */
-export function jsPluginDeclarations(config: OxlintConfig): Array<{ name: string, specifier: string }> {
-  return (config.overrides ?? []).flatMap(override => (override.jsPlugins ?? []).map(entry =>
-    typeof entry === 'string' ? { name: entry, specifier: entry } : entry,
-  ))
+export function jsPluginDeclarations(
+  config: OxlintConfig,
+): Array<{ name: string; specifier: string }> {
+  return (config.overrides ?? []).flatMap(override =>
+    (override.jsPlugins ?? []).map(entry =>
+      typeof entry === 'string' ? { name: entry, specifier: entry } : entry,
+    ),
+  )
 }
 
 /**
@@ -59,17 +68,21 @@ export function jsPluginDeclarations(config: OxlintConfig): Array<{ name: string
  * it points at: a bare name stays as written, and a Bundle-resolved path maps back to its package,
  * so the assertion is about which plugin rather than where this machine installed it.
  */
-export async function jsPluginsOf(options: Options = {}): Promise<Array<{ name: string, specifier: string }>> {
-  return jsPluginDeclarations(await oxlint(houseOptions(options)))
-    .map(entry => ({ ...entry, specifier: pluginPackageName(entry.specifier) }))
+export async function jsPluginsOf(
+  options: Options = {},
+): Promise<Array<{ name: string; specifier: string }>> {
+  return jsPluginDeclarations(await oxlint(houseOptions(options))).map(entry => ({
+    ...entry,
+    specifier: pluginPackageName(entry.specifier),
+  }))
 }
 
 /**
  * The Bridge of `options`: the tail a resolution with `oxlint` adds over the same options resolved
  * without it.
  *
- * Deriving it through the Composer keeps the tests on the public seam — the Bridge builder is never
- * imported, so it stays free to change — and turns "is it still last" into "is it the tail".
+ * Deriving it through the Composer keeps the tests on the public seam: the Bridge builder is never
+ * imported, so it stays free to change. It also turns "is it still last" into "is it the tail".
  */
 export async function bridgeOf(options: Options = {}): Promise<Linter.Config[]> {
   const without = await eslint(houseOptions({ ...options, oxlint: false }))

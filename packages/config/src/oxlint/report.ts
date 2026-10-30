@@ -11,13 +11,13 @@ import { mapRules } from './rule-map'
 /**
  * What the Oxlint Emission cannot implement, per Module.
  *
- * The report describes the widest Source — every Module, and every optional slice the options can
- * add — so an option cannot hide a gap: a rule turns up here because Oxlint has no realization for
- * it, or because it needs a mode the Emission only turns on when asked. It is committed as
+ * The report describes the widest Source: every Module, and every optional slice the options can
+ * add. An option therefore cannot hide a gap. A rule turns up here because Oxlint has no realization
+ * for it, or because it needs a mode the Emission only turns on when asked. It is committed as
  * `coverage.json`, so a rule that stops being representable forces a review.
  */
 export interface CoverageReport {
-  /** The Oxlint version the rule inventory — and so this report — was generated from. */
+  /** The Oxlint version the rule inventory, and so this report, was generated from. */
   oxlintVersion: string
   /** The Plugin ids the Emission's one `jsPlugins` declaration aliases, in registry order. */
   jsPlugins: PluginId[]

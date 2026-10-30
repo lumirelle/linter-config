@@ -16,7 +16,7 @@ import { requirePeerPackages } from '../packages'
 import { pluginRef } from '../plugins'
 
 /**
- * Upstream's `parserPlain`: a parser that reports the file as one empty `Program`, so a formatter
+ * A parser that reports the file as one empty `Program`, so a formatter
  * rule sees the raw text and nothing else.
  *
  * It is a plain object, not a package, which is why it lives in Source instead of the Plugin
@@ -59,7 +59,7 @@ const PRETTIER_XML_OPTIONS = {
 }
 
 /** The CSS-family objects, which differ only in the Prettier parser they name. */
-const STYLE_FORMATTERS: Array<{ files: string[], parser: string, name: string }> = [
+const STYLE_FORMATTERS: Array<{ files: string[]; parser: string; name: string }> = [
   { files: [GLOB_CSS, GLOB_POSTCSS], name: 'lumirelle/formatter/css', parser: 'css' },
   { files: [GLOB_SCSS], name: 'lumirelle/formatter/scss', parser: 'scss' },
   { files: [GLOB_LESS], name: 'lumirelle/formatter/less', parser: 'less' },
@@ -87,19 +87,6 @@ function formatter(
   }
 }
 
-/**
- * Upstream's `configs/formatters.ts`: hand CSS, HTML, XML, SVG, Markdown, Astro, GraphQL and
- * optional Slidev files to `eslint-plugin-format`.
- *
- * The Module is opt-in (`Options.formatters` defaults to off) and its plugin is a peer, so a
- * consumer who never asks for it never needs `eslint-plugin-format` installed. Every object reads
- * its files with {@link parserPlain}, which is ESLint-only; Oxlint records the whole Module as
- * `eslint-only-domain`.
- *
- * Where Upstream probes the consumer's packages to decide what `formatters: true` enables, the
- * house enables the formatters that need no extra plugin (`css`, `html`, `graphql`, `markdown`)
- * and leaves the plugin-dependent ones (`xml`, `svg`, `astro`, `slidev`) to the object form.
- */
 export function formatters(options: FormattersOptions = {}): ConfigObject[] {
   requirePeerPackages('formatters', ['format'])
   const prettierOptions = { ...PRETTIER_OPTIONS, ...options.prettierOptions }
@@ -116,63 +103,94 @@ export function formatters(options: FormattersOptions = {}): ConfigObject[] {
   ]
 
   if (options.css) {
-    configs.push(...STYLE_FORMATTERS.map(({ files, name, parser }) => formatter(name, 'data', files, {
-      'format/prettier': ['error', { ...prettierOptions, parser }],
-    })))
+    configs.push(
+      ...STYLE_FORMATTERS.map(({ files, name, parser }) =>
+        formatter(name, 'data', files, {
+          'format/prettier': ['error', { ...prettierOptions, parser }],
+        }),
+      ),
+    )
   }
 
   if (options.html) {
-    configs.push(formatter('lumirelle/formatter/html', 'markup', [GLOB_HTML], {
-      'format/prettier': ['error', { ...prettierOptions, parser: 'html' }],
-    }))
+    configs.push(
+      formatter('lumirelle/formatter/html', 'markup', [GLOB_HTML], {
+        'format/prettier': ['error', { ...prettierOptions, parser: 'html' }],
+      }),
+    )
   }
 
   if (options.xml || options.svg) {
-    const xmlOptions = { ...prettierOptions, ...PRETTIER_XML_OPTIONS, parser: 'xml', plugins: ['@prettier/plugin-xml'] }
+    const xmlOptions = {
+      ...prettierOptions,
+      ...PRETTIER_XML_OPTIONS,
+      parser: 'xml',
+      plugins: ['@prettier/plugin-xml'],
+    }
     if (options.xml) {
-      configs.push(formatter('lumirelle/formatter/xml', 'data', [GLOB_XML], {
-        'format/prettier': ['error', xmlOptions],
-      }))
+      configs.push(
+        formatter('lumirelle/formatter/xml', 'data', [GLOB_XML], {
+          'format/prettier': ['error', xmlOptions],
+        }),
+      )
     }
     if (options.svg) {
-      configs.push(formatter('lumirelle/formatter/svg', 'data', [GLOB_SVG], {
-        'format/prettier': ['error', xmlOptions],
-      }))
+      configs.push(
+        formatter('lumirelle/formatter/svg', 'data', [GLOB_SVG], {
+          'format/prettier': ['error', xmlOptions],
+        }),
+      )
     }
   }
 
   if (options.markdown) {
-    const slidevFiles = options.slidev === true
-      ? ['**/slides.md']
-      : typeof options.slidev === 'object' && options.slidev !== null
-        ? options.slidev.files ?? []
-        : []
+    const slidevFiles =
+      options.slidev === true
+        ? ['**/slides.md']
+        : typeof options.slidev === 'object' && options.slidev !== null
+          ? (options.slidev.files ?? [])
+          : []
 
-    configs.push(formatter(
-      'lumirelle/formatter/markdown',
-      'markup',
-      [GLOB_MARKDOWN],
-      options.markdown === 'dprint'
-        ? { 'format/dprint': ['error', { ...options.dprintOptions, language: 'markdown' }] }
-        : { 'format/prettier': ['error', { ...prettierOptions, embeddedLanguageFormatting: 'off', parser: 'markdown' }] },
-    ))
+    configs.push(
+      formatter(
+        'lumirelle/formatter/markdown',
+        'markup',
+        [GLOB_MARKDOWN],
+        options.markdown === 'dprint'
+          ? { 'format/dprint': ['error', { ...options.dprintOptions, language: 'markdown' }] }
+          : {
+              'format/prettier': [
+                'error',
+                { ...prettierOptions, embeddedLanguageFormatting: 'off', parser: 'markdown' },
+              ],
+            },
+      ),
+    )
 
     if (options.slidev) {
-      configs.push(formatter('lumirelle/formatter/slidev', 'markup', slidevFiles, {
-        'format/prettier': ['error', {
-          ...prettierOptions,
-          embeddedLanguageFormatting: 'off',
-          parser: 'slidev',
-          plugins: ['prettier-plugin-slidev'],
-        }],
-      }))
+      configs.push(
+        formatter('lumirelle/formatter/slidev', 'markup', slidevFiles, {
+          'format/prettier': [
+            'error',
+            {
+              ...prettierOptions,
+              embeddedLanguageFormatting: 'off',
+              parser: 'slidev',
+              plugins: ['prettier-plugin-slidev'],
+            },
+          ],
+        }),
+      )
     }
   }
 
   if (options.astro) {
     configs.push(
       formatter('lumirelle/formatter/astro', 'markup', [GLOB_ASTRO], {
-        'format/prettier': ['error', { ...prettierOptions, parser: 'astro', plugins: ['prettier-plugin-astro'] }],
+        'format/prettier': [
+          'error',
+          { ...prettierOptions, parser: 'astro', plugins: ['prettier-plugin-astro'] },
+        ],
       }),
       {
         name: 'lumirelle/formatter/astro/disables',
@@ -193,9 +211,11 @@ export function formatters(options: FormattersOptions = {}): ConfigObject[] {
   }
 
   if (options.graphql) {
-    configs.push(formatter('lumirelle/formatter/graphql', 'data', [GLOB_GRAPHQL], {
-      'format/prettier': ['error', { ...prettierOptions, parser: 'graphql' }],
-    }))
+    configs.push(
+      formatter('lumirelle/formatter/graphql', 'data', [GLOB_GRAPHQL], {
+        'format/prettier': ['error', { ...prettierOptions, parser: 'graphql' }],
+      }),
+    )
   }
 
   return configs

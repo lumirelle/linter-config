@@ -34,8 +34,7 @@ export async function readInstalledVersion(packageName: string): Promise<string 
     const manifest = createRequire(import.meta.url).resolve(`${packageName}/package.json`)
     const { version } = JSON.parse(await readFile(manifest, 'utf8')) as { version: string }
     return version
-  }
-  catch {
+  } catch {
     return undefined
   }
 }

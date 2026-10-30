@@ -3,7 +3,12 @@ import type { Linter } from 'eslint'
 import type { OxlintConfig } from 'oxlint'
 import type { Example } from '../../../playground/examples'
 import { expect } from 'vitest'
-import { listExamples, listStacks, resolveExample, resolveStack } from '../../../playground/examples'
+import {
+  listExamples,
+  listStacks,
+  resolveExample,
+  resolveStack,
+} from '../../../playground/examples'
 
 /** One example as a stack spec loads it: its options module plus both Emissions. */
 export type ExampleEmissions = Example & {
@@ -26,9 +31,9 @@ export interface StackExamples {
  *
  * Resolving them here keeps the discovery out of the specs, which only bind the result. It cannot be
  * a constant: both tables are awaited from the registry, and the house rules ban a top-level await
- * outside a test file — this module is test scaffolding rather than one.
+ * outside a test file, while this module is test scaffolding rather than one.
  */
-export async function exampleTables(): Promise<{ examples: Example[], stacks: StackExamples[] }> {
+export async function exampleTables(): Promise<{ examples: Example[]; stacks: StackExamples[] }> {
   const [examples, stacks] = await Promise.all([
     listExamples().then(names => Promise.all(names.map(name => resolveExample(name)))),
     listStacks().then(names =>
@@ -48,13 +53,15 @@ export async function exampleTables(): Promise<{ examples: Example[], stacks: St
  * proves it built from the stack's options.
  */
 export function optionsByStack(stacks: readonly StackExamples[]): Map<string, Options> {
-  return new Map(stacks.map(({ stack, examples }) => {
-    const paired = examples.find(example => example.flavor === 'eslint-oxlint')
-    if (!paired?.options) {
-      throw new Error(`The "${stack}" stack ships no paired flavor with an options module.`)
-    }
-    return [stack, paired.options] as const
-  }))
+  return new Map(
+    stacks.map(({ stack, examples }) => {
+      const paired = examples.find(example => example.flavor === 'eslint-oxlint')
+      if (!paired?.options) {
+        throw new Error(`The "${stack}" stack ships no paired flavor with an options module.`)
+      }
+      return [stack, paired.options] as const
+    }),
+  )
 }
 
 /**
@@ -64,8 +71,8 @@ export function optionsByStack(stacks: readonly StackExamples[]): Map<string, Op
  * Both Emissions come back resolved, so every test that loads an example has also loaded the
  * Oxlint side: a missing peer, parser or processor throws here, not in a consumer's repository.
  * A stack spec asserts stack semantics, which do not vary by flavor, so it loads the stack's paired
- * flavor — the one that ships both config modules — and this is where that is required rather than
- * in every spec.
+ * flavor, the one that ships both config modules, and this is where that is required rather than in
+ * every spec.
  *
  * The assertions read Config object names rather than pinning `.gitignore` discovery and editor
  * detection the way `houseOptions()` does for the repository's own config: those two inputs change
@@ -76,7 +83,9 @@ export async function loadExample(name: string): Promise<ExampleEmissions> {
   const example = await resolveExample(name)
   const { eslint, options, oxlint } = example
   if (!eslint || !oxlint || !options) {
-    throw new Error(`The example "${example.name}" is not a paired flavor: it ships neither two config modules nor an options module.`)
+    throw new Error(
+      `The example "${example.name}" is not a paired flavor: it ships neither two config modules nor an options module.`,
+    )
   }
   return { ...example, options, eslint, oxlint }
 }
@@ -89,13 +98,20 @@ export async function loadExample(name: string): Promise<ExampleEmissions> {
  * same options are never identity-equal. Names, file scopes and rules are what a flavor can change;
  * plugins and processors belong to the Modules, not to the example.
  */
-export function comparableEmission(configs: readonly Linter.Config[]): Array<Pick<Linter.Config, 'name' | 'files' | 'ignores' | 'rules'>> {
-  return configs.map(config => ({ name: config.name, files: config.files, ignores: config.ignores, rules: config.rules }))
+export function comparableEmission(
+  configs: readonly Linter.Config[],
+): Array<Pick<Linter.Config, 'name' | 'files' | 'ignores' | 'rules'>> {
+  return configs.map(config => ({
+    name: config.name,
+    files: config.files,
+    ignores: config.ignores,
+    rules: config.rules,
+  }))
 }
 
 /** The Config object names an ESLint Emission carries, in emission order. */
 export function configNames(configs: readonly Linter.Config[]): string[] {
-  return configs.flatMap(config => config.name === undefined ? [] : [config.name])
+  return configs.flatMap(config => (config.name === undefined ? [] : [config.name]))
 }
 
 /**
@@ -149,7 +165,10 @@ export function objectsOfModule(configs: readonly Linter.Config[], module: Modul
  * assertion: an option that leaked between examples shows up as an object of a Module the example
  * never enabled.
  */
-export function expectNoModules(configs: readonly Linter.Config[], modules: readonly ModuleId[]): void {
+export function expectNoModules(
+  configs: readonly Linter.Config[],
+  modules: readonly ModuleId[],
+): void {
   for (const module of modules) {
     expect(objectsOfModule(configs, module), `the Emission carries ${module} objects`).toEqual([])
   }
@@ -167,8 +186,8 @@ export function expectOxlintReadsVue(oxlint: OxlintConfig): void {
 /**
  * The Config object an ESLint Emission carries under `name`.
  *
- * Some assertions read what a Module put inside one object — the rule table an option extends, the
- * plugins it declares — which the name list `configNames` returns cannot answer.
+ * Some assertions read what a Module put inside one object, the rule table an option extends or the
+ * plugins it declares, which the name list `configNames` returns cannot answer.
  */
 export function configNamed(configs: readonly Linter.Config[], name: string): Linter.Config {
   const config = configs.find(candidate => candidate.name === name)

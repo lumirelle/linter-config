@@ -3,10 +3,12 @@ layout: home
 
 hero:
   name: '@lumirelle/linter-config'
+  text: One set of lint preferences, emitted for ESLint and Oxlint
   actions:
     - theme: brand
-      text: Get Started
-      link: /guide/
+      text: Source schema
+      link: /design/source-schema
+    - theme: alt
+      text: Decisions
+      link: /adr/
 ---
-
-Hello

@@ -7,7 +7,13 @@ import { oxlint } from '../src/oxlint'
 import { jsPluginDeclarations } from './helpers/emission'
 
 const oxlintSchema = JSON.parse(
-  readFileSync(join(dirname(createRequire(import.meta.url).resolve('oxlint/package.json')), 'configuration_schema.json'), 'utf8'),
+  readFileSync(
+    join(
+      dirname(createRequire(import.meta.url).resolve('oxlint/package.json')),
+      'configuration_schema.json',
+    ),
+    'utf8',
+  ),
 ) as { properties: Record<string, unknown> }
 const OXLINT_ROOT_FIELDS = Object.keys(oxlintSchema.properties)
 
@@ -76,7 +82,9 @@ describe('oxlint()', () => {
     }))
     const removed = await oxlint().remove(name)
 
-    expect(jsPluginDeclarations(overridden)).toEqual([{ name: 'antfu', specifier: 'eslint-plugin-antfu' }])
+    expect(jsPluginDeclarations(overridden)).toEqual([
+      { name: 'antfu', specifier: 'eslint-plugin-antfu' },
+    ])
     expect(jsPluginDeclarations(removed)).toEqual([])
   })
 })

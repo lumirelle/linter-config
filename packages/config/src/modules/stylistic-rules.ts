@@ -24,11 +24,11 @@ const DEFAULT_INDENT_LEVEL = 2
  *
  * Source imports no plugin package, so the rule table is the committed output of one
  * `customize()` call and each option is a generated patch over it. The patches apply in a fixed
- * order — experimental, JSX, indent, quotes, semi, brace style — because they overlap: the
- * experimental patch turns JSX rules off and the JSX patch removes them, while both the indent
- * and the experimental patches touch rules that only exist while JSX is on. The generator
- * (`mise run //packages/config:stylistic`) asserts that this composition equals `customize()`
- * for every option combination, so an ordering bug cannot survive regeneration.
+ * order: experimental, JSX, indent, quotes, semi, brace style. The order matters because they
+ * overlap: the experimental patch turns JSX rules off and the JSX patch removes them, while both
+ * the indent and the experimental patches touch rules that only exist while JSX is on. The
+ * generator (`mise run //packages/config:stylistic`) asserts that this composition equals
+ * `customize()` for every option combination, so an ordering bug cannot survive regeneration.
  */
 export function stylisticCustomizeRules(
   options: StylisticCustomizeOptions,
@@ -67,9 +67,10 @@ function applyIndent(
   const [level, indentOptions] = Array.isArray(indent) ? indent : [indent, undefined]
 
   if (level !== DEFAULT_INDENT_LEVEL) {
-    const patches = level === 'tab'
-      ? STYLISTIC_PATCHES.indent.tab
-      : withIndentLevel(STYLISTIC_PATCHES.indent.number, level)
+    const patches =
+      level === 'tab'
+        ? STYLISTIC_PATCHES.indent.tab
+        : withIndentLevel(STYLISTIC_PATCHES.indent.number, level)
     applyPatch(rules, jsx ? patches.withJsx : patches.withoutJsx)
   }
 
@@ -103,11 +104,12 @@ function substituteLevel(value: unknown, level: number): unknown {
 
 /** A patch replaces the rules it names and removes the ones it sets to `null`. */
 function applyPatch(rules: Partial<Record<RuleKey, RuleEntry>>, patch: StylisticRulePatch): void {
-  for (const [key, entry] of Object.entries(patch) as Array<[RuleKey, RuleEntry | null | undefined]>) {
+  for (const [key, entry] of Object.entries(patch) as Array<
+    [RuleKey, RuleEntry | null | undefined]
+  >) {
     if (entry === null) {
       delete rules[key]
-    }
-    else if (entry !== undefined) {
+    } else if (entry !== undefined) {
       rules[key] = entry
     }
   }

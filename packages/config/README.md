@@ -19,19 +19,17 @@ pnpm add -D @lumirelle/linter-config
 npm install -D @lumirelle/linter-config
 ```
 
-The default plugins setup for different linter are optional peers, pick as your need:
+The default plugin set for each linter is an optional peer. Install the one your linter needs:
 
-- `@lumirelle/linter-plugins-eslint`: If you want to use `@lumirelle/linter-config/eslint`.
-- `@lumirelle/linter-plugins-oxlint`: If you want to use `@lumirelle/linter-config/oxlint`.
+- `@lumirelle/linter-plugins-eslint` for `@lumirelle/linter-config/eslint`
+- `@lumirelle/linter-plugins-oxlint` for `@lumirelle/linter-config/oxlint`
 
-If you want to use some optional options, such as `eslint({ react: true })`, you may need to install the corresponding
-plugin as the direct dependency of your project, the plugins package does not include them.
-
-This design draws reference from `@antfu/eslint-config`.
+Some options need a plugin the Bundles do not ship. For example, with `eslint({ react: true })`, you should install
+`@eslint-react/eslint-plugin` in your own project.
 
 > [!NOTE]
-> Oxlint runs most of the required plugins natively. Some plugins that need their own parser still cannot run through
-> `jsPlugins` yet and have no native implementation: Svelte, Astro, Angular, `format` and the
+> Oxlint runs most of the required plugins natively. Some plugins need their own parser, so they cannot run through
+> `jsPlugins` and have no native implementation: Svelte, Astro, Angular, `format` and the
 > `jsonc`/`yaml`/`toml`/`markdown` Modules stay ESLint-only ([docs][oxlint-js-plugins],
 > [Milestone 3][oxlint-js-plugins-milestone]).
 >
@@ -61,20 +59,22 @@ export default oxlint({
 })
 ```
 
-## Composition and Overrides
+## Composition and overrides
 
-Both composers of ESLint and Oxlint support `append`, `override`, `insertAfter` and `remove`.
+The composers on both sides support `append`, `override`, `insertAfter` and `remove`. The ESLint side
+is [`eslint-flat-config-utils`](https://github.com/antfu/eslint-flat-config-utils); the Oxlint side is
+[`@oxlint-flat-config/composer`](https://github.com/liangmiQwQ/oxlint-flat-config/tree/main/packages/composer).
 
-For ESLint, it uses [`eslint-flat-config-utils`](https://github.com/antfu/eslint-flat-config-utils) under the hood; for Oxlint, it uses [`@oxlint-flat-config/composer`](https://github.com/liangmiQwQ/oxlint-flat-config/tree/main/packages/composer) under the hood.
-
-A Config object is addressed by its stable `name`, `lumirelle/<upstream tail>`:
+A Config object is addressed by its stable `name`, of the form `lumirelle/{upstream_tail}`.
 
 > [!Note]
-> Only the ESLint side has the Bridge: `oxlint: true` (or its object form) turns off the rules of ESLint which is already handled by Oxlint.
+> Only the ESLint side has the Bridge. `oxlint: true`, or its object form, turns off the ESLint rules that Oxlint
+> already reports.
 >
-> That option alone enables the Bridge. It applies to the rules created by the `eslint()` helper and to every Config object you append, insert or override.
+> That option alone enables the Bridge, and it reaches the rules the `eslint()` factory creates plus every Config object
+> you append, insert or override.
 >
-> They are designed for mixed use, because Oxlint does not support some ESLint rules yet.
+> The Bridge exists for mixed use.
 
 ```js
 // eslint.config.js
@@ -85,17 +85,21 @@ const options = { oxlint: { typeAware: true } }
 export default eslint(options)
   // One named Config object, without restating the Module.
   .override('lumirelle/javascript/rules', { rules: { 'no-console': 'off' } })
-  // Your own objects are appended after ours and resolve before the Bridge, which the factory appends last.
-  .append({ name: 'project/no-legacy', files: ['legacy/**'], rules: { 'ts/no-explicit-any': 'error' } })
+  // Your own objects resolve before the Bridge, which the factory adds at resolution time.
+  .append({
+    name: 'project/no-legacy',
+    files: ['legacy/**'],
+    rules: { 'ts/no-explicit-any': 'error' },
+  })
 ```
 
-Or by its Module for the factory's own `overrides` option:
+Or by its Module, for the factory's own `overrides` option:
 
 ```js
 eslint({
   overrides: {
     // A Module: the rules merge into every Config object of that Module.
-    javascript: { rules: { 'no-console': 'off' } },
+    'javascript': { rules: { 'no-console': 'off' } },
     // One Config object.
     'lumirelle/typescript/rules': { rules: { 'ts/no-explicit-any': 'error' } },
   },
@@ -103,6 +107,7 @@ eslint({
 ```
 
 For more usage details, please refer to below two composer package:
+
 - [`eslint-flat-config-utils`](https://github.com/antfu/eslint-flat-config-utils)
 - [`@oxlint-flat-config/composer`](https://github.com/liangmiQwQ/oxlint-flat-config/tree/main/packages/composer)
 
@@ -131,19 +136,19 @@ mise run play --all      # Print every example
 See the [playground index][playground] for the Flavor × Stack matrix and the project each stack
 simulates.
 
-## Coverage Report and Upstream Comparison
+## Coverage report and upstream comparison
 
 This configuration is highly inspired by the upstream package [`@antfu/eslint-config`](https://github.com/antfu/eslint-config). It introduces a mechanism to compare with upstream.
 
-- The Coverage report includes the rules the Oxlint Emission cannot implement, per Module, with the reason, which is committed at [`packages/config/coverage.json`][coverage] and guarded by a snapshot test.
-- The Upstream comparison is rendered by `mise run upstream:diff`, which writes `reports/upstream-diff.md`; `mise run upstream:check` fails only when the pinned submodule tag and the installed `@antfu/eslint-config` version disagree.
-- The repository dogfoods both subpaths in [`eslint.config.js`][dogfood-eslint] and [`oxlint.config.ts`][dogfood-oxlint].
+- The Coverage report lists, per Module, the rules the Oxlint Emission cannot implement and why. It is committed at [`packages/config/coverage.json`][coverage] and a snapshot test guards it.
+- The Upstream comparison is rendered by `mise run upstream:diff`, which writes `reports/upstream-diff.md`. `mise run upstream:check` fails only when the pinned submodule tag and the installed `@antfu/eslint-config` version disagree.
+- This repository runs both subpaths on itself, in [`eslint.config.js`][dogfood-eslint] and [`oxlint.config.ts`][dogfood-oxlint].
 
-## Thanks To
+## Credits
 
-- [`eslint-flat-config-utils`](https://github.com/antfu/eslint-flat-config-utils): ESLint composer API support.
-- [`@oxlint-flat-config/composer`](https://github.com/liangmiQwQ/oxlint-flat-config/tree/main/packages/composer): Oxlint composer API support.
-- [`@antfu/eslint-config`](https://github.com/antfu/eslint-config): ESLint & Oxlint config source reference.
+- [`eslint-flat-config-utils`](https://github.com/antfu/eslint-flat-config-utils): ESLint composer API.
+- [`@oxlint-flat-config/composer`](https://github.com/liangmiQwQ/oxlint-flat-config/tree/main/packages/composer): Oxlint composer API.
+- [`@antfu/eslint-config`](https://github.com/antfu/eslint-config): the upstream this config compares against.
 
 ## Sponsors
 

@@ -12,7 +12,9 @@ import {
 } from '../scripts/upstream-diff'
 
 function fixture(name: string): ComparableConfig[] {
-  return JSON.parse(readFileSync(new URL(`./fixtures/upstream/${name}.json`, import.meta.url), 'utf8')) as ComparableConfig[]
+  return JSON.parse(
+    readFileSync(new URL(`./fixtures/upstream/${name}.json`, import.meta.url), 'utf8'),
+  ) as ComparableConfig[]
 }
 
 const sourceConfigs = fixture('source')
@@ -95,7 +97,13 @@ describe('gateUpstreamOptions', () => {
       ['ignores', 'javascript'],
     )
 
-    expect(gated).toMatchObject({ typescript: false, vue: false, stylistic: false, gitignore: false, isInEditor: false })
+    expect(gated).toMatchObject({
+      typescript: false,
+      vue: false,
+      stylistic: false,
+      gitignore: false,
+      isInEditor: false,
+    })
   })
 
   it('keeps the option of a Module Source implements', () => {

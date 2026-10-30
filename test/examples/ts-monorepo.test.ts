@@ -25,7 +25,7 @@ describe('the `eslint-oxlint/ts-monorepo` example', () => {
     expect(names).toContain('lumirelle/test/rules')
   })
 
-  it('turns on Oxlint\'s type-aware mode through that same options module', async () => {
+  it("turns on Oxlint's type-aware mode through that same options module", async () => {
     const { oxlint } = await loadExample('eslint-oxlint/ts-monorepo')
 
     expect(oxlint.options).toEqual({ typeAware: true })
@@ -50,21 +50,28 @@ describe('the `ts-monorepo` per-package override', () => {
   })
 
   describe.each(EXAMPLES)('$name', (example: Example) => {
-    it.skipIf(!example.eslint)('narrows one package\'s type-aware rules in the ESLint Emission', () => {
-      const rules = example.eslint?.find(config => config.name === 'lumirelle/typescript/rules-type-aware')
+    it.skipIf(!example.eslint)(
+      "narrows one package's type-aware rules in the ESLint Emission",
+      () => {
+        const rules = example.eslint?.find(
+          config => config.name === 'lumirelle/typescript/rules-type-aware',
+        )
 
-      // An `overrides` entry keyed by Config object name rescopes exactly that object: `files`
-      // replaces its scope, so the package named here is the one the type-aware rules now cover.
-      expect(rules?.files).toEqual([NARROWED_PACKAGE])
-      // The rule change lands on the same object, and the rest of the type-aware set stays on.
-      expect(rules?.rules?.['ts/no-unsafe-assignment']).toBe('off')
-      expect(rules?.rules?.['ts/no-floating-promises']).toBe('error')
-    })
+        // An `overrides` entry keyed by Config object name rescopes exactly that object: `files`
+        // replaces its scope, so the package named here is the one the type-aware rules now cover.
+        expect(rules?.files).toEqual([NARROWED_PACKAGE])
+        // The rule change lands on the same object, and the rest of the type-aware set stays on.
+        expect(rules?.rules?.['ts/no-unsafe-assignment']).toBe('off')
+        expect(rules?.rules?.['ts/no-floating-promises']).toBe('error')
+      },
+    )
 
     it.skipIf(!example.oxlint)('narrows the same package in the Oxlint Emission', () => {
       // One entry in the options module reaches both Emissions, so the two tools agree on the
       // package scope; Oxlint spells the same rule under its built-in `typescript` scope.
-      const narrowed = (example.oxlint?.overrides ?? []).filter(override => (override.files ?? []).includes(NARROWED_PACKAGE))
+      const narrowed = (example.oxlint?.overrides ?? []).filter(override =>
+        (override.files ?? []).includes(NARROWED_PACKAGE),
+      )
 
       expect(narrowed).toHaveLength(1)
       expect(narrowed[0]?.rules?.['typescript/no-unsafe-assignment']).toBe('off')

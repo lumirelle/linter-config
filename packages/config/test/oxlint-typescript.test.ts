@@ -42,7 +42,9 @@ describe('oxlint() TypeScript rules', () => {
 
   it('scopes the TypeScript rules to TypeScript files', async () => {
     const config = await emission()
-    const override = (config.overrides ?? []).find(override => 'typescript/no-namespace' in (override.rules ?? {}))
+    const override = (config.overrides ?? []).find(
+      override => 'typescript/no-namespace' in (override.rules ?? {}),
+    )
 
     // Oxlint flattens the shared brace globs, so assert the extension set instead of the spelling.
     expect(override?.files?.length).toBeGreaterThan(0)
@@ -70,7 +72,10 @@ describe('oxlint() type-aware TypeScript rules', () => {
   it('leaves them out while the type-aware mode is off', async () => {
     const emitted = await rules(TSCONFIG)
 
-    for (const rule of ['typescript/no-floating-promises', 'typescript/strict-boolean-expressions']) {
+    for (const rule of [
+      'typescript/no-floating-promises',
+      'typescript/strict-boolean-expressions',
+    ]) {
       expect(emitted[rule], rule).toBeUndefined()
     }
   })
@@ -95,9 +100,11 @@ describe('oxlint() type-aware TypeScript rules', () => {
     const emitted = await rules({ typescript: { erasableOnly: true } })
 
     expect(Object.keys(emitted).some(key => key.startsWith('erasable-syntax-only/'))).toBe(false)
-    expect(coverageReport().modules.typescript).toEqual(expect.arrayContaining([
-      { key: 'erasable-syntax-only/enums', reason: 'no-oxlint-realization' },
-    ]))
+    expect(coverageReport().modules.typescript).toEqual(
+      expect.arrayContaining([
+        { key: 'erasable-syntax-only/enums', reason: 'no-oxlint-realization' },
+      ]),
+    )
   })
 })
 
@@ -105,34 +112,40 @@ describe('the Coverage report over the TypeScript module', () => {
   it('lists every type-aware rule with the reason the Oxlint Emission drops it', () => {
     const entries = coverageReport().modules.typescript ?? []
 
-    expect(entries.filter(entry => entry.reason === 'type-aware').map(entry => entry.key).sort())
-      .toEqual([
-        'ts/await-thenable',
-        'ts/dot-notation',
-        'ts/no-floating-promises',
-        'ts/no-for-in-array',
-        'ts/no-implied-eval',
-        'ts/no-misused-promises',
-        'ts/no-unnecessary-type-assertion',
-        'ts/no-unsafe-argument',
-        'ts/no-unsafe-assignment',
-        'ts/no-unsafe-call',
-        'ts/no-unsafe-member-access',
-        'ts/no-unsafe-return',
-        'ts/promise-function-async',
-        'ts/restrict-plus-operands',
-        'ts/restrict-template-expressions',
-        'ts/return-await',
-        'ts/strict-boolean-expressions',
-        'ts/switch-exhaustiveness-check',
-        'ts/unbound-method',
-      ])
+    expect(
+      entries
+        .filter(entry => entry.reason === 'type-aware')
+        .map(entry => entry.key)
+        .sort(),
+    ).toEqual([
+      'ts/await-thenable',
+      'ts/dot-notation',
+      'ts/no-floating-promises',
+      'ts/no-for-in-array',
+      'ts/no-implied-eval',
+      'ts/no-misused-promises',
+      'ts/no-unnecessary-type-assertion',
+      'ts/no-unsafe-argument',
+      'ts/no-unsafe-assignment',
+      'ts/no-unsafe-call',
+      'ts/no-unsafe-member-access',
+      'ts/no-unsafe-return',
+      'ts/promise-function-async',
+      'ts/restrict-plus-operands',
+      'ts/restrict-template-expressions',
+      'ts/return-await',
+      'ts/strict-boolean-expressions',
+      'ts/switch-exhaustiveness-check',
+      'ts/unbound-method',
+    ])
   })
 
   it('only calls a rule type-aware when the installed Oxlint agrees', () => {
     const scope = pluginDefinition('ts').oxlint?.builtin
     const inventory = new Map(oxlintRules().map(rule => [`${rule.scope}/${rule.rule}`, rule]))
-    const typeAware = (coverageReport().modules.typescript ?? []).filter(entry => entry.reason === 'type-aware')
+    const typeAware = (coverageReport().modules.typescript ?? []).filter(
+      entry => entry.reason === 'type-aware',
+    )
 
     expect(typeAware.length).toBeGreaterThan(0)
     for (const entry of typeAware) {

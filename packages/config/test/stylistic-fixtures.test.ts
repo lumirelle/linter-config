@@ -30,13 +30,15 @@ async function lintWithEslint(options: Parameters<typeof eslint>[0] = {}): Promi
   })
 
   const results = await eslintApi.lintFiles(['.'])
-  return results.flatMap(result =>
-    result.messages.map((message: Linter.LintMessage) => ({
-      file: toPosixPath(result.filePath.slice(FIXTURES.length)),
-      ruleId: message.ruleId ?? '(fatal)',
-      line: message.line ?? 0,
-    })),
-  ).sort(byPosition)
+  return results
+    .flatMap(result =>
+      result.messages.map((message: Linter.LintMessage) => ({
+        file: toPosixPath(result.filePath.slice(FIXTURES.length)),
+        ruleId: message.ruleId ?? '(fatal)',
+        line: message.line ?? 0,
+      })),
+    )
+    .sort(byPosition)
 }
 
 /** The real Oxlint over the same fixture, with `fixtures/` stripped from the file path. */
@@ -48,15 +50,21 @@ async function lintWithOxlint(options: Parameters<typeof oxlint>[0] = {}): Promi
     FIXTURES,
   )
 
-  return lint(directory).diagnostics.map(diagnostic => ({
-    file: diagnostic.file.replace(/^fixtures\//u, ''),
-    ruleId: diagnostic.ruleId,
-    line: diagnostic.line,
-  })).sort(byPosition)
+  return lint(directory)
+    .diagnostics.map(diagnostic => ({
+      file: diagnostic.file.replace(/^fixtures\//u, ''),
+      ruleId: diagnostic.ruleId,
+      line: diagnostic.line,
+    }))
+    .sort(byPosition)
 }
 
 function byPosition(left: Reported, right: Reported): number {
-  return left.file.localeCompare(right.file) || left.line - right.line || left.ruleId.localeCompare(right.ruleId)
+  return (
+    left.file.localeCompare(right.file)
+    || left.line - right.line
+    || left.ruleId.localeCompare(right.ruleId)
+  )
 }
 
 describe('the stylistic Module over the real binaries', () => {

@@ -2,12 +2,6 @@ import type { ConfigObject } from '../types'
 import { GLOB_SRC } from '../globs'
 import { pluginRef } from '../plugins'
 
-/**
- * Upstream's `configs/node.ts`: `eslint-plugin-n` hygiene for source files.
- *
- * The plugin needs no settings of its own here: Upstream enables none of the rules that read the
- * Node version from `settings.n`, so the module carries no `settings`.
- */
 export function node(): ConfigObject[] {
   return [
     {

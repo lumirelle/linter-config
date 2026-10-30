@@ -1,4 +1,4 @@
-import type { ConfigObject, Glob, Options, PnpmOptions, StylisticOptions } from './types'
+import type { ConfigObject, Glob, Options, PnpmOptions } from './types'
 import { existsSync, readFileSync } from 'node:fs'
 import { dirname, join, parse } from 'node:path'
 import process from 'node:process'
@@ -39,7 +39,6 @@ import { yaml } from './modules/yaml'
 import { isPackageInstalled } from './packages'
 import { enabledRuleKeys } from './rules'
 
-/** Config object names are `lumirelle/<tail>`; anything else is a Module id. */
 export const CONFIG_NAME_PREFIX = 'lumirelle/'
 
 type Overrides = NonNullable<Options['overrides']>
@@ -48,106 +47,131 @@ type Override = NonNullable<Overrides[keyof Overrides]>
 /**
  * Composes every Module into Source's Config objects; the only input to both Adapters.
  *
- * The order below is the emission order both Adapters preserve; the Modules themselves live in
- * `src/modules/<module>.ts`, and the ones that switch rules off read what the earlier Modules
- * actually enabled, which is why they compose last.
+ * The order below is the emission order both Adapters preserve.
  */
 export function source(options: Options = {}): ConfigObject[] {
   const isInEditor = options.isInEditor ?? isInEditorEnv()
-  const stylisticSlices = isStylisticEnabled(options.stylistic)
+  const perfectionistEnabled = options.perfectionist !== false
+  const jsxEnabled = !!options.jsx
   const typescriptEnabled = isTypeScriptEnabled(options.typescript)
-  // Upstream treats `.vue` as one more component extension of the TypeScript Module, so the
+  // Treats `.vue` as one more component extension of the TypeScript Module, so the
   // component parser's scripts are typed whenever `vue` is on.
-  const componentExts = [...options.componentExts ?? [], ...options.vue ? ['vue'] : []]
-
-  // `test` and `disables` turn off rules owned by the Modules above them, and derive that table
-  // from what those Modules actually emit, so they compose after them.
+  const componentExts = [...(options.componentExts ?? []), ...(options.vue ? ['vue'] : [])]
+  const nodeEnabled = options.node !== false
+  const jsdocEnabled = options.jsdoc !== false
+  const importsEnabled = options.imports !== false
+  const e18eEnabled = options.e18e !== false
+  const unicornEnabled = options.unicorn !== false
+  const antislopEnabled = options.antislop === true
+  const stylisticOptions = options.stylistic
+  const stylisticEnabled = isStylisticEnabled(stylisticOptions)
+  const regexEnabled = options.regexp !== false
+  const vueEnabled = !!options.vue
+  const reactEnabled = !!options.react
+  const nextjsEnabled = !!options.nextjs
+  const solidEnabled = !!options.solid
+  const svelteEnabled = !!options.svelte
+  const unocssEnabled = !!options.unocss
+  const astroEnabled = !!options.astro
+  const angularEnabled = !!options.angular
   const composed: ConfigObject[] = [
     ...ignores(options),
     ...javascript({ isInEditor }),
     ...eslintComments(),
     ...command(),
-    ...options.perfectionist === false ? [] : perfectionist(),
-    ...options.jsx ? jsx() : [],
-    ...typescriptEnabled ? typescript({ ...options, componentExts }) : [],
-    ...options.node === false ? [] : node(),
-    ...options.jsdoc === false ? [] : jsdoc({ stylistic: stylisticSlices }),
-    ...options.imports === false ? [] : imports({ stylistic: stylisticSlices }),
-    ...options.e18e === false ? [] : e18e({ isInEditor, type: options.type }),
-    ...options.unicorn === false ? [] : unicorn(),
-    ...options.antislop === true ? antislop() : [],
-    ...isStylisticEnabled(options.stylistic) ? stylistic(stylisticOptions(options.stylistic)) : [],
-    ...options.regexp === false ? [] : regexp(),
-    ...options.vue ? vue({ ...options, componentExts, typescript: typescriptEnabled }) : [],
-    ...options.react ? react(options) : [],
-    ...options.nextjs ? nextjs() : [],
-    ...options.solid ? solid(options) : [],
-    ...options.svelte ? svelte({ ...options, stylistic: isStylisticEnabled(options.stylistic) }) : [],
-    ...options.unocss ? unocss() : [],
-    ...options.astro ? astro({ stylistic: isStylisticEnabled(options.stylistic) }) : [],
-    ...options.angular ? angular() : [],
+    ...(perfectionistEnabled ? perfectionist() : []),
+    ...(jsxEnabled ? jsx() : []),
+    ...(typescriptEnabled ? typescript({ ...options, componentExts }) : []),
+    ...(nodeEnabled ? node() : []),
+    ...(jsdocEnabled ? jsdoc({ stylistic: stylisticEnabled }) : []),
+    ...(importsEnabled ? imports({ stylistic: stylisticEnabled }) : []),
+    ...(e18eEnabled ? e18e({ isInEditor, type: options.type }) : []),
+    ...(unicornEnabled ? unicorn() : []),
+    ...(antislopEnabled ? antislop() : []),
+    ...(stylisticEnabled
+      ? stylistic(
+          typeof stylisticOptions === 'object' && stylisticOptions !== null ? stylisticOptions : {},
+        )
+      : []),
+    ...(regexEnabled ? regexp() : []),
+    ...(vueEnabled ? vue({ ...options, componentExts, typescript: typescriptEnabled }) : []),
+    ...(reactEnabled ? react(options) : []),
+    ...(nextjsEnabled ? nextjs() : []),
+    ...(solidEnabled ? solid(options) : []),
+    ...(svelteEnabled ? svelte({ ...options, stylistic: stylisticEnabled }) : []),
+    ...(unocssEnabled ? unocss() : []),
+    ...(astroEnabled ? astro({ stylistic: stylisticEnabled }) : []),
+    ...(angularEnabled ? angular() : []),
   ]
 
-  // The data and markup Modules follow Upstream's factory order: `jsonc` carries the two `sort`
-  // objects, then `pnpm`, `yaml`, `toml` and `markdown`; all of them are ESLint-only, because
-  // Oxlint has no parser or processor hook. `markdown` disables rules of the Modules above it
-  // inside code blocks, so it reads what they actually enabled.
+  const jsoncEnabled = options.jsonc !== false
+  const yamlEnabled = options.yaml !== false
+  const tomlEnabled = options.toml !== false
+  // Some modules switch rules off read what the earlier Modules actually enabled, which is why they are composed seperately.
   composed.push(
-    ...options.jsonc === false ? [] : [...jsonc({ stylistic: stylisticSlices }), ...sortPackageJson(), ...sortTsconfig()],
-    ...pnpmModule(options.pnpm, { isInEditor, stylistic: stylisticSlices }),
-    ...options.yaml === false ? [] : yaml({ stylistic: stylisticSlices }),
-    ...options.toml === false ? [] : toml({ stylistic: stylisticSlices }),
-    ...formatterModules(options.formatters),
+    ...(jsoncEnabled
+      ? [...jsonc({ stylistic: stylisticEnabled }), ...sortPackageJson(), ...sortTsconfig()]
+      : []),
+    ...pnpmModule(options.pnpm, { isInEditor, stylistic: stylisticEnabled }),
+    ...(yamlEnabled ? yaml({ stylistic: stylisticEnabled }) : []),
+    ...(tomlEnabled ? toml({ stylistic: stylisticEnabled }) : []),
+    ...formattersModule(options.formatters),
   )
 
-  if (options.markdown !== false) {
-    composed.push(...markdown({ componentExts: options.componentExts, enabled: enabledRuleKeys(composed) }))
+  const markdownEnabled = options.markdown !== false
+  if (markdownEnabled) {
+    composed.push(
+      ...markdown({ componentExts: options.componentExts, enabled: enabledRuleKeys(composed) }),
+    )
   }
 
-  if (isTestEnabled(options.test)) {
-    composed.push(...test({ enabled: enabledRuleKeys(composed), isInEditor, overrides: testOverrides(options.test) }))
+  const testEnabled = isTestEnabled(options.test)
+  if (testEnabled) {
+    composed.push(
+      ...test({
+        enabled: enabledRuleKeys(composed),
+        isInEditor,
+        overrides: testOverrides(options.test),
+      }),
+    )
   }
 
   const configs = applyOverrides([...composed, ...disables(composed)], options.overrides)
 
   // Invariant: a glob must work in both tools, so Source rejects anything outside the
   // shared vocabulary before an Adapter ever sees it.
-  assertGlobVocabulary(configs.flatMap(config => [...(config.files ?? []), ...(config.ignores ?? [])] as Glob[]))
+  assertGlobVocabulary(
+    configs.flatMap(config => [...(config.files ?? []), ...(config.ignores ?? [])] as Glob[]),
+  )
 
   return configs
 }
-
-/**
- * Whether the stylistic slices of otherwise-useful Modules are on.
- *
- * Upstream enables them by default; the house turns them off ({@link Options.stylistic}), so a
- * Module asks this instead of its own default.
- */
 function isStylisticEnabled(option: Options['stylistic']): boolean {
   return option !== undefined && option !== false
 }
-
+function isTypeScriptEnabled(option: Options['typescript']): boolean {
+  if (option !== undefined) {
+    return option !== false
+  }
+  return isPackageInstalled('typescript') || isPackageInstalled('@typescript/native-preview')
+}
 /**
- * The `formatters` Module, which is opt-in: Upstream enables it only for a truthy option, and so
- * does the house. `true` asks for the formatters that need no extra Prettier plugin.
+ * Provide formatters module by user options.
  */
-function formatterModules(option: Options['formatters']): ConfigObject[] {
+function formattersModule(option: Options['formatters']): ConfigObject[] {
   if (!option) {
     return []
   }
-  return formatters(option === true ? { css: true, graphql: true, html: true, markdown: true } : option)
+  return formatters(
+    option === true ? { css: true, graphql: true, html: true, markdown: true } : option,
+  )
 }
-
 /**
- * The `pnpm` Module, which Upstream enables only where a `pnpm-workspace.yaml` exists.
- *
- * The flag wins when the caller gives one; otherwise the presence of that file decides, and its
- * contents decide whether catalogs are in use. Both readings are of the working directory, like
- * the gitignore handling.
+ * Provide PNPM module by user options.
  */
 function pnpmModule(
   option: Options['pnpm'],
-  defaults: { isInEditor: boolean, stylistic: boolean },
+  defaults: { isInEditor: boolean; stylistic: boolean },
 ): ConfigObject[] {
   if (option === false) {
     return []
@@ -166,17 +190,12 @@ function pnpmModule(
     isInEditor: moduleOptions.isInEditor ?? defaults.isInEditor,
   })
 }
-
 interface PnpmWorkspace {
   /** Whether the file declares a `catalog:` or `catalogs:` block. */
   hasCatalogs: boolean
 }
-
 /**
- * The nearest `pnpm-workspace.yaml`, walking up from the working directory.
- *
- * Upstream reads the same file at config-build time; the Module can only be enabled where the
- * project declares a pnpm workspace.
+ * Find the nearest `pnpm-workspace.yaml`, walking up from the working directory.
  */
 function findPnpmWorkspace(): PnpmWorkspace | undefined {
   const root = parse(process.cwd()).root
@@ -195,45 +214,37 @@ function findPnpmWorkspace(): PnpmWorkspace | undefined {
   }
 }
 
-/** The object form of the `stylistic` option carries the Module's options; every other form is enablement. */
-function stylisticOptions(option: Options['stylistic']): StylisticOptions {
-  return typeof option === 'object' && option !== null ? option : {}
-}
-
-/**
- * Upstream enables the TypeScript Module when the project has `typescript` — or its native
- * preview — installed, since the Module is useless without one; an explicit flag wins either way.
- */
-function isTypeScriptEnabled(option: Options['typescript']): boolean {
-  if (option !== undefined) {
-    return option !== false
-  }
-  return isPackageInstalled('typescript') || isPackageInstalled('@typescript/native-preview')
-}
-
 /**
  * Merges the caller's overrides into the Config objects they name.
  *
  * A key that is a Module id applies to every object of that Module, so a caller can change
  * one rule without restating the module; a key that is a Config object name
- * (`lumirelle/<tail>`) applies to exactly that object, and a name Source did not emit is an
+ * (`lumirelle/{tail}`) applies to exactly that object, and a name Source did not emit is an
  * error rather than a silent no-op.
  *
  * `rules` merge over the object's rules, while `files` and `ignores` replace its scope when
  * given, which is how a caller narrows or widens one module.
  */
-function applyOverrides(configs: ConfigObject[], overrides: Options['overrides'] = {}): ConfigObject[] {
-  const entries = Object.entries(overrides).filter((entry): entry is [string, Override] => entry[1] !== undefined)
+function applyOverrides(
+  configs: ConfigObject[],
+  overrides: Options['overrides'] = {},
+): ConfigObject[] {
+  const entries = Object.entries(overrides).filter(
+    (entry): entry is [string, Override] => entry[1] !== undefined,
+  )
   if (entries.length === 0) {
     return configs
   }
 
-  assertKnownConfigNames(configs, entries.map(([key]) => key))
+  assertKnownConfigNames(
+    configs,
+    entries.map(([key]) => key),
+  )
 
-  return configs.map((config) => {
-    const matching = entries.filter(([key]) => key.startsWith(CONFIG_NAME_PREFIX)
-      ? config.name === key
-      : config.module === key)
+  return configs.map(config => {
+    const matching = entries.filter(([key]) =>
+      key.startsWith(CONFIG_NAME_PREFIX) ? config.name === key : config.module === key,
+    )
     if (matching.length === 0) {
       return config
     }
@@ -253,7 +264,6 @@ function applyOverrides(configs: ConfigObject[], overrides: Options['overrides']
     return overridden
   })
 }
-
 /** A Config object name in `overrides` must exist, because names are the public targeting key. */
 function assertKnownConfigNames(configs: ConfigObject[], keys: string[]): void {
   const names = new Set(configs.map(config => config.name))
@@ -261,7 +271,7 @@ function assertKnownConfigNames(configs: ConfigObject[], keys: string[]): void {
   if (unknown.length > 0) {
     throw new Error(
       `Unknown Config object in "overrides": ${unknown.map(key => `"${key}"`).join(', ')}. `
-      + `Source emits ${[...names].map(name => `"${name}"`).join(', ')}.`,
+        + `Source emits ${[...names].map(name => `"${name}"`).join(', ')}.`,
     )
   }
 }

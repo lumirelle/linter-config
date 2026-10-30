@@ -11,7 +11,10 @@ const FIXTURES = fileURLToPath(new URL('./fixtures/typescript/', import.meta.url
 const TSCONFIG_PATH = join(FIXTURES, 'tsconfig.json')
 
 /** The house config, linting `files` with the real ESLint inside the fixture project. */
-async function lint(files: string[], options: Parameters<typeof eslint>[0] = {}): Promise<Linter.LintMessage[]> {
+async function lint(
+  files: string[],
+  options: Parameters<typeof eslint>[0] = {},
+): Promise<Linter.LintMessage[]> {
   const eslintApi = new ESLint({
     overrideConfigFile: true,
     overrideConfig: await eslint({ gitignore: false, isInEditor: false, ...options }),
@@ -51,9 +54,9 @@ describe('eslint() over the TypeScript fixtures', () => {
   })
 
   it('reports the type-aware violation once tsconfigPath is supplied', async () => {
-    expect(reported(await lint(['type-aware.ts'], { typescript: { tsconfigPath: TSCONFIG_PATH } }))).toEqual([
-      { ruleId: 'ts/no-floating-promises', line: 6 },
-    ])
+    expect(
+      reported(await lint(['type-aware.ts'], { typescript: { tsconfigPath: TSCONFIG_PATH } })),
+    ).toEqual([{ ruleId: 'ts/no-floating-promises', line: 6 }])
   })
 
   it('stays quiet about erasable-syntax violations by default', async () => {

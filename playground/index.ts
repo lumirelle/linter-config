@@ -37,8 +37,8 @@ function withEntryPackageName(entry: unknown): unknown {
 }
 
 /**
- * An Emission as the runner prints it: the same shape, with every Plugin specifier it carries — in the
- * root object or in an override — naming its package.
+ * An Emission as the runner prints it: the same shape, with every Plugin specifier it carries, in
+ * the root object or in an override, naming its package.
  *
  * The Emission is free to hold the absolute path a Bundle resolved a plugin to, but printed output is
  * read and diffed across machines, so the path a store happens to use never reaches it.

@@ -6,7 +6,9 @@ import { oxlint } from '../src/oxlint'
 
 /** The ESLint object with that name. */
 async function eslintConfig(name: string): Promise<Linter.Config> {
-  const config = (await eslint({ gitignore: false, isInEditor: false })).find(config => config.name === name)
+  const config = (await eslint({ gitignore: false, isInEditor: false })).find(
+    config => config.name === name,
+  )
   if (!config) {
     throw new Error(`eslint() emitted no "${name}" object`)
   }
@@ -15,7 +17,10 @@ async function eslintConfig(name: string): Promise<Linter.Config> {
 
 /** Every `globals` table the Oxlint Emission declares, merged as Oxlint merges them. */
 async function oxlintGlobals(): Promise<Record<string, string>> {
-  const tables = (await oxlint({ gitignore: false, isInEditor: false })).overrides?.map(override => override.globals ?? {}) ?? []
+  const tables =
+    (await oxlint({ gitignore: false, isInEditor: false })).overrides?.map(
+      override => override.globals ?? {},
+    ) ?? []
   const merged: Record<string, string> = {}
   Object.assign(merged, ...tables)
   return merged

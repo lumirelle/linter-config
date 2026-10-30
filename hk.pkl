@@ -7,10 +7,7 @@ local linters = new Mapping<String, Step> {
   ["oxlint"] = (Builtins.ox_lint) {
     // Oxlint's allocator keeps one pool per worker thread. On a small CI runner the whole tree
     // plus the js-plugin bridge is enough to exhaust a pool, which panics inside Oxlint
-    // (`oxc_allocator::pool::fixed_size`). One thread holds one pool and costs about 8%.
-    // `--disable-nested-config` keeps the example packages' own root configs from being treated
-    // as nested configs of this repository: an example's `options.typeAware` is legal where the
-    // example runs Oxlint itself, but Oxlint only accepts it in the process root config.
+    // (`oxc_allocator::pool::fixed_size`).
     check = new CommandSpec {
       command = new Command {
         argv =
@@ -48,11 +45,13 @@ local linters = new Mapping<String, Step> {
         "*.tsx",
         // Configurations
         "*.json",
+        "*.json5",
         "*.jsonc",
         "*.yaml",
         "*.yml",
         "*.toml",
         // Documentations
+        "*.markdown",
         "*.md",
         "*.mdc",
         "*.mdx",
@@ -69,15 +68,17 @@ local linters = new Mapping<String, Step> {
     }
     depends = List("oxlint")
   }
+  ["oxfmt"] = (Builtins.oxfmt) {
+    // Formatting runs last: ESLint's fixes are the ones that can leave a file unformatted, and no
+    // rule of this repository's config reports what Oxfmt would only reformat.
+    depends = List("eslint")
+  }
   ["tsc"] = (Builtins.tsc) {
-    // An example's tsconfig is documentation, not part of this repository's type check: the
-    // examples are consumer snapshots whose build and runtime packages are deliberately absent.
     exclude = List("playground/**")
   }
   // Unused
   ["knip"] = (Builtins.knip) {
-    // Use root knip config
-    workspace_indicator = "hk.pkl"
+    workspace_indicator = "knip.jsonc"
     // Disable knip auto-fix, because it's dangerous
     fix = null
   }

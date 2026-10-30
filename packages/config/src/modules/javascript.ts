@@ -2,16 +2,6 @@ import type { ConfigObject, Options } from '../types'
 import globals from 'globals'
 import { pluginRef } from '../plugins'
 
-/**
- * Upstream's `configs/javascript.ts`: the language every JavaScript file shares, then the
- * house JavaScript rules.
- *
- * `globals` is data (global name -> writable), not a plugin, so Source may import it: the
- * ESLint Adapter maps it to `languageOptions.globals` and the Oxlint Adapter to `globals`.
- *
- * Upstream spells three DOM globals as `'readonly'`; the boolean spelling says the same
- * thing (`true` writable, `false` readonly) and is the one both Adapters can carry.
- */
 export function javascript(options: Pick<Options, 'isInEditor'> = {}): ConfigObject[] {
   const { isInEditor = false } = options
 
@@ -123,17 +113,22 @@ export function javascript(options: Pick<Options, 'isInEditor'> = {}): ConfigObj
         ],
         'no-restricted-properties': [
           'error',
-          { message: 'Use `Object.getPrototypeOf` or `Object.setPrototypeOf` instead.', property: '__proto__' },
+          {
+            message: 'Use `Object.getPrototypeOf` or `Object.setPrototypeOf` instead.',
+            property: '__proto__',
+          },
           { message: 'Use `Object.defineProperty` instead.', property: '__defineGetter__' },
           { message: 'Use `Object.defineProperty` instead.', property: '__defineSetter__' },
-          { message: 'Use `Object.getOwnPropertyDescriptor` instead.', property: '__lookupGetter__' },
-          { message: 'Use `Object.getOwnPropertyDescriptor` instead.', property: '__lookupSetter__' },
+          {
+            message: 'Use `Object.getOwnPropertyDescriptor` instead.',
+            property: '__lookupGetter__',
+          },
+          {
+            message: 'Use `Object.getOwnPropertyDescriptor` instead.',
+            property: '__lookupSetter__',
+          },
         ],
-        'no-restricted-syntax': [
-          'error',
-          'TSEnumDeclaration[const=true]',
-          'TSExportAssignment',
-        ],
+        'no-restricted-syntax': ['error', 'TSEnumDeclaration[const=true]', 'TSExportAssignment'],
         'no-self-assign': ['error', { props: true }],
         'no-self-compare': 'error',
         'no-sequences': 'error',
@@ -151,17 +146,23 @@ export function javascript(options: Pick<Options, 'isInEditor'> = {}): ConfigObj
         'no-unreachable-loop': 'error',
         'no-unsafe-finally': 'error',
         'no-unsafe-negation': 'error',
-        'no-unused-expressions': ['error', {
-          allowShortCircuit: true,
-          allowTaggedTemplates: true,
-          allowTernary: true,
-        }],
-        'no-unused-vars': ['error', {
-          args: 'none',
-          caughtErrors: 'none',
-          ignoreRestSiblings: true,
-          vars: 'all',
-        }],
+        'no-unused-expressions': [
+          'error',
+          {
+            allowShortCircuit: true,
+            allowTaggedTemplates: true,
+            allowTernary: true,
+          },
+        ],
+        'no-unused-vars': [
+          'error',
+          {
+            args: 'none',
+            caughtErrors: 'none',
+            ignoreRestSiblings: true,
+            vars: 'all',
+          },
+        ],
         'no-use-before-define': ['error', { classes: false, functions: false, variables: true }],
         'no-useless-backreference': 'error',
         'no-useless-call': 'error',

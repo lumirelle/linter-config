@@ -1,5 +1,13 @@
 import { spawnSync } from 'node:child_process'
-import { cpSync, mkdirSync, mkdtempSync, readFileSync, realpathSync, rmSync, symlinkSync } from 'node:fs'
+import {
+  cpSync,
+  mkdirSync,
+  mkdtempSync,
+  readFileSync,
+  realpathSync,
+  rmSync,
+  symlinkSync,
+} from 'node:fs'
 import { tmpdir } from 'node:os'
 import { dirname, join } from 'node:path'
 import process from 'node:process'
@@ -13,7 +21,7 @@ const PACKAGE_ROOT = fileURLToPath(new URL('../', import.meta.url))
  * runtime `dependencies` are linked, so every peer plugin the consumer would have to install is
  * genuinely absent.
  */
-function workspace(): { directory: string, remove: () => void } {
+function workspace(): { directory: string; remove: () => void } {
   const directory = mkdtempSync(join(tmpdir(), 'lumirelle-missing-peer-'))
   const target = join(directory, 'node_modules/@lumirelle/linter-config')
   mkdirSync(target, { recursive: true })
@@ -54,8 +62,12 @@ type Case = keyof typeof CASES
  * composition itself reads nothing but the options.
  */
 function factoryResults(directory: string): Record<Case | 'oxlint', string> {
-  const eslintEntry = pathToFileURL(join(directory, 'node_modules/@lumirelle/linter-config/dist/eslint.mjs')).href
-  const oxlintEntry = pathToFileURL(join(directory, 'node_modules/@lumirelle/linter-config/dist/oxlint.mjs')).href
+  const eslintEntry = pathToFileURL(
+    join(directory, 'node_modules/@lumirelle/linter-config/dist/eslint.mjs'),
+  ).href
+  const oxlintEntry = pathToFileURL(
+    join(directory, 'node_modules/@lumirelle/linter-config/dist/oxlint.mjs'),
+  ).href
   const script = `
     const { eslint } = await import(${JSON.stringify(eslintEntry)})
     const { oxlint } = await import(${JSON.stringify(oxlintEntry)})
@@ -79,7 +91,11 @@ function factoryResults(directory: string): Record<Case | 'oxlint', string> {
   // `NODE_PATH` would let `require.resolve` see this repository's own store, so the fixture would
   // look as if the peers were installed while the ESM `import()` that loads them cannot find them.
   const { NODE_PATH: _nodePath, ...env } = process.env
-  const result = spawnSync(process.execPath, ['--input-type=module', '-e', script], { cwd: directory, encoding: 'utf8', env })
+  const result = spawnSync(process.execPath, ['--input-type=module', '-e', script], {
+    cwd: directory,
+    encoding: 'utf8',
+    env,
+  })
   if (result.error || result.status !== 0) {
     throw new Error(`the Emission could not run in the fixture workspace: ${result.stderr}`)
   }
@@ -99,28 +115,32 @@ describe('a Module whose peer packages are missing', () => {
   afterAll(() => remove())
 
   it('names the packages to install instead of failing to resolve them', () => {
-    expect(results.react)
-      .toBe('The "react" Module needs packages this project has not installed: "@eslint-react/eslint-plugin", '
-        + '"eslint-plugin-react-refresh". Install them to enable the Module.')
+    expect(results.react).toBe(
+      'The "react" Module needs packages this project has not installed: "@eslint-react/eslint-plugin", '
+        + '"eslint-plugin-react-refresh". Install them to enable the Module.',
+    )
   })
 
   it('names every package of a Module that needs a parser as well as plugins', () => {
-    expect(results.angular)
-      .toBe('The "angular" Module needs packages this project has not installed: '
+    expect(results.angular).toBe(
+      'The "angular" Module needs packages this project has not installed: '
         + '"@angular-eslint/eslint-plugin", "@angular-eslint/eslint-plugin-template", "@angular-eslint/template-parser". '
-        + 'Install them to enable the Module.')
+        + 'Install them to enable the Module.',
+    )
   })
 
   it('names the optional accessibility peer only when the Vue Module asks for it', () => {
-    expect(results.vueA11y)
-      .toBe('The "vue" Module needs a package this project has not installed: "eslint-plugin-vuejs-accessibility". '
-        + 'Install it to enable the Module.')
+    expect(results.vueA11y).toBe(
+      'The "vue" Module needs a package this project has not installed: "eslint-plugin-vuejs-accessibility". '
+        + 'Install it to enable the Module.',
+    )
   })
 
   it('names the stylistic peer the Module turns on', () => {
-    expect(results.stylistic)
-      .toBe('The "stylistic" Module needs a package this project has not installed: "@stylistic/eslint-plugin". '
-        + 'Install it to enable the Module.')
+    expect(results.stylistic).toBe(
+      'The "stylistic" Module needs a package this project has not installed: "@stylistic/eslint-plugin". '
+        + 'Install it to enable the Module.',
+    )
   })
 
   it('stays quiet for a Module whose peers are not asked for', () => {
@@ -128,7 +148,8 @@ describe('a Module whose peer packages are missing', () => {
   })
 
   it('names the Oxlint Bundle instead of failing to resolve it from the Emission', () => {
-    expect(results.oxlint)
-      .toBe('Cannot resolve "@lumirelle/linter-plugins-oxlint". Install it in your project.')
+    expect(results.oxlint).toBe(
+      'Cannot resolve "@lumirelle/linter-plugins-oxlint". Install it in your project.',
+    )
   })
 })

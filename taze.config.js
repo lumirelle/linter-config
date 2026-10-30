@@ -4,8 +4,7 @@ import { builtinManifests, defineConfig } from 'taze'
 
 function findBuiltinManifest(type) {
   const manifest = builtinManifests.find(m => m.type === type)
-  if (!manifest)
-    throw new Error(`taze: expected a built-in manifest of type "${type}"`)
+  if (!manifest) throw new Error(`taze: expected a built-in manifest of type "${type}"`)
   return manifest
 }
 
@@ -26,23 +25,19 @@ const nubWorkspaceManifest = {
   name: 'nub-workspace',
   type: 'nub-workspace',
   match(filepath) {
-    if (basename(filepath) !== 'package.json')
-      return false
-    if (!existsSync(join(dirname(filepath), 'nub.lock')))
-      return false
+    if (basename(filepath) !== 'package.json') return false
+    if (!existsSync(join(dirname(filepath), 'nub.lock'))) return false
     try {
       const raw = JSON.parse(readFileSync(filepath, 'utf8'))
       return Boolean(raw?.workspaces?.catalog || raw?.workspaces?.catalogs)
-    }
-    catch {
+    } catch {
       return false
     }
   },
   async load(relative, options, shouldUpdate) {
     const packages = await packageJsonManifest.load(relative, options, shouldUpdate)
     const raw = packages[0]?.raw
-    if (!raw)
-      return packages
+    if (!raw) return packages
     const catalogs = await bunWorkspaceManifest.load(relative, options, shouldUpdate, raw)
     return [...catalogs, ...packages]
   },

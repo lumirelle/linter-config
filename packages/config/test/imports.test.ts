@@ -27,7 +27,9 @@ describe('eslint() imports module', () => {
   })
 
   it('leaves the stylistic rule out while the house stylistic option is off', async () => {
-    expect(rulesOf(await eslintObject('lumirelle/imports/rules'))['import/newline-after-import']).toBeUndefined()
+    expect(
+      rulesOf(await eslintObject('lumirelle/imports/rules'))['import/newline-after-import'],
+    ).toBeUndefined()
   })
 
   it('adds the stylistic rule when the caller turns stylistic on', async () => {

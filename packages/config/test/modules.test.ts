@@ -28,18 +28,22 @@ describe('the options that gate the new Modules', () => {
   })
 
   it('takes a per-Module rule override by Module id', async () => {
-    const rules = rulesOf(await eslintObject('lumirelle/imports/rules', {
-      overrides: { imports: { rules: { 'import/first': 'off' } } },
-    }))
+    const rules = rulesOf(
+      await eslintObject('lumirelle/imports/rules', {
+        overrides: { imports: { rules: { 'import/first': 'off' } } },
+      }),
+    )
 
     expect(rules['import/first']).toBe('off')
     expect(rules['import/no-duplicates']).toBe('error')
   })
 
   it('takes a rule override aimed at one Config object by its name', async () => {
-    const rules = rulesOf(await eslintObject('lumirelle/node/rules', {
-      overrides: { 'lumirelle/node/rules': { rules: { 'node/no-path-concat': 'off' } } },
-    }))
+    const rules = rulesOf(
+      await eslintObject('lumirelle/node/rules', {
+        overrides: { 'lumirelle/node/rules': { rules: { 'node/no-path-concat': 'off' } } },
+      }),
+    )
 
     expect(rules['node/no-path-concat']).toBe('off')
     expect(rules['node/no-new-require']).toBe('error')
@@ -48,7 +52,11 @@ describe('the options that gate the new Modules', () => {
   it('rejects a name Source did not emit, such as a row the derivation dropped', async () => {
     // The `bin` row exists only while the imports Module turns its rules on.
     expect(() => {
-      void eslint({ gitignore: false, imports: false, overrides: { 'lumirelle/disables/bin': { files: ['**/*.js'] } } })
+      void eslint({
+        gitignore: false,
+        imports: false,
+        overrides: { 'lumirelle/disables/bin': { files: ['**/*.js'] } },
+      })
     }).toThrow(/lumirelle\/disables\/bin/)
   })
 })

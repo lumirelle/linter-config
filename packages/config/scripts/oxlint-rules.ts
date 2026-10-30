@@ -18,7 +18,7 @@ interface OxlintRuleReport {
  *
  * This is build and test tooling, not Source: the inventory is data, and Source never runs Oxlint.
  */
-export function readOxlintRules(): { version: string, rules: OxlintRule[] } {
+export function readOxlintRules(): { version: string; rules: OxlintRule[] } {
   const packagePath = require.resolve('oxlint/package.json')
   const version = (require(packagePath) as { version: string }).version
   const output = execFileSync(
@@ -38,7 +38,7 @@ function normalize(parsed: unknown): OxlintRule[] {
   if (!Array.isArray(parsed) || parsed.length === 0) {
     throw new TypeError(
       '`oxlint --rules --format json` no longer prints an array of rules. '
-      + 'Update `packages/config/scripts/oxlint-rules.ts` against the installed Oxlint before regenerating the inventory.',
+        + 'Update `packages/config/scripts/oxlint-rules.ts` against the installed Oxlint before regenerating the inventory.',
     )
   }
 
@@ -47,11 +47,13 @@ function normalize(parsed: unknown): OxlintRule[] {
     if (typeof scope !== 'string' || typeof value !== 'string' || typeof typeAware !== 'boolean') {
       throw new TypeError(
         `Rule #${index} of \`oxlint --rules --format json\` is not \`{ scope, value, type_aware }\`: `
-        + `${JSON.stringify(entry)}. Update \`packages/config/scripts/oxlint-rules.ts\` against the installed Oxlint.`,
+          + `${JSON.stringify(entry)}. Update \`packages/config/scripts/oxlint-rules.ts\` against the installed Oxlint.`,
       )
     }
     return { scope: scope.replaceAll('_', '-'), rule: value, typeAware }
   })
 
-  return rules.sort((left, right) => left.scope.localeCompare(right.scope) || left.rule.localeCompare(right.rule))
+  return rules.sort(
+    (left, right) => left.scope.localeCompare(right.scope) || left.rule.localeCompare(right.rule),
+  )
 }

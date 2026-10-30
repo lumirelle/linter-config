@@ -3,10 +3,22 @@ import { createRequire } from 'node:module'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { describe, expect, it } from 'vitest'
-import { isPluginId, PLUGIN_IDS, pluginDefinition, pluginIdOfRuleKey, pluginRef } from '../src/plugins'
+import {
+  isPluginId,
+  PLUGIN_IDS,
+  pluginDefinition,
+  pluginIdOfRuleKey,
+  pluginRef,
+} from '../src/plugins'
 
 const oxlintSchema = JSON.parse(
-  readFileSync(join(dirname(createRequire(import.meta.url).resolve('oxlint/package.json')), 'configuration_schema.json'), 'utf8'),
+  readFileSync(
+    join(
+      dirname(createRequire(import.meta.url).resolve('oxlint/package.json')),
+      'configuration_schema.json',
+    ),
+    'utf8',
+  ),
 ) as { definitions: Record<string, { enum?: string[] }> }
 
 /** Oxlint owns these JavaScript plugin names, so a `jsPlugins` alias may not use them. */
@@ -63,7 +75,9 @@ function designDocPluginIds(): string[] {
   if (!declaration) {
     throw new Error('docs/design/source-schema.md no longer declares `type PluginId`')
   }
-  return [...declaration.matchAll(/'([^']+)'/g)].map(match => DESIGN_DOC_RENAMES[match[1]!] ?? match[1]!)
+  return [...declaration.matchAll(/'([^']+)'/g)].map(
+    match => DESIGN_DOC_RENAMES[match[1]!] ?? match[1]!,
+  )
 }
 
 describe('plugin id registry', () => {
@@ -82,7 +96,7 @@ describe('plugin id registry', () => {
     expect(new Set(PLUGIN_IDS).size).toBe(PLUGIN_IDS.length)
   })
 
-  it.each(PLUGIN_IDS)('defines %s with an ESLint plugin package', (id) => {
+  it.each(PLUGIN_IDS)('defines %s with an ESLint plugin package', id => {
     const definition = pluginDefinition(id)
 
     expect(['bundle', 'peer']).toContain(definition.from)

@@ -53,7 +53,7 @@ Upstream options:
 }
 \`\`\`
 
-### \`eslint-comments\` — module not yet implemented in Source
+### \`eslint-comments\`: module not yet implemented in Source
 
 Config objects: 1 · Added: 2 · Removed: 0 · Severity changed: 0
 
@@ -63,10 +63,10 @@ Source does not emit this Config object; every rule it sets is \`added\`.
 
 | Change | Rule | Source | Upstream |
 | --- | --- | --- | --- |
-| added | \`eslint-comments/no-unused-disable\` | — | error |
-| added | \`eslint-comments/no-unused-enable\` | — | warn |
+| added | \`eslint-comments/no-unused-disable\` | n/a | error |
+| added | \`eslint-comments/no-unused-enable\` | n/a | warn |
 
-### \`ignores\` — implemented in Source
+### \`ignores\`: implemented in Source
 
 Config objects: 2 · Added: 0 · Removed: 0 · Severity changed: 0
 
@@ -78,7 +78,7 @@ Source does not emit this Config object; it has no rules.
 
 No rule differences.
 
-### \`javascript\` — implemented in Source
+### \`javascript\`: implemented in Source
 
 Config objects: 2 · Added: 1 · Removed: 0 · Severity changed: 2
 
@@ -86,7 +86,7 @@ Config objects: 2 · Added: 1 · Removed: 0 · Severity changed: 2
 
 | Change | Rule | Source | Upstream |
 | --- | --- | --- | --- |
-| added | \`style/semi\` | — | error |
+| added | \`style/semi\` | n/a | error |
 | severity-changed | \`eqeqeq\` | off | error |
 | severity-changed | \`no-console\` | error | warn |
 

@@ -3,12 +3,11 @@ import type { Glob } from './types'
 /**
  * The glob vocabulary shared by ESLint and Oxlint.
  *
- * Upstream spells these with extglobs (`?([cm])[jt]s?(x)`); ESLint reads them with
- * minimatch and Oxlint with fast-glob, so they are written as brace alternations instead:
+ * ESLint reads glob patterns with minimatch and Oxlint with fast-glob,
+ * so they are written as brace alternations instead:
  * only `*`, `**`, `{a,b}` and character classes survive in both engines.
  */
 
-/** Every source extension; the brace expansion of upstream's `?([cm])[jt]s?(x)`. */
 export const GLOB_SRC_EXT = '{js,jsx,cjs,cjsx,mjs,mjsx,ts,tsx,cts,ctsx,mts,mtsx}'
 
 export const GLOB_SRC: Glob = `**/*.${GLOB_SRC_EXT}`
@@ -132,7 +131,9 @@ export function assertGlobVocabulary(globs: readonly Glob[]): void {
   for (const glob of globs) {
     const violation = globVocabularyViolation(glob)
     if (violation) {
-      throw new Error(`Glob "${glob}" ${violation}; only *, **, {a,b} and character classes are allowed.`)
+      throw new Error(
+        `Glob "${glob}" ${violation}; only *, **, {a,b} and character classes are allowed.`,
+      )
     }
   }
 }

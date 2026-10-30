@@ -25,21 +25,26 @@ export interface UpstreamCheckResult {
  * The result carries the exit code, so tests can assert the outcome without calling
  * `process.exit`; only a mismatch makes it non-zero.
  */
-export function checkUpstreamPin(pin: UpstreamPin, observed: UpstreamObservation): UpstreamCheckResult {
+export function checkUpstreamPin(
+  pin: UpstreamPin,
+  observed: UpstreamObservation,
+): UpstreamCheckResult {
   const mismatches: string[] = []
 
   if (observed.submoduleTag === undefined) {
     mismatches.push(`cannot read the tag of "${pin.submodule}"; run "git submodule update --init"`)
-  }
-  else if (observed.submoduleTag !== pin.tag) {
-    mismatches.push(`submodule "${pin.submodule}" is checked out at ${observed.submoduleTag}, but ${PIN_FILE} pins ${pin.tag}`)
+  } else if (observed.submoduleTag !== pin.tag) {
+    mismatches.push(
+      `submodule "${pin.submodule}" is checked out at ${observed.submoduleTag}, but ${PIN_FILE} pins ${pin.tag}`,
+    )
   }
 
   if (observed.installedVersion === undefined) {
     mismatches.push(`cannot resolve the installed "${pin.package}" package; run "nub install"`)
-  }
-  else if (observed.installedVersion !== pin.version) {
-    mismatches.push(`installed "${pin.package}" is ${observed.installedVersion}, but ${PIN_FILE} pins ${pin.version}`)
+  } else if (observed.installedVersion !== pin.version) {
+    mismatches.push(
+      `installed "${pin.package}" is ${observed.installedVersion}, but ${PIN_FILE} pins ${pin.version}`,
+    )
   }
 
   return { exitCode: mismatches.length === 0 ? 0 : 1, mismatches }
@@ -48,10 +53,16 @@ export function checkUpstreamPin(pin: UpstreamPin, observed: UpstreamObservation
 /** Tag at the submodule's `HEAD`; `undefined` when git cannot describe it (missing or detached untagged checkout). */
 export async function readSubmoduleTag(submodule: string): Promise<string | undefined> {
   try {
-    const { stdout } = await execFileAsync('git', ['-C', submodule, 'describe', '--tags', '--exact-match', 'HEAD'])
+    const { stdout } = await execFileAsync('git', [
+      '-C',
+      submodule,
+      'describe',
+      '--tags',
+      '--exact-match',
+      'HEAD',
+    ])
     return stdout.trim() || undefined
-  }
-  catch {
+  } catch {
     return undefined
   }
 }
@@ -67,8 +78,7 @@ export async function main(): Promise<number> {
 
   if (exitCode === 0) {
     process.stdout.write(`Upstream baseline matches: ${pin.package} ${pin.version} (${pin.tag})\n`)
-  }
-  else {
+  } else {
     for (const mismatch of mismatches) {
       process.stderr.write(`upstream:check: ${mismatch}\n`)
     }

@@ -12,7 +12,9 @@ type Options = Parameters<typeof eslint>[0]
 
 /** The disables objects of an Emission, in emission order. */
 async function disablesObjects(options: Options = {}): Promise<Linter.Config[]> {
-  return (await eslint(houseOptions(options))).filter(config => config.name?.startsWith('lumirelle/disables/'))
+  return (await eslint(houseOptions(options))).filter(config =>
+    config.name?.startsWith('lumirelle/disables/'),
+  )
 }
 
 /** How the Oxlint Emission spells each rule the disables table turns off, or `undefined` if it drops it. */
@@ -59,7 +61,7 @@ async function oxlintOffRules(options: Options = {}): Promise<Record<string, unk
 }
 
 describe('eslint() disables module', () => {
-  it('emits Upstream\'s six rows, last of all Modules', async () => {
+  it("emits Upstream's six rows, last of all Modules", async () => {
     const names = (await disablesObjects()).map(config => config.name)
 
     expect(names).toEqual([
@@ -82,11 +84,16 @@ describe('eslint() disables module', () => {
     expect(bin?.files).toEqual(['**/bin/**/*', `**/bin.${GLOB_SRC_EXT}`])
     expect(dts?.files).toEqual(['**/*.d.{ts,cts,mts}'])
     expect(cjs?.files).toEqual(['**/*.js', '**/*.cjs'])
-    expect(configFiles?.files).toEqual([`**/*.config.${GLOB_SRC_EXT}`, `**/*.config.*.${GLOB_SRC_EXT}`])
+    expect(configFiles?.files).toEqual([
+      `**/*.config.${GLOB_SRC_EXT}`,
+      `**/*.config.*.${GLOB_SRC_EXT}`,
+    ])
   })
 
   it('turns every rule it carries off', async () => {
-    const rules = (await disablesObjects({ type: 'lib' })).flatMap(config => Object.entries(config.rules ?? {}))
+    const rules = (await disablesObjects({ type: 'lib' })).flatMap(config =>
+      Object.entries(config.rules ?? {}),
+    )
 
     expect(rules.length).toBeGreaterThan(0)
     for (const [key, value] of rules) {
@@ -105,7 +112,9 @@ describe('eslint() disables module', () => {
     // `ts/explicit-function-return-type` exists only for libraries.
     expect(app).toHaveLength(6)
     expect(Object.keys(app[0]!.rules ?? {})).not.toContain('ts/explicit-function-return-type')
-    expect(Object.keys((await disablesObjects({ type: 'lib' }))[0]!.rules ?? {})).toContain('ts/explicit-function-return-type')
+    expect(Object.keys((await disablesObjects({ type: 'lib' }))[0]!.rules ?? {})).toContain(
+      'ts/explicit-function-return-type',
+    )
   })
 
   it('keeps a row only for the rules another Module turns on', async () => {
@@ -124,7 +133,9 @@ describe('eslint() disables module', () => {
 
 describe('disables in both Emissions', () => {
   it('turns off, in Oxlint too, every rule it turns off in ESLint', async () => {
-    const rules = (await disablesObjects({ type: 'lib' })).flatMap(config => Object.keys(config.rules ?? {}))
+    const rules = (await disablesObjects({ type: 'lib' })).flatMap(config =>
+      Object.keys(config.rules ?? {}),
+    )
     const off = await oxlintOffRules({ type: 'lib' })
     const recorded = (coverageReport().modules.disables ?? []).map(entry => entry.key)
 
@@ -135,8 +146,7 @@ describe('disables in both Emissions', () => {
       const spelling = OXLINT_SPELLING[key]
       if (spelling === undefined) {
         expect(recorded, key).toContain(key)
-      }
-      else {
+      } else {
         expect(off[spelling], key).toBe('off')
       }
     }
@@ -144,7 +154,11 @@ describe('disables in both Emissions', () => {
 
   it('records the rules Oxlint cannot be given', () => {
     expect(coverageReport().modules.disables).toEqual([
-      { key: 'eslint-comments/no-unlimited-disable', plugin: 'eslint-comments', reason: 'blacklisted-plugin' },
+      {
+        key: 'eslint-comments/no-unlimited-disable',
+        plugin: 'eslint-comments',
+        reason: 'blacklisted-plugin',
+      },
       { key: 'no-restricted-syntax', reason: 'unknown-rule' },
     ])
   })
@@ -154,7 +168,7 @@ describe('disables in both Emissions', () => {
     const disablesKeys = new Set(Object.values(OXLINT_SPELLING).filter(key => key !== undefined))
     // Oxlint config objects carry no name, so an override belongs to the table when every rule it
     // sets is one of the rules the table relaxes.
-    const oxlintDisables = (config.overrides ?? []).filter((override) => {
+    const oxlintDisables = (config.overrides ?? []).filter(override => {
       const keys = Object.keys(override.rules ?? {})
       return keys.length > 0 && keys.every(key => disablesKeys.has(key))
     })

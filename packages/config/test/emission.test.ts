@@ -11,12 +11,14 @@ import { oxlint } from '../src/oxlint'
  * because both are a package's internal shape.
  */
 function normalize(configs: Linter.Config[]): unknown {
-  return configs.map((config) => {
+  return configs.map(config => {
     const parser = config.languageOptions?.parser
     return sortKeys({
       ...config,
       ...(config.plugins ? { plugins: Object.keys(config.plugins).sort() } : {}),
-      ...(parser ? { languageOptions: { ...config.languageOptions, parser: parserName(parser) } } : {}),
+      ...(parser
+        ? { languageOptions: { ...config.languageOptions, parser: parserName(parser) } }
+        : {}),
     })
   })
 }
@@ -36,14 +38,18 @@ function parserName(parser: unknown): string {
 function normalizeSpecifiers(config: OxlintConfig): unknown {
   return sortKeys({
     ...config,
-    overrides: config.overrides?.map(override => override.jsPlugins
-      ? {
-          ...override,
-          jsPlugins: override.jsPlugins.map(entry => typeof entry === 'string'
-            ? pluginPackageName(entry)
-            : { ...entry, specifier: pluginPackageName(entry.specifier) }),
-        }
-      : override),
+    overrides: config.overrides?.map(override =>
+      override.jsPlugins
+        ? {
+            ...override,
+            jsPlugins: override.jsPlugins.map(entry =>
+              typeof entry === 'string'
+                ? pluginPackageName(entry)
+                : { ...entry, specifier: pluginPackageName(entry.specifier) },
+            ),
+          }
+        : override,
+    ),
   })
 }
 
@@ -73,21 +79,34 @@ describe('eslint() emission', () => {
   })
 
   it('emits the stylistic config when the caller turns it on', async () => {
-    expect(normalize(await eslint({ gitignore: false, isInEditor: false, stylistic: true }))).toMatchSnapshot()
+    expect(
+      normalize(await eslint({ gitignore: false, isInEditor: false, stylistic: true })),
+    ).toMatchSnapshot()
   })
 })
 
 describe('oxlint() emission', () => {
   it('emits the house config', async () => {
-    expect(normalizeSpecifiers(await oxlint({ gitignore: false, isInEditor: false }))).toMatchSnapshot()
+    expect(
+      normalizeSpecifiers(await oxlint({ gitignore: false, isInEditor: false })),
+    ).toMatchSnapshot()
   })
 
   it('emits the root options a type-aware consumer asks for', async () => {
-    expect(normalizeSpecifiers(await oxlint({ gitignore: false, isInEditor: false, oxlint: { typeAware: true, typeCheck: true } })))
-      .toMatchSnapshot()
+    expect(
+      normalizeSpecifiers(
+        await oxlint({
+          gitignore: false,
+          isInEditor: false,
+          oxlint: { typeAware: true, typeCheck: true },
+        }),
+      ),
+    ).toMatchSnapshot()
   })
 
   it('emits the stylistic config when the caller turns it on', async () => {
-    expect(normalizeSpecifiers(await oxlint({ gitignore: false, isInEditor: false, stylistic: true }))).toMatchSnapshot()
+    expect(
+      normalizeSpecifiers(await oxlint({ gitignore: false, isInEditor: false, stylistic: true })),
+    ).toMatchSnapshot()
   })
 })

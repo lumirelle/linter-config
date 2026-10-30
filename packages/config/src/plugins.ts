@@ -4,10 +4,7 @@ import type { PluginDefinition, PluginRef, RuleKey } from './types'
  * Every Plugin id Source may reference, with where its ESLint plugin comes from
  * and how Oxlint realizes it.
  *
- * The id is the canonical rule prefix (`defaultPluginRenaming` in mind), so a rule
- * key reads the same in both tools: `ts/no-explicit-any`, `style/indent`, `test/no-only-tests`.
- * Upstream prefixes that only make sense as package names are split so `${PluginId}/${rule}`
- * stays decomposable: `@angular-eslint` -> `angular`, `@angular-eslint/template` -> `angular-template`.
+ * The id is the canonical rule prefix (`defaultPluginRenaming` in mind).
  */
 const registry = {
   'angular': {
@@ -16,7 +13,10 @@ const registry = {
   },
   'angular-template': {
     from: 'peer',
-    eslint: { plugin: '@angular-eslint/eslint-plugin-template', parser: '@angular-eslint/template-parser' },
+    eslint: {
+      plugin: '@angular-eslint/eslint-plugin-template',
+      parser: '@angular-eslint/template-parser',
+    },
   },
   'antfu': {
     from: 'bundle',
@@ -44,7 +44,10 @@ const registry = {
   'eslint-comments': {
     from: 'bundle',
     eslint: { plugin: '@eslint-community/eslint-plugin-eslint-comments' },
-    oxlint: { jsPlugin: '@eslint-community/eslint-plugin-eslint-comments', alias: 'eslint-comments' },
+    oxlint: {
+      jsPlugin: '@eslint-community/eslint-plugin-eslint-comments',
+      alias: 'eslint-comments',
+    },
   },
   'format': {
     from: 'peer',
@@ -161,7 +164,11 @@ const registry = {
   },
   'vue': {
     from: 'bundle',
-    eslint: { plugin: 'eslint-plugin-vue', parser: 'vue-eslint-parser', processor: 'eslint-processor-vue-blocks' },
+    eslint: {
+      plugin: 'eslint-plugin-vue',
+      parser: 'vue-eslint-parser',
+      processor: 'eslint-processor-vue-blocks',
+    },
     oxlint: { builtin: 'vue' },
   },
   'vue-a11y': {
@@ -195,9 +202,7 @@ export function isPluginId(value: string): value is PluginId {
  * so a longer id (`angular-template`) wins over a shorter one that prefixes it (`angular`).
  */
 export function pluginIdOfRuleKey(key: RuleKey): PluginId | undefined {
-  return [...PLUGIN_IDS]
-    .sort((a, b) => b.length - a.length)
-    .find(id => key.startsWith(`${id}/`))
+  return [...PLUGIN_IDS].sort((a, b) => b.length - a.length).find(id => key.startsWith(`${id}/`))
 }
 
 /**

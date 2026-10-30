@@ -44,7 +44,7 @@ describe('the example registry', () => {
     expect(await listExamples()).toEqual(EXAMPLE_NAMES)
   })
 
-  it('resolves a flavor-qualified name to that flavor\'s directory', async () => {
+  it("resolves a flavor-qualified name to that flavor's directory", async () => {
     const example = await resolveExample('eslint-oxlint/ts')
 
     expect(example.name).toBe('eslint-oxlint/ts')
@@ -57,7 +57,9 @@ describe('the example registry', () => {
     // Every stack ships one directory per flavor, and the runner prints a bare stack name in
     // this order. Asserting it per stack is what makes a lost directory or a wrong flavor order
     // fail here rather than in a printed Emission.
-    const resolved = await Promise.all(STACKS.map(async stack => ({ stack, flavors: await resolveStack(stack) })))
+    const resolved = await Promise.all(
+      STACKS.map(async stack => ({ stack, flavors: await resolveStack(stack) })),
+    )
 
     for (const { stack, flavors } of resolved) {
       expect(flavors.map(example => example.name)).toEqual([
@@ -69,7 +71,7 @@ describe('the example registry', () => {
     }
   })
 
-  it('resolves a stack\'s paired flavor with both Emissions built from its own options module', async () => {
+  it("resolves a stack's paired flavor with both Emissions built from its own options module", async () => {
     const example = await resolveExample('eslint-oxlint/ts')
 
     // The Emissions come back resolved: the ESLint one carries the TypeScript objects the example
@@ -81,20 +83,33 @@ describe('the example registry', () => {
 
   it('fails an unknown example name, naming only the flavor-qualified names', async () => {
     // One vocabulary: an example is `<flavor>/<stack>`, so a stack name is not a near miss to list.
-    const failure = await resolveExample('nope').then(() => undefined, (error: Error) => error)
+    const failure = await resolveExample('nope').then(
+      () => undefined,
+      (error: Error) => error,
+    )
 
-    expect(failure?.message).toBe(`Unknown example "nope". Valid examples: ${EXAMPLE_NAMES.join(', ')}`)
+    expect(failure?.message).toBe(
+      `Unknown example "nope". Valid examples: ${EXAMPLE_NAMES.join(', ')}`,
+    )
   })
 
   it('fails a bare stack name, because one stack is three examples', async () => {
     // The compatibility alias is gone: `ts` names no example, and the failure lists the names that do.
-    const failure = await resolveExample('ts').then(() => undefined, (error: Error) => error)
+    const failure = await resolveExample('ts').then(
+      () => undefined,
+      (error: Error) => error,
+    )
 
-    expect(failure?.message).toBe(`Unknown example "ts". Valid examples: ${EXAMPLE_NAMES.join(', ')}`)
+    expect(failure?.message).toBe(
+      `Unknown example "ts". Valid examples: ${EXAMPLE_NAMES.join(', ')}`,
+    )
   })
 
   it('fails an unknown stack, naming only the stack names', async () => {
-    const failure = await resolveStack('nope').then(() => undefined, (error: Error) => error)
+    const failure = await resolveStack('nope').then(
+      () => undefined,
+      (error: Error) => error,
+    )
 
     expect(failure?.message).toBe(`Unknown stack "nope". Valid stacks: ${STACKS.join(', ')}`)
   })

@@ -56,6 +56,7 @@
         "@arethetypeswrong/cli": "^0.18.5",
         "eslint": "^10.12.0",
         "knip": "^6.41.0",
+        "oxfmt": "^0.75.0",
         "oxlint": "^1.88.0",
         "oxlint-tsgolint": "^7.0.2004",
         "publint": "^0.3.25"
@@ -141,6 +142,7 @@
     "eslint-plugin-regexp": "catalog:bundle",
     "eslint-plugin-unused-imports": "catalog:bundle",
     "knip": "catalog:check",
+    "oxfmt": "catalog:check",
     "oxlint": "catalog:check",
     "oxlint-tsgolint": "catalog:check",
     "pkg-pr-new": "catalog:release",

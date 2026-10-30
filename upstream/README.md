@@ -7,11 +7,11 @@ submodule and the npm version the repository installs.
 
 The submodule provides the source and history to read; the exactly pinned npm package is what executes, and both must name the same release.
 
-| Path | Role |
-| --- | --- |
-| `upstream/antfu-eslint-config` | Git submodule, checked out at the tag in `pin.json` |
-| `upstream/pin.json` | Pinned tag, npm version, and package name |
-| `catalog:check` entry in `/package.json` | Exact npm version (`9.5.1`, never a range) |
+| Path                                     | Role                                                |
+| ---------------------------------------- | --------------------------------------------------- |
+| `upstream/antfu-eslint-config`           | Git submodule, checked out at the tag in `pin.json` |
+| `upstream/pin.json`                      | Pinned tag, npm version, and package name           |
+| `catalog:check` entry in `/package.json` | Exact npm version (`9.5.1`, never a range)          |
 
 ## Bumping the baseline
 

@@ -1,6 +1,7 @@
 import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { dirname, join } from 'node:path'
+// oxlint-disable-next-line e18e/ban-dependencies
 import fastGlob from 'fast-glob'
 import { minimatch } from 'minimatch'
 import { afterAll, describe, expect, it } from 'vitest'
@@ -43,7 +44,7 @@ import {
  * vocabulary must select exactly the same files. Each row is the independent source of truth
  * for the equivalence test below.
  */
-const UPSTREAM_EQUIVALENTS: Array<{ upstream: string | string[], ours: string | string[] }> = [
+const UPSTREAM_EQUIVALENTS: Array<{ upstream: string | string[]; ours: string | string[] }> = [
   { upstream: ['**/*.?([cm])js'], ours: [GLOB_JS] },
   { upstream: ['**/*.?([cm])jsx'], ours: [GLOB_JSX] },
   { upstream: ['**/*.?([cm])ts'], ours: [GLOB_TS] },
@@ -159,13 +160,15 @@ describe('glob vocabulary', () => {
   })
 
   it('keeps the exclude list free of the removed tooling paths', () => {
-    expect(GLOB_EXCLUDE).toEqual(expect.arrayContaining([
-      '**/node_modules',
-      '**/dist',
-      '**/coverage',
-      '**/auto-import.d.ts',
-      '**/auto-imports.d.ts',
-    ]))
+    expect(GLOB_EXCLUDE).toEqual(
+      expect.arrayContaining([
+        '**/node_modules',
+        '**/dist',
+        '**/coverage',
+        '**/auto-import.d.ts',
+        '**/auto-imports.d.ts',
+      ]),
+    )
   })
 })
 

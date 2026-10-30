@@ -5,8 +5,6 @@ defineProps<{ name: string }>()
 <template>
   <section class="card">
     <!-- A labelled region: the accessibility rules this example enables check exactly this. -->
-    <p :aria-label="`Greeting for ${name}`">
-      Hello, {{ name }}!
-    </p>
+    <p :aria-label="`Greeting for ${name}`">Hello, {{ name }}!</p>
   </section>
 </template>

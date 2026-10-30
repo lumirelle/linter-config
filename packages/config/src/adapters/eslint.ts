@@ -7,7 +7,15 @@ import { GLOB_MARKDOWN } from '../globs'
 import { pluginDefinition } from '../plugins'
 import { source } from '../source'
 
-const ESLINT_DOMAINS: readonly Domain[] = ['js', 'vue', 'svelte', 'astro', 'angular', 'data', 'markup']
+const ESLINT_DOMAINS: readonly Domain[] = [
+  'js',
+  'vue',
+  'svelte',
+  'astro',
+  'angular',
+  'data',
+  'markup',
+]
 
 const BUNDLE_PACKAGE = '@lumirelle/linter-plugins-eslint'
 
@@ -65,7 +73,9 @@ async function toEslintConfig(config: ConfigObject): Promise<Linter.Config> {
   return eslintConfig
 }
 
-async function resolvePlugins(plugins: NonNullable<ConfigObject['plugins']>): Promise<Record<string, ESLint.Plugin>> {
+async function resolvePlugins(
+  plugins: NonNullable<ConfigObject['plugins']>,
+): Promise<Record<string, ESLint.Plugin>> {
   const resolved: Record<string, ESLint.Plugin> = {}
   for (const id of Object.keys(plugins) as PluginId[]) {
     const ref = plugins[id]
@@ -87,7 +97,7 @@ async function loadPlugin(id: PluginId, ref: PluginRef): Promise<ESLint.Plugin> 
     if (!plugin) {
       throw new Error(
         `"${BUNDLE_PACKAGE}" does not provide the "${id}" plugin. `
-        + `Install a Bundle version that covers it, or drop the module that needs it.`,
+          + `Install a Bundle version that covers it, or drop the module that needs it.`,
       )
     }
     return plugin
@@ -95,11 +105,10 @@ async function loadPlugin(id: PluginId, ref: PluginRef): Promise<ESLint.Plugin> 
 
   try {
     return interopDefault(await import(definition.eslint.plugin)) as ESLint.Plugin
-  }
-  catch (cause) {
+  } catch (cause) {
     throw new Error(
       `Cannot resolve "${definition.eslint.plugin}", which the "${id}" plugin needs. `
-      + `Install it in your project.`,
+        + `Install it in your project.`,
       { cause },
     )
   }
@@ -116,7 +125,9 @@ async function loadParser(ref: PluginRef): Promise<NonNullable<Linter.LanguageOp
   const definition = pluginDefinition(id)
   const packageName = definition.eslint.parser
   if (!packageName) {
-    throw new Error(`The "${id}" plugin registers no parser, so a Config object cannot ask it for one.`)
+    throw new Error(
+      `The "${id}" plugin registers no parser, so a Config object cannot ask it for one.`,
+    )
   }
 
   if (definition.from === 'bundle') {
@@ -124,19 +135,20 @@ async function loadParser(ref: PluginRef): Promise<NonNullable<Linter.LanguageOp
     if (!parser) {
       throw new Error(
         `"${BUNDLE_PACKAGE}" does not provide the "${id}" parser. `
-        + `Install a Bundle version that covers it, or drop the module that needs it.`,
+          + `Install a Bundle version that covers it, or drop the module that needs it.`,
       )
     }
     return parser
   }
 
   try {
-    return interopDefault(await import(packageName)) as NonNullable<Linter.LanguageOptions['parser']>
-  }
-  catch (cause) {
+    return interopDefault(await import(packageName)) as NonNullable<
+      Linter.LanguageOptions['parser']
+    >
+  } catch (cause) {
     throw new Error(
       `Cannot resolve "${packageName}", which the "${id}" plugin needs. `
-      + `Install it in your project.`,
+        + `Install it in your project.`,
       { cause },
     )
   }
@@ -152,8 +164,9 @@ async function loadParser(ref: PluginRef): Promise<NonNullable<Linter.LanguageOp
 async function loadProcessor(ref: ProcessorRef): Promise<Linter.Config['processor']> {
   const id = ref.plugin as PluginId
   const plugin = await loadPlugin(id, ref.plugin)
-  const processor: Linter.Config['processor'] | undefined
-    = (plugin as { processors?: Record<string, Linter.Config['processor']> }).processors?.[ref.name]
+  const processor: Linter.Config['processor'] | undefined = (
+    plugin as { processors?: Record<string, Linter.Config['processor']> }
+  ).processors?.[ref.name]
   if (!processor) {
     const glue = (await loadBundle()).processors[`${ref.plugin}/${ref.name}`]
     if (glue) {
@@ -176,7 +189,9 @@ async function loadProcessor(ref: ProcessorRef): Promise<Linter.Config['processo
  * `svelte-eslint-parser` and `astro-eslint-parser` read the script parser from that option, and
  * Source can only name it as a Plugin id, so the Adapter swaps the id for the parser object.
  */
-async function resolveNestedParser(languageOptions: Linter.LanguageOptions): Promise<Linter.LanguageOptions> {
+async function resolveNestedParser(
+  languageOptions: Linter.LanguageOptions,
+): Promise<Linter.LanguageOptions> {
   const parserOptions = languageOptions.parserOptions
   const nested: unknown = parserOptions?.parser
   if (typeof nested !== 'string') {
@@ -206,14 +221,17 @@ async function loadBundle(): Promise<Bundle> {
 
 async function importBundle(): Promise<Bundle> {
   try {
-    const loaded = await import(BUNDLE_PACKAGE) as {
+    const loaded = (await import(BUNDLE_PACKAGE)) as {
       eslintPlugins?: Bundle['plugins']
       eslintParsers?: Bundle['parsers']
       eslintProcessors?: Bundle['processors']
     }
-    return { plugins: loaded.eslintPlugins ?? {}, parsers: loaded.eslintParsers ?? {}, processors: loaded.eslintProcessors ?? {} }
-  }
-  catch (cause) {
+    return {
+      plugins: loaded.eslintPlugins ?? {},
+      parsers: loaded.eslintParsers ?? {},
+      processors: loaded.eslintProcessors ?? {},
+    }
+  } catch (cause) {
     bundle = undefined
     throw new Error(
       `Cannot resolve "${BUNDLE_PACKAGE}". Install it to use the bundled plugins: nub add -D ${BUNDLE_PACKAGE}`,

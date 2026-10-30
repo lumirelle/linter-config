@@ -39,8 +39,8 @@ export const builtinPlugins: readonly BuiltinPlugin[] = [
  *
  * The map is data, not the last word on the specifier: {@link resolveJsPlugin} turns an id into the
  * absolute path of the package this Bundle ships, and an id whose package this Bundle does not
- * depend on — a peer, or one this Bundle predates — stays a bare package name for the consumer to
- * install.
+ * depend on, such as a peer or one this Bundle predates, stays a bare package name for the consumer
+ * to install.
  */
 export const jsPlugins: Readonly<Record<string, string>> = {
   'antfu': 'eslint-plugin-antfu',
@@ -61,8 +61,9 @@ export const jsPlugins: Readonly<Record<string, string>> = {
  * Resolves a Plugin id to the absolute path of the package this Bundle ships for it.
  *
  * "Ships" means the package is one of this Bundle's own `dependencies`, read from its manifest: an
- * id whose package is not one of them — a peer, a blacklisted plugin, or an id a newer registry
- * knows and this Bundle does not — returns `undefined`, and the caller keeps the bare package name.
+ * id whose package is not one of them, whether a peer, a blacklisted plugin, or an id a newer
+ * registry knows and this Bundle does not, returns `undefined`, and the caller keeps the bare
+ * package name.
  * Reachability is not the test: `import.meta.resolve` walks every ancestor `node_modules`, so a
  * hoisted copy or another workspace package's dependency would otherwise look like the Bundle's.
  */
@@ -74,8 +75,7 @@ export function resolveJsPlugin(id: string): string | undefined {
 
   try {
     return fileURLToPath(import.meta.resolve(packageName))
-  }
-  catch {
+  } catch {
     return undefined
   }
 }

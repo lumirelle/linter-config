@@ -1,10 +1,5 @@
 import type { ConfigObject } from '../types'
 
-/**
- * Sort package.json
- *
- * Requires the `jsonc` Module, which registers the `jsonc` plugin and its `language`
- */
 export function sortPackageJson(): ConfigObject[] {
   return [
     {
@@ -90,12 +85,7 @@ export function sortPackageJson(): ConfigObject[] {
             pathPattern: '^workspaces\\.catalogs\\.[^.]+$',
           },
           {
-            order: [
-              'types',
-              'import',
-              'require',
-              'default',
-            ],
+            order: ['types', 'import', 'require', 'default'],
             pathPattern: '^exports.*$',
           },
           {
@@ -119,11 +109,6 @@ export function sortPackageJson(): ConfigObject[] {
     },
   ]
 }
-/**
- * Sort tsconfig.json
- *
- * Requires the `jsonc` Module, which registers the `jsonc` plugin and its `language`
- */
 
 export function sortTsconfig(): ConfigObject[] {
   return [
@@ -136,14 +121,7 @@ export function sortTsconfig(): ConfigObject[] {
         'jsonc/sort-keys': [
           'error',
           {
-            order: [
-              'extends',
-              'compilerOptions',
-              'references',
-              'files',
-              'include',
-              'exclude',
-            ],
+            order: ['extends', 'compilerOptions', 'references', 'files', 'include', 'exclude'],
             pathPattern: '^$',
           },
           {

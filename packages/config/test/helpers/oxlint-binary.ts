@@ -1,6 +1,15 @@
 import type { OxlintConfig } from 'oxlint'
 import { spawnSync } from 'node:child_process'
-import { cpSync, existsSync, mkdirSync, mkdtempSync, realpathSync, rmSync, symlinkSync, writeFileSync } from 'node:fs'
+import {
+  cpSync,
+  existsSync,
+  mkdirSync,
+  mkdtempSync,
+  realpathSync,
+  rmSync,
+  symlinkSync,
+  writeFileSync,
+} from 'node:fs'
 import { createRequire } from 'node:module'
 import { tmpdir } from 'node:os'
 import { dirname, isAbsolute, join } from 'node:path'
@@ -9,15 +18,23 @@ import { fileURLToPath } from 'node:url'
 import { toPosixPath } from './paths'
 
 const REPO_ROOT = fileURLToPath(new URL('../../../', import.meta.url))
-const OXLINT_BIN = join(dirname(createRequire(import.meta.url).resolve('oxlint/package.json')), 'bin', 'oxlint')
+const OXLINT_BIN = join(
+  dirname(createRequire(import.meta.url).resolve('oxlint/package.json')),
+  'bin',
+  'oxlint',
+)
 
 /**
  * Where this repository keeps the packages a consumer would install for `jsPlugins`.
  *
- * A peer's package is linked from the consumer side, so `packages/config` — the package whose
- * Modules ask the consumer for it — is one of the roots.
+ * A peer's package is linked from the consumer side, so `packages/config`, the package whose
+ * Modules ask the consumer for it, is one of the roots.
  */
-const PLUGIN_ROOTS = [REPO_ROOT, join(REPO_ROOT, 'packages/plugins-eslint'), join(REPO_ROOT, 'packages/config')]
+const PLUGIN_ROOTS = [
+  REPO_ROOT,
+  join(REPO_ROOT, 'packages/plugins-eslint'),
+  join(REPO_ROOT, 'packages/config'),
+]
 
 /** Diagnostic filenames are relative to the project, with an optional leading `./`. */
 const LEADING_DOT_SLASH = /^\.?\//u
@@ -38,15 +55,18 @@ interface OxlintReport {
     code: string
     severity: string
     filename: string
-    labels?: Array<{ span: { line: number, column: number } }>
+    labels?: Array<{ span: { line: number; column: number } }>
   }>
 }
 
 /** One entry of Oxlint's `jsPlugins`. */
-type JsPluginEntry = string | { name: string, specifier: string }
+type JsPluginEntry = string | { name: string; specifier: string }
 
 /** A scratch directory that the caller removes once its run is done. */
-export function scratchDirectory(prefix = 'lumirelle-oxlint-'): { directory: string, remove: () => void } {
+export function scratchDirectory(prefix = 'lumirelle-oxlint-'): {
+  directory: string
+  remove: () => void
+} {
   // `tmpdir()` is a symlink on macOS (`/var` -> `/private/var`); Oxlint matches its ignore
   // patterns against the canonical path, so the scratch project uses it from the start.
   const directory = realpathSync(mkdtempSync(join(tmpdir(), prefix)))
@@ -54,9 +74,9 @@ export function scratchDirectory(prefix = 'lumirelle-oxlint-'): { directory: str
 }
 
 /**
- * A scratch project holding the emission as `oxlint.config.json` — the same object a consumer's
+ * A scratch project holding the emission as `oxlint.config.json`, the same object a consumer's
  * `oxlint.config.ts` exports by default, so writing it as JSON also proves the Emission carries no
- * functions — plus the fixture set and the packages its `jsPlugins` name.
+ * functions. It also holds the fixture set and the packages its `jsPlugins` name.
  *
  * The fixture project's `tsconfig.json` is copied to the project root as well: a type-aware run
  * reads the project around its working directory, exactly as a consumer's `oxlint` does.
@@ -93,11 +113,13 @@ function linkPlugin(directory: string, entry: JsPluginEntry): void {
     }
     return
   }
-  const target = PLUGIN_ROOTS
-    .map(root => resolvePackageDirectory(root, specifier))
-    .find(resolved => resolved !== undefined)
+  const target = PLUGIN_ROOTS.map(root => resolvePackageDirectory(root, specifier)).find(
+    resolved => resolved !== undefined,
+  )
   if (!target) {
-    throw new Error(`Cannot find "${specifier}" to link into the Oxlint fixture project; install it in the workspace.`)
+    throw new Error(
+      `Cannot find "${specifier}" to link into the Oxlint fixture project; install it in the workspace.`,
+    )
   }
   const link = join(directory, 'node_modules', specifier)
   // The same package may be declared by several Config objects, each with its own alias.
@@ -112,8 +134,7 @@ function resolvePackageDirectory(from: string, specifier: string): string | unde
   let entry: string
   try {
     entry = createRequire(join(from, 'package.json')).resolve(specifier)
-  }
-  catch {
+  } catch {
     return undefined
   }
 
@@ -131,10 +152,20 @@ function resolvePackageDirectory(from: string, specifier: string): string | unde
  * Runs the real Oxlint and returns what it printed, for a run whose outcome is itself the subject
  * (a plugin that crashes the report shim exits nothing like a clean run).
  */
-export function runOxlint(directory: string, patterns: string[] = ['fixtures']): { status: number | null, output: string } {
+export function runOxlint(
+  directory: string,
+  patterns: string[] = ['fixtures'],
+): { status: number | null; output: string } {
   const result = spawnSync(
     process.execPath,
-    [OXLINT_BIN, '--config', join(directory, 'oxlint.config.json'), '--format', 'json', ...patterns],
+    [
+      OXLINT_BIN,
+      '--config',
+      join(directory, 'oxlint.config.json'),
+      '--format',
+      'json',
+      ...patterns,
+    ],
     { cwd: directory, encoding: 'utf8' },
   )
 
@@ -142,10 +173,20 @@ export function runOxlint(directory: string, patterns: string[] = ['fixtures']):
 }
 
 /** Runs the real Oxlint over `patterns` and returns its diagnostics, in a stable order. */
-export function lint(directory: string, patterns: string[] = ['fixtures']): { diagnostics: Diagnostic[], files: number } {
+export function lint(
+  directory: string,
+  patterns: string[] = ['fixtures'],
+): { diagnostics: Diagnostic[]; files: number } {
   const result = spawnSync(
     process.execPath,
-    [OXLINT_BIN, '--config', join(directory, 'oxlint.config.json'), '--format', 'json', ...patterns],
+    [
+      OXLINT_BIN,
+      '--config',
+      join(directory, 'oxlint.config.json'),
+      '--format',
+      'json',
+      ...patterns,
+    ],
     { cwd: directory, encoding: 'utf8' },
   )
   // 0 is clean, 1 means "diagnostics reported"; anything else is Oxlint rejecting the config.
@@ -154,11 +195,13 @@ export function lint(directory: string, patterns: string[] = ['fixtures']): { di
   }
 
   // A run that matches no file says so on stdout before the report, so read from the first brace.
-  const report = JSON.parse(result.stdout.slice(result.stdout.indexOf('{'))) as OxlintReport & { number_of_files: number }
+  const report = JSON.parse(result.stdout.slice(result.stdout.indexOf('{'))) as OxlintReport & {
+    number_of_files: number
+  }
   return {
     files: report.number_of_files,
     diagnostics: report.diagnostics
-      .map((diagnostic) => {
+      .map(diagnostic => {
         const label = diagnostic.labels?.[0]?.span
         return {
           file: toPosixPath(diagnostic.filename).replace(LEADING_DOT_SLASH, ''),
@@ -168,11 +211,13 @@ export function lint(directory: string, patterns: string[] = ['fixtures']): { di
           column: label?.column ?? 0,
         }
       })
-      .sort((left, right) =>
-        left.file.localeCompare(right.file)
-        || left.line - right.line
-        || left.column - right.column
-        || left.ruleId.localeCompare(right.ruleId)),
+      .sort(
+        (left, right) =>
+          left.file.localeCompare(right.file)
+          || left.line - right.line
+          || left.column - right.column
+          || left.ruleId.localeCompare(right.ruleId),
+      ),
   }
 }
 

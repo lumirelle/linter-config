@@ -4,7 +4,5 @@ const emit = defineEmits<{ increment: [] }>()
 </script>
 
 <template>
-  <button type="button" class="counter" @click="emit('increment')">
-    Count: {{ count }}
-  </button>
+  <button type="button" class="counter" @click="emit('increment')">Count: {{ count }}</button>
 </template>

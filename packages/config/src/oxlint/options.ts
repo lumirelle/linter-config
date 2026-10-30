@@ -1,7 +1,7 @@
 import type { Options, OxlintOptions } from '../types'
 
 /**
- * Oxlint's root `options` field, which has no ESLint counterpart.
+ * Oxlint's root `options` field.
  *
  * `options.oxlint` is the Bridge flag in its boolean form and Oxlint's root options in its object
  * form, so this one reading tells both Emissions whether Oxlint runs in its type-aware mode: the
@@ -22,8 +22,8 @@ export function oxlintRootOptions(option: Options['oxlint']): OxlintOptions | un
 }
 
 /**
- * Whether Oxlint runs in its type-aware mode, which decides whether a type-aware rule is part of
- * the Oxlint Emission at all — and therefore whether the Bridge may turn it off in ESLint.
+ * Whether Oxlint runs in its type-aware mode. That decides whether a type-aware rule is part of the
+ * Oxlint Emission at all, and therefore whether the Bridge may turn it off in ESLint.
  */
 export function isTypeAware(options: Options): boolean {
   return oxlintRootOptions(options.oxlint)?.typeAware === true

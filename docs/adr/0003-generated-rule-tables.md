@@ -12,11 +12,11 @@ recommended config, `@e18e/eslint-plugin`'s three named sets) and the Oxlint inv
 maps rule names against. Those are generated, carry the version they were generated from in their
 header, and have a drift test:
 
-| Generated file | Generator | Source of truth |
-| --- | --- | --- |
-| `src/modules/stylistic-rules.generated.ts` | `mise run //packages/config:stylistic` | `@stylistic/eslint-plugin`'s `configs.customize()` |
-| `src/modules/plugin-rules.generated.ts` | `mise run //packages/config:plugin-rules` | `eslint-plugin-regexp` and `@e18e/eslint-plugin` recommended configs |
-| `src/oxlint/inventory.generated.ts` | `mise run //packages/config:inventory` | `oxlint --rules --format json` |
+| Generated file                             | Generator                                 | Source of truth                                                      |
+| ------------------------------------------ | ----------------------------------------- | -------------------------------------------------------------------- |
+| `src/modules/stylistic-rules.generated.ts` | `mise run //packages/config:stylistic`    | `@stylistic/eslint-plugin`'s `configs.customize()`                   |
+| `src/modules/plugin-rules.generated.ts`    | `mise run //packages/config:plugin-rules` | `eslint-plugin-regexp` and `@e18e/eslint-plugin` recommended configs |
+| `src/oxlint/inventory.generated.ts`        | `mise run //packages/config:inventory`    | `oxlint --rules --format json`                                       |
 
 Every other table is **hand-transcribed** from Upstream's own source, because there is nothing to
 call: Upstream writes those lists as literals, and Source's copy is a transcription of

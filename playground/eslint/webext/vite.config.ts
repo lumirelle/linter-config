@@ -11,7 +11,7 @@ export default {
     outDir: 'extension',
     rollupOptions: {
       input: {
-        background: 'src/background.ts',
+        'background': 'src/background.ts',
         'content-script': 'src/content-script.ts',
       },
     },

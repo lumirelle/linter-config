@@ -8,11 +8,18 @@ const EVERY_FILE = '**/*'
  * them: an override without a scope applies everywhere, and Oxlint flattens Source's brace globs
  * into one pattern per extension, so a scope is matched on its extensions rather than on its text.
  */
-export function rulesFor(config: OxlintConfig, extensions: readonly string[]): Record<string, unknown> {
-  const scoped = (config.overrides ?? []).filter((override) => {
+export function rulesFor(
+  config: OxlintConfig,
+  extensions: readonly string[],
+): Record<string, unknown> {
+  const scoped = (config.overrides ?? []).filter(override => {
     const files = override.files ?? []
-    return files.length > 0
-      && files.every(file => file === EVERY_FILE || extensions.some(extension => file.endsWith(extension)))
+    return (
+      files.length > 0
+      && files.every(
+        file => file === EVERY_FILE || extensions.some(extension => file.endsWith(extension)),
+      )
+    )
   })
 
   const merged: Record<string, unknown> = {}

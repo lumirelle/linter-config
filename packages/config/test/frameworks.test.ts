@@ -3,7 +3,17 @@ import { eslint } from '../src/eslint'
 import { oxlint } from '../src/oxlint'
 import { eslintObject, houseOptions, jsPluginsOf, rulesOf } from './helpers/emission'
 
-const FRAMEWORK_TAGS = ['jsx', 'vue', 'react', 'nextjs', 'solid', 'unocss', 'svelte', 'astro', 'angular']
+const FRAMEWORK_TAGS = [
+  'jsx',
+  'vue',
+  'react',
+  'nextjs',
+  'solid',
+  'unocss',
+  'svelte',
+  'astro',
+  'angular',
+]
 
 /** The names of the Config objects an Emission emitted. */
 async function names(options = {}): Promise<string[]> {
@@ -15,25 +25,31 @@ describe('the framework Modules', () => {
     const emitted = await names()
 
     for (const tag of FRAMEWORK_TAGS) {
-      expect(emitted.filter(name => name.includes(`/${tag}`)), `${tag} is opt-in`).toEqual([])
+      expect(
+        emitted.filter(name => name.includes(`/${tag}`)),
+        `${tag} is opt-in`,
+      ).toEqual([])
     }
   })
 
   // `svelte` is left out: loading `eslint-plugin-svelte` needs the `svelte` package itself, which
   // this workspace does not install, so its ESLint emission cannot be composed here.
-  it.each(FRAMEWORK_TAGS.filter(tag => tag !== 'svelte'))('composes %s once the caller opts in', async (tag) => {
-    // Every framework is reachable from the one place that knows its options; what this asserts is
-    // that the flag alone is enough to compose it, which is what the peer check runs behind.
-    const options = { [tag]: true }
+  it.each(FRAMEWORK_TAGS.filter(tag => tag !== 'svelte'))(
+    'composes %s once the caller opts in',
+    async tag => {
+      // Every framework is reachable from the one place that knows its options; what this asserts is
+      // that the flag alone is enough to compose it, which is what the peer check runs behind.
+      const options = { [tag]: true }
 
-    expect(() => {
-      void eslint(houseOptions(options))
-    }).not.toThrow()
-  })
+      expect(() => {
+        void eslint(houseOptions(options))
+      }).not.toThrow()
+    },
+  )
 })
 
 describe('eslint() react module', () => {
-  it('emits Upstream\'s four objects in order', async () => {
+  it("emits Upstream's four objects in order", async () => {
     const emitted = await names({ react: true })
 
     expect(emitted.filter(name => name.includes('/react'))).toEqual([
@@ -44,10 +60,9 @@ describe('eslint() react module', () => {
   })
 
   it('declares both peer plugins on the setup object', async () => {
-    expect(Object.keys((await eslintObject('lumirelle/react/setup', { react: true })).plugins ?? {})).toEqual([
-      'react',
-      'react-refresh',
-    ])
+    expect(
+      Object.keys((await eslintObject('lumirelle/react/setup', { react: true })).plugins ?? {}),
+    ).toEqual(['react', 'react-refresh'])
   })
 
   it('carries the recommended set and the refresh rule on the scoped object', async () => {
@@ -55,10 +70,13 @@ describe('eslint() react module', () => {
 
     expect(rules['react/rules-of-hooks']).toBe('error')
     expect(rules['react/no-direct-mutation-state']).toBe('error')
-    expect(rules['react-refresh/only-export-components']).toEqual(['error', {
-      allowConstantExport: true,
-      allowExportNames: [],
-    }])
+    expect(rules['react-refresh/only-export-components']).toEqual([
+      'error',
+      {
+        allowConstantExport: true,
+        allowExportNames: [],
+      },
+    ])
   })
 
   it('turns off the two rules TypeScript already reports', async () => {
@@ -71,13 +89,20 @@ describe('eslint() react module', () => {
   })
 
   it('adds the type-aware object only when the caller names a tsconfig', async () => {
-    const names = await (async () => (await eslint(houseOptions({
-      react: true,
-      typescript: { tsconfigPath: 'tsconfig.json' },
-    }))).map(config => config.name))()
+    const names = await (async () =>
+      (
+        await eslint(
+          houseOptions({
+            react: true,
+            typescript: { tsconfigPath: 'tsconfig.json' },
+          }),
+        )
+      ).map(config => config.name))()
 
     expect(names).toContain('lumirelle/react/type-aware-rules')
-    expect(await namesOrNothing('lumirelle/react/type-aware-rules', { react: true })).toBeUndefined()
+    expect(
+      await namesOrNothing('lumirelle/react/type-aware-rules', { react: true }),
+    ).toBeUndefined()
   })
 })
 
@@ -112,7 +137,9 @@ describe('eslint() jsx module', () => {
 
     expect(setup.files).toEqual(['**/*.{jsx,cjsx,mjsx}', '**/*.{tsx,ctsx,mtsx}'])
     expect(setup.plugins).toBeUndefined()
-    const parserOptions = setup.languageOptions?.parserOptions as { ecmaFeatures?: unknown } | undefined
+    const parserOptions = setup.languageOptions?.parserOptions as
+      | { ecmaFeatures?: unknown }
+      | undefined
 
     expect(parserOptions?.ecmaFeatures).toEqual({ jsx: true })
   })
@@ -144,9 +171,12 @@ describe('oxlint() over the framework Modules', () => {
     expect(declarations).toContainEqual({ name: 'unocss', specifier: '@unocss/eslint-plugin' })
   })
 
-  it.each(['svelte', 'astro', 'angular'] as const)('leaves the Emission alone for the %s Domain', async (tag) => {
-    const config = await oxlint(houseOptions({ [tag]: true }))
+  it.each(['svelte', 'astro', 'angular'] as const)(
+    'leaves the Emission alone for the %s Domain',
+    async tag => {
+      const config = await oxlint(houseOptions({ [tag]: true }))
 
-    expect(JSON.stringify(config)).not.toContain(`"${tag}/`)
-  })
+      expect(JSON.stringify(config)).not.toContain(`"${tag}/`)
+    },
+  )
 })

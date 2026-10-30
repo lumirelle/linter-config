@@ -151,7 +151,9 @@ async function discoverExamples(): Promise<ExampleLocation[]> {
 /** The directories under `directory`, skipping the install artifacts every example carries. */
 async function exampleDirectories(directory: string): Promise<string[]> {
   const entries = await readdir(directory, { withFileTypes: true })
-  return entries.filter(entry => entry.isDirectory() && entry.name !== 'node_modules').map(entry => entry.name)
+  return entries
+    .filter(entry => entry.isDirectory() && entry.name !== 'node_modules')
+    .map(entry => entry.name)
 }
 
 /** Load one location's options module, when it ships one, and the config modules it ships. */
@@ -223,7 +225,9 @@ function exampleNames(locations: readonly ExampleLocation[]): string[] {
  * the stacks as well would suggest a bare name is one of them.
  */
 function unknownExample(name: string, locations: ExampleLocation[]): Error {
-  return new Error(`Unknown example "${name}". Valid examples: ${exampleNames(locations).join(', ')}`)
+  return new Error(
+    `Unknown example "${name}". Valid examples: ${exampleNames(locations).join(', ')}`,
+  )
 }
 
 /** The failure for a stack the playground does not ship. */
@@ -247,5 +251,5 @@ async function optionalEmission<T>(path: string): Promise<T | undefined> {
 
 /** Import a module by file path, with the type the caller expects from it. */
 async function importModule<T>(path: string): Promise<T> {
-  return await import(pathToFileURL(path).href) as T
+  return (await import(pathToFileURL(path).href)) as T
 }

@@ -2391,14 +2391,6 @@ exports[`eslint() emission > emits the editor config 1`] = `
     },
     "name": "lumirelle/toml/rules",
     "rules": {
-      "toml/array-bracket-spacing": [
-        "error",
-        "never",
-      ],
-      "toml/array-element-newline": [
-        "error",
-        "consistent",
-      ],
       "toml/comma-style": "error",
       "toml/keys-order": "error",
       "toml/no-space-dots": "error",
@@ -4986,14 +4978,6 @@ exports[`eslint() emission > emits the house config 1`] = `
     },
     "name": "lumirelle/toml/rules",
     "rules": {
-      "toml/array-bracket-spacing": [
-        "error",
-        "never",
-      ],
-      "toml/array-element-newline": [
-        "error",
-        "consistent",
-      ],
       "toml/comma-style": "error",
       "toml/keys-order": "error",
       "toml/no-space-dots": "error",

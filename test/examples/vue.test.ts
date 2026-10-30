@@ -1,5 +1,12 @@
 import { describe, expect, it } from 'vitest'
-import { configNamed, configNames, expectNoModules, expectOxlintReadsVue, loadExample, objectsOfModule } from './helpers/emission'
+import {
+  configNamed,
+  configNames,
+  expectNoModules,
+  expectOxlintReadsVue,
+  loadExample,
+  objectsOfModule,
+} from './helpers/emission'
 
 describe('the `eslint-oxlint/vue` example', () => {
   it('emits the Vue, UnoCSS and test Config objects a Vite single-page application asks for', async () => {
@@ -20,7 +27,10 @@ describe('the `eslint-oxlint/vue` example', () => {
     expect(ruleKeys.some(key => key.startsWith('vue-a11y/'))).toBe(true)
     // Merged, not appended: the sub-option adds rules and a plugin, never a Config object.
     expect(objectsOfModule(eslint, 'vue')).toEqual(['lumirelle/vue/setup', 'lumirelle/vue/rules'])
-    expect(Object.keys(configNamed(eslint, 'lumirelle/vue/setup').plugins ?? {})).toEqual(['vue', 'vue-a11y'])
+    expect(Object.keys(configNamed(eslint, 'lumirelle/vue/setup').plugins ?? {})).toEqual([
+      'vue',
+      'vue-a11y',
+    ])
   })
 
   it('does not emit the framework Modules the example leaves off', async () => {

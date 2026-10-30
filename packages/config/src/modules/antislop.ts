@@ -1,20 +1,16 @@
 import type { ConfigObject } from '../types'
-import { GLOB_ALL_SRC, GLOB_GRAPHQL, GLOB_JSONC, GLOB_MARKDOWN_CODE, GLOB_SRC, GLOB_TOML } from '../globs'
+import {
+  GLOB_ALL_SRC,
+  GLOB_GRAPHQL,
+  GLOB_JSONC,
+  GLOB_MARKDOWN_CODE,
+  GLOB_SRC,
+  GLOB_TOML,
+} from '../globs'
 import { requirePeerPackages } from '../packages'
 import { pluginRef } from '../plugins'
 
 /**
- * Upstream's `configs/antislop.ts`: a curated `eslint-plugin-slop` set against filler prose and
- * dead code, plus the SonarJS subset that needs no type information.
- *
- * Upstream spreads the package configs; Source declares the rules as data. The plugin ids are
- * peers, so the ESLint Adapter resolves them from the consumer's install and Oxlint loads them
- * through `jsPlugins`. `slop/no-em-dash` applies to every prose-bearing file type, so that object
- * is wider than the `js` domain it declares.
- *
- * Upstream keeps the SonarJS half in a `sonarjs` Module of its own; here the subset rides on this
- * one, so `Options` carries no `sonarjs` flag and `antislop` is the one way to get `sonar/` rules.
- *
  * @see https://github.com/antfu/eslint-plugin-slop
  * @see https://github.com/SonarSource/SonarJS
  */

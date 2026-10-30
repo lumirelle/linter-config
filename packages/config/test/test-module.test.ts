@@ -19,7 +19,10 @@ describe('eslint() test module', () => {
   it('enables the vitest rules Upstream enables, with their options', async () => {
     const emitted = rulesOf(await eslintObject('lumirelle/test/rules'))
 
-    expect(emitted['test/consistent-test-it']).toEqual(['error', { fn: 'it', withinDescribe: 'it' }])
+    expect(emitted['test/consistent-test-it']).toEqual([
+      'error',
+      { fn: 'it', withinDescribe: 'it' },
+    ])
     expect(emitted['test/no-identical-title']).toBe('error')
     expect(emitted['test/no-import-node-test']).toBe('error')
     expect(emitted['test/prefer-hooks-in-order']).toBe('error')
@@ -28,7 +31,11 @@ describe('eslint() test module', () => {
 
   it('downgrades no-only-tests inside an editor, as the other autofixable rules are', async () => {
     expect(rulesOf(await eslintObject('lumirelle/test/rules'))['test/no-only-tests']).toBe('error')
-    expect(rulesOf(await eslintObject('lumirelle/test/rules', { isInEditor: true }))['test/no-only-tests']).toBe('warn')
+    expect(
+      rulesOf(await eslintObject('lumirelle/test/rules', { isInEditor: true }))[
+        'test/no-only-tests'
+      ],
+    ).toBe('warn')
   })
 
   it('turns off the rules the other Modules enabled inside test files', async () => {
@@ -46,17 +53,26 @@ describe('eslint() test module', () => {
     // it and the entry stays out; a rule nothing enables must not turn up as an `off` entry, or
     // Oxlint would need a plugin for it. A library turns it on, and then the entry is kept.
     expect(emitted['e18e/prefer-static-regex']).toBeUndefined()
-    expect(rulesOf(await eslintObject('lumirelle/test/rules', { type: 'lib' }))['e18e/prefer-static-regex'])
-      .toBe('off')
+    expect(
+      rulesOf(await eslintObject('lumirelle/test/rules', { type: 'lib' }))[
+        'e18e/prefer-static-regex'
+      ],
+    ).toBe('off')
     // `ts/explicit-function-return-type` exists only for libraries.
     expect(emitted['ts/explicit-function-return-type']).toBeUndefined()
-    expect(rulesOf(await eslintObject('lumirelle/test/rules', { type: 'lib' }))['ts/explicit-function-return-type'])
-      .toBe('off')
+    expect(
+      rulesOf(await eslintObject('lumirelle/test/rules', { type: 'lib' }))[
+        'ts/explicit-function-return-type'
+      ],
+    ).toBe('off')
   })
 
   it('drops the entry of a Module the caller turned off', async () => {
-    expect(rulesOf(await eslintObject('lumirelle/test/rules', { node: false }))['node/prefer-global/process'])
-      .toBeUndefined()
+    expect(
+      rulesOf(await eslintObject('lumirelle/test/rules', { node: false }))[
+        'node/prefer-global/process'
+      ],
+    ).toBeUndefined()
   })
 
   it('turns the module off with test: false', async () => {
@@ -65,10 +81,12 @@ describe('eslint() test module', () => {
     expect(names.some(name => name?.startsWith('lumirelle/test/'))).toBe(false)
   })
 
-  it('takes rule overrides from the option object, as Upstream\'s option shape allows', async () => {
-    const emitted = rulesOf(await eslintObject('lumirelle/test/rules', {
-      test: { overrides: { 'test/no-identical-title': 'off' } },
-    }))
+  it("takes rule overrides from the option object, as Upstream's option shape allows", async () => {
+    const emitted = rulesOf(
+      await eslintObject('lumirelle/test/rules', {
+        test: { overrides: { 'test/no-identical-title': 'off' } },
+      }),
+    )
 
     expect(emitted['test/no-identical-title']).toBe('off')
   })
@@ -78,15 +96,20 @@ describe('oxlint() test module', () => {
   it('maps the test rules onto the built-in vitest scope', async () => {
     const emitted = rulesOf(await oxlintObjectWith('vitest/consistent-test-it'))
 
-    expect(emitted['vitest/consistent-test-it']).toEqual(['error', { fn: 'it', withinDescribe: 'it' }])
+    expect(emitted['vitest/consistent-test-it']).toEqual([
+      'error',
+      { fn: 'it', withinDescribe: 'it' },
+    ])
     expect(emitted['vitest/prefer-hooks-in-order']).toBe('error')
     expect(emitted['vitest/prefer-lowercase-title']).toBe('error')
   })
 
   it('records the rules Oxlint does not carry, and the one it spells differently', () => {
-    expect(coverageReport().modules.test).toEqual(expect.arrayContaining([
-      { key: 'test/no-only-tests', oxlint: 'vitest/no-focused-tests', reason: 'renamed-rule' },
-      { key: 'node/prefer-global/process', reason: 'unknown-rule' },
-    ]))
+    expect(coverageReport().modules.test).toEqual(
+      expect.arrayContaining([
+        { key: 'test/no-only-tests', oxlint: 'vitest/no-focused-tests', reason: 'renamed-rule' },
+        { key: 'node/prefer-global/process', reason: 'unknown-rule' },
+      ]),
+    )
   })
 })

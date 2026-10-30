@@ -47,7 +47,11 @@ describe('eslint() stylistic module', () => {
 
     expect(rules['style/array-bracket-spacing']).toEqual(['error', 'never'])
     expect(rules['style/brace-style']).toEqual(['error', 'stroustrup', { allowSingleLine: true }])
-    expect(rules['style/quotes']).toEqual(['error', 'single', { allowTemplateLiterals: 'always', avoidEscape: false }])
+    expect(rules['style/quotes']).toEqual([
+      'error',
+      'single',
+      { allowTemplateLiterals: 'always', avoidEscape: false },
+    ])
     expect(rules['style/semi']).toEqual(['error', 'never'])
     expect(rules['style/indent']).toEqual(['error', 2, expect.objectContaining({ tabLength: 2 })])
     expect(rules['style/indent-binary-ops']).toEqual(['error', 2])
@@ -68,16 +72,31 @@ describe('eslint() stylistic module', () => {
   })
 
   it('honors the customize options the object form passes', async () => {
-    const semi = rulesOf(await eslintObject('lumirelle/stylistic/rules', { stylistic: { semi: true } }))
-    const double = rulesOf(await eslintObject('lumirelle/stylistic/rules', { stylistic: { indent: 4, quotes: 'double' } }))
-    const tab = rulesOf(await eslintObject('lumirelle/stylistic/rules', { stylistic: { indent: 'tab' } }))
+    const semi = rulesOf(
+      await eslintObject('lumirelle/stylistic/rules', { stylistic: { semi: true } }),
+    )
+    const double = rulesOf(
+      await eslintObject('lumirelle/stylistic/rules', {
+        stylistic: { indent: 4, quotes: 'double' },
+      }),
+    )
+    const tab = rulesOf(
+      await eslintObject('lumirelle/stylistic/rules', { stylistic: { indent: 'tab' } }),
+    )
 
     expect(semi['style/semi']).toEqual(['error', 'always'])
-    expect(semi['style/member-delimiter-style']).toEqual(['error', expect.objectContaining({
-      multiline: { delimiter: 'semi', requireLast: true },
-      singleline: { delimiter: 'semi' },
-    })])
-    expect(double['style/quotes']).toEqual(['error', 'double', { allowTemplateLiterals: 'always', avoidEscape: false }])
+    expect(semi['style/member-delimiter-style']).toEqual([
+      'error',
+      expect.objectContaining({
+        multiline: { delimiter: 'semi', requireLast: true },
+        singleline: { delimiter: 'semi' },
+      }),
+    ])
+    expect(double['style/quotes']).toEqual([
+      'error',
+      'double',
+      { allowTemplateLiterals: 'always', avoidEscape: false },
+    ])
     expect(double['style/indent']).toEqual(['error', 4, expect.objectContaining({ tabLength: 4 })])
     expect(double['style/indent-binary-ops']).toEqual(['error', 4])
     expect(tab['style/indent']).toEqual(['error', 'tab', expect.objectContaining({ tabLength: 4 })])
@@ -85,13 +104,19 @@ describe('eslint() stylistic module', () => {
   })
 
   it('carries the caller indent options verbatim, the way customize() takes them', async () => {
-    const rules = rulesOf(await eslintObject('lumirelle/stylistic/rules', { stylistic: { indent: [4, { SwitchCase: 2 }] } }))
+    const rules = rulesOf(
+      await eslintObject('lumirelle/stylistic/rules', {
+        stylistic: { indent: [4, { SwitchCase: 2 }] },
+      }),
+    )
 
     expect(rules['style/indent']).toEqual(['error', 4, { SwitchCase: 2 }])
   })
 
   it('swaps the antfu opinionation for the core curly rule when lessOpinionated is set', async () => {
-    const rules = rulesOf(await eslintObject('lumirelle/stylistic/rules', { stylistic: { lessOpinionated: true } }))
+    const rules = rulesOf(
+      await eslintObject('lumirelle/stylistic/rules', { stylistic: { lessOpinionated: true } }),
+    )
 
     expect(rules.curly).toEqual(['error', 'all'])
     expect(rules['antfu/curly']).toBeUndefined()
@@ -101,7 +126,9 @@ describe('eslint() stylistic module', () => {
   })
 
   it('drops the antfu list-newline rule once the experimental rules replace it', async () => {
-    const rules = rulesOf(await eslintObject('lumirelle/stylistic/rules', { stylistic: { experimental: true } }))
+    const rules = rulesOf(
+      await eslintObject('lumirelle/stylistic/rules', { stylistic: { experimental: true } }),
+    )
 
     expect(rules['antfu/consistent-list-newline']).toBeUndefined()
     expect(rules['style/exp-list-style']).toBe('error')
@@ -109,7 +136,9 @@ describe('eslint() stylistic module', () => {
   })
 
   it('drops the JSX slice when the caller turns JSX off', async () => {
-    const rules = rulesOf(await eslintObject('lumirelle/stylistic/rules', { stylistic: { jsx: false } }))
+    const rules = rulesOf(
+      await eslintObject('lumirelle/stylistic/rules', { stylistic: { jsx: false } }),
+    )
 
     expect(rules['style/jsx-quotes']).toBeUndefined()
     expect(rules['style/jsx-indent-props']).toBeUndefined()
@@ -117,10 +146,12 @@ describe('eslint() stylistic module', () => {
   })
 
   it('lets the shared override map refine one rule of the module', async () => {
-    const rules = rulesOf(await eslintObject('lumirelle/stylistic/rules', {
-      stylistic: true,
-      overrides: { stylistic: { rules: { 'style/semi': 'warn' } } },
-    }))
+    const rules = rulesOf(
+      await eslintObject('lumirelle/stylistic/rules', {
+        stylistic: true,
+        overrides: { stylistic: { rules: { 'style/semi': 'warn' } } },
+      }),
+    )
 
     expect(rules['style/semi']).toBe('warn')
   })
@@ -132,12 +163,18 @@ describe('oxlint() stylistic module', () => {
     const rules = rulesOf(override)
 
     expect(rules['style/semi']).toEqual(['error', 'never'])
-    expect(rules['style/quotes']).toEqual(['error', 'single', { allowTemplateLiterals: 'always', avoidEscape: false }])
+    expect(rules['style/quotes']).toEqual([
+      'error',
+      'single',
+      { allowTemplateLiterals: 'always', avoidEscape: false },
+    ])
     expect(rules['antfu/consistent-chaining']).toBe('error')
-    expect(await jsPluginsOf({ stylistic: true })).toEqual(expect.arrayContaining([
-      { name: 'style', specifier: STYLE_PLUGIN },
-      { name: 'antfu', specifier: 'eslint-plugin-antfu' },
-    ]))
+    expect(await jsPluginsOf({ stylistic: true })).toEqual(
+      expect.arrayContaining([
+        { name: 'style', specifier: STYLE_PLUGIN },
+        { name: 'antfu', specifier: 'eslint-plugin-antfu' },
+      ]),
+    )
   })
 
   it('honors the same customize options as the ESLint side', async () => {
@@ -147,7 +184,9 @@ describe('oxlint() stylistic module', () => {
   })
 
   it('keeps the core curly rule the lessOpinionated branch emits', async () => {
-    const rules = rulesOf(await oxlintObjectWith('style/semi', { stylistic: { lessOpinionated: true } }))
+    const rules = rulesOf(
+      await oxlintObjectWith('style/semi', { stylistic: { lessOpinionated: true } }),
+    )
 
     expect(rules.curly).toEqual(['error', 'all'])
   })

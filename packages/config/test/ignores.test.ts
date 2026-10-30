@@ -23,7 +23,9 @@ function gitignoreDirectory(name: string, content?: string): string {
 }
 
 async function ignoresOf(options: Parameters<typeof eslint>[0]): Promise<Linter.Config[]> {
-  return (await eslint({ gitignore: false, ...options })).filter(config => config.name === 'lumirelle/ignores')
+  return (await eslint({ gitignore: false, ...options })).filter(
+    config => config.name === 'lumirelle/ignores',
+  )
 }
 
 describe('eslint() global ignores', () => {
@@ -35,7 +37,7 @@ describe('eslint() global ignores', () => {
     expect(configs[0]!.ignores).toEqual(expect.arrayContaining(GLOB_EXCLUDE))
   })
 
-  it('appends the caller\'s ignores after the house list', async () => {
+  it("appends the caller's ignores after the house list", async () => {
     const [config] = await ignoresOf({ ignores: ['**/vendor', '**/fixtures'] })
 
     expect(config!.ignores!.slice(-2)).toEqual(['**/vendor', '**/fixtures'])
@@ -50,14 +52,14 @@ describe('eslint() global ignores', () => {
 })
 
 describe('eslint() gitignore handling', () => {
-  it('folds the project\'s .gitignore patterns into lumirelle/ignores by default', async () => {
+  it("folds the project's .gitignore patterns into lumirelle/ignores by default", async () => {
     const cwd = gitignoreDirectory('enabled', 'generated/\n*.snap\n')
     const [config] = await ignoresOf({ gitignore: { cwd } })
 
     expect(config!.ignores).toEqual(expect.arrayContaining(['**/generated/', '**/*.snap']))
   })
 
-  it('reads the repository\'s .gitignore when it gets no options', async () => {
+  it("reads the repository's .gitignore when it gets no options", async () => {
     const [config] = await ignoresOf({ gitignore: undefined })
 
     // `**/*.tsbuildinfo` is in this repository's `.gitignore`, not in GLOB_EXCLUDE.

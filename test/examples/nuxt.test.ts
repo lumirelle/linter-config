@@ -1,5 +1,11 @@
 import { describe, expect, it } from 'vitest'
-import { configNamed, configNames, expectNoModules, expectOxlintReadsVue, loadExample } from './helpers/emission'
+import {
+  configNamed,
+  configNames,
+  expectNoModules,
+  expectOxlintReadsVue,
+  loadExample,
+} from './helpers/emission'
 
 describe('the `eslint-oxlint/nuxt` example', () => {
   it('emits the Vue, UnoCSS and test Config objects a Nuxt application asks for', async () => {
@@ -12,7 +18,7 @@ describe('the `eslint-oxlint/nuxt` example', () => {
     expect(names).toContain('lumirelle/test/rules')
   })
 
-  it('keeps the Vue Module\'s accessibility sub-option off', async () => {
+  it("keeps the Vue Module's accessibility sub-option off", async () => {
     const { eslint, options } = await loadExample('eslint-oxlint/nuxt')
     const ruleKeys = Object.keys(configNamed(eslint, 'lumirelle/vue/rules').rules ?? {})
 

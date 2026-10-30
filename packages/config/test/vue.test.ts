@@ -72,11 +72,24 @@ describe('eslint() vue module', () => {
   })
 
   it('turns on the stylistic family only with the stylistic option', async () => {
-    expect(rulesOf(await eslintObject('lumirelle/vue/rules', { vue: true }))['vue/array-bracket-spacing']).toBeUndefined()
-    expect(rulesOf(await eslintObject('lumirelle/vue/rules', { stylistic: true, vue: true }))['vue/html-indent'])
-      .toEqual(['error', 2])
-    expect(rulesOf(await eslintObject('lumirelle/vue/rules', { stylistic: { braceStyle: '1tbs', indent: 4 }, vue: true }))['vue/brace-style'])
-      .toEqual(['error', '1tbs', { allowSingleLine: true }])
+    expect(
+      rulesOf(await eslintObject('lumirelle/vue/rules', { vue: true }))[
+        'vue/array-bracket-spacing'
+      ],
+    ).toBeUndefined()
+    expect(
+      rulesOf(await eslintObject('lumirelle/vue/rules', { stylistic: true, vue: true }))[
+        'vue/html-indent'
+      ],
+    ).toEqual(['error', 2])
+    expect(
+      rulesOf(
+        await eslintObject('lumirelle/vue/rules', {
+          stylistic: { braceStyle: '1tbs', indent: 4 },
+          vue: true,
+        }),
+      )['vue/brace-style'],
+    ).toEqual(['error', '1tbs', { allowSingleLine: true }])
   })
 
   it('keeps the house rule set Upstream overrides inside the module', async () => {
@@ -94,8 +107,11 @@ describe('eslint() vue accessibility', () => {
     const setup = await eslintObject('lumirelle/vue/setup', { vue: { a11y: true } })
 
     expect(Object.keys(setup.plugins ?? {})).toEqual(['vue', 'vue-a11y'])
-    expect(rulesOf(await eslintObject('lumirelle/vue/rules', { vue: { a11y: true } }))['vue-a11y/alt-text'])
-      .toBe('error')
+    expect(
+      rulesOf(await eslintObject('lumirelle/vue/rules', { vue: { a11y: true } }))[
+        'vue-a11y/alt-text'
+      ],
+    ).toBe('error')
   })
 
   it('keeps the peer out of an Emission that does not ask for it', async () => {
@@ -115,8 +131,11 @@ describe('the Component extension', () => {
     expect(parserOptions.extraFileExtensions).toContain('.vue')
   })
 
-  it('adds the caller\'s own component extensions as well', async () => {
-    const parser = await eslintObject('lumirelle/typescript/parser', { componentExts: ['md'], vue: true })
+  it("adds the caller's own component extensions as well", async () => {
+    const parser = await eslintObject('lumirelle/typescript/parser', {
+      componentExts: ['md'],
+      vue: true,
+    })
 
     expect(parser.files as string[]).toContain('**/*.md')
   })
@@ -144,9 +163,9 @@ describe('oxlint() vue module', () => {
 
   it('declares no jsPlugins for the built-in scope', async () => {
     const config = await oxlint(houseOptions({ vue: { a11y: true } }))
-    const aliases = (config.overrides ?? []).flatMap(override => (override.jsPlugins ?? []).map(entry =>
-      typeof entry === 'string' ? entry : entry.name,
-    ))
+    const aliases = (config.overrides ?? []).flatMap(override =>
+      (override.jsPlugins ?? []).map(entry => (typeof entry === 'string' ? entry : entry.name)),
+    )
 
     // `vue` is a built-in scope, so the Module adds no alias; `vue-a11y` has no Oxlint realization.
     expect(aliases).not.toContain('vue')

@@ -1,7 +1,7 @@
 import type { ConfigObject, Domain } from '../types'
 
 /**
- * The Domains Oxlint can read: JavaScript/TypeScript/JSX plus Vue single-file components.
+ * The Domains Oxlint can read: currently JavaScript/TypeScript/JSX plus Vue single-file components.
  *
  * Oxlint has no parser or processor hook, so every other Domain is ESLint-only; the Oxlint
  * Adapter filters on this list before mapping any rule, and the Coverage report records what
@@ -16,8 +16,7 @@ export function isOxlintDomain(domain: Domain): boolean {
 
 /**
  * Whether the Oxlint Emission takes this Config object: a Domain it can read, and no
- * `tools.oxlint: false` opt-out. The Adapter and the Bridge both filter on this one answer, so a
- * Config object is either in both Emissions or in neither.
+ * `tools.oxlint: false` opt-out. The Adapter and the Bridge both filter on this one answer.
  */
 export function isOxlintConfig(config: ConfigObject): boolean {
   return isOxlintDomain(config.domain) && config.tools?.oxlint !== false

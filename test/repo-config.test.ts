@@ -69,7 +69,7 @@ async function oxlintEnabledRules(): Promise<string[]> {
   return [...enabled].sort()
 }
 
-describe('the repository\'s own two configs', () => {
+describe("the repository's own two configs", () => {
   it('builds both Emissions from one options object, so the Bridge silences only what Oxlint reports', async () => {
     const sourceEnabled = new Set((await eslintEnabledRules()).map(oxlintRuleKey))
     const bridge = (await bridgeDisabledRules()).filter(key => sourceEnabled.has(key))

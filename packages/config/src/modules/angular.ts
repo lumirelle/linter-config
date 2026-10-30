@@ -3,18 +3,6 @@ import { GLOB_HTML, GLOB_TS } from '../globs'
 import { requirePeerPackages } from '../packages'
 import { pluginRef } from '../plugins'
 
-/**
- * Upstream's `configs/angular.ts`: the three `@angular-eslint` packages over TypeScript sources
- * and templates.
- *
- * Angular needs a parser and a processor, neither of which Oxlint has, so the Module carries the
- * `angular` Domain and the Oxlint Emission drops it as ESLint-only. All three packages are peers.
- *
- * Upstream routes `overrides` by rule prefix (`angular/*` to the TypeScript object,
- * `angular-template/*` to the template one). Source's override map applies to every object of a
- * Module, so the two plugin sets stay in their own object and an `overrides` entry aimed at this
- * Module has to name rules both objects can see.
- */
 export function angular(): ConfigObject[] {
   requirePeerPackages('angular', ['angular', 'angular-template'])
 

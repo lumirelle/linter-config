@@ -3,7 +3,6 @@ import { GLOB_ASTRO } from '../globs'
 import { requirePeerPackages } from '../packages'
 import { pluginRef } from '../plugins'
 
-/** The rules Upstream adds while its stylistic option is on. */
 const STYLISTIC_RULES: ConfigObject['rules'] = {
   'style/indent': 'off',
   'style/jsx-closing-tag-location': 'off',
@@ -12,12 +11,7 @@ const STYLISTIC_RULES: ConfigObject['rules'] = {
 }
 
 /**
- * Upstream's `configs/astro.ts`: `eslint-plugin-astro` over Astro components.
- *
- * Astro needs a parser and a processor, neither of which Oxlint has, so the Module carries the
- * `astro` Domain and the Oxlint Emission drops it as ESLint-only. Upstream also copies the
- * plugin's `environments.astro.globals` onto the object; Source cannot read a plugin's own table,
- * so the globals are not ported yet.
+ * LIMITATION: The globals `environments.astro.globals` are not ported yet.
  */
 export function astro(options: Pick<Options, 'stylistic'> = {}): ConfigObject[] {
   requirePeerPackages('astro', ['astro'])
@@ -60,7 +54,7 @@ export function astro(options: Pick<Options, 'stylistic'> = {}): ConfigObject[] 
         'astro/no-unused-define-vars-in-style': 'error',
         'astro/semi': 'off',
         'astro/valid-compile': 'error',
-        ...stylistic ? STYLISTIC_RULES : {},
+        ...(stylistic ? STYLISTIC_RULES : {}),
       },
     },
   ]

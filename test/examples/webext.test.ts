@@ -26,7 +26,17 @@ describe('the `eslint-oxlint/webext` example', () => {
     // `test: true` reaches the Emission through the one options module both configs read.
     expect(names).toContain('lumirelle/test/rules')
 
-    expectNoModules(eslint, ['vue', 'react', 'nextjs', 'solid', 'svelte', 'astro', 'angular', 'unocss', 'jsx'])
+    expectNoModules(eslint, [
+      'vue',
+      'react',
+      'nextjs',
+      'solid',
+      'svelte',
+      'astro',
+      'angular',
+      'unocss',
+      'jsx',
+    ])
   })
 })
 
@@ -41,7 +51,7 @@ describe('the `webext` build-output ignores', () => {
     ])
   })
 
-  it('are the patterns the paired flavor\'s options module declares', () => {
+  it("are the patterns the paired flavor's options module declares", () => {
     // The stack's options live in one module, in the paired flavor: the two single-tool flavors write
     // the same entries inline. This is the one place the patterns are readable as data; every flavor
     // then has to carry them into its own Emission below.
@@ -62,11 +72,13 @@ describe('the `webext` build-output ignores', () => {
       expect(ignores.ignores).toEqual(expect.arrayContaining(BUILD_OUTPUT))
     })
 
-    it.skipIf(!example.oxlint)('reaches the Oxlint Emission\'s root `ignorePatterns`', () => {
+    it.skipIf(!example.oxlint)("reaches the Oxlint Emission's root `ignorePatterns`", () => {
       // Oxlint has no global ignores Config object, so the Adapter emits the `lumirelle/ignores`
-      // list as the root `ignorePatterns` field — slash-prefixed, which is how Oxlint anchors a
-      // pattern at the project root — instead of as an override's `ignores` glob.
-      const patterns = (example.oxlint?.ignorePatterns ?? []).map(pattern => pattern.replace(/^\//, ''))
+      // list as the root `ignorePatterns` field, slash-prefixed, which is how Oxlint anchors a
+      // pattern at the project root, and not as an override's `ignores` glob.
+      const patterns = (example.oxlint?.ignorePatterns ?? []).map(pattern =>
+        pattern.replace(/^\//, ''),
+      )
 
       expect(patterns).toEqual(expect.arrayContaining(BUILD_OUTPUT))
       expect((example.oxlint?.overrides ?? []).some(override => 'ignores' in override)).toBe(false)

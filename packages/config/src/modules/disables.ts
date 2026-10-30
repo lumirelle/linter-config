@@ -10,9 +10,7 @@ interface Disable {
 }
 
 /**
- * Upstream's disables table, verbatim: code that is not library code — scripts, CLIs, bins,
- * declaration files, CommonJS entry points and config files — is allowed to do what the house
- * rules otherwise forbid.
+ * Rules disable table.
  */
 const DISABLES: readonly Disable[] = [
   {
@@ -78,17 +76,19 @@ const DISABLES: readonly Disable[] = [
 export function disables(configs: readonly ConfigObject[]): ConfigObject[] {
   const enabled = enabledRuleKeys(configs)
 
-  return DISABLES.flatMap((disable) => {
+  return DISABLES.flatMap(disable => {
     const rules = rulesEnabledBy(disable.rules, enabled)
     if (Object.keys(rules).length === 0) {
       return []
     }
-    return [{
-      name: disable.name,
-      module: 'disables',
-      domain: 'js',
-      files: disable.files,
-      rules,
-    }]
+    return [
+      {
+        name: disable.name,
+        module: 'disables',
+        domain: 'js',
+        files: disable.files,
+        rules,
+      },
+    ]
   })
 }

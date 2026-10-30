@@ -19,14 +19,14 @@ import { findOxlintRule } from './inventory'
  * - `blacklisted-plugin`: the Plugin id is on the Oxlint blacklist, so none of its rules is safe
  *   to emit; `plugin` names the dropped plugin for the report.
  */
-type CoverageReason
-  = | 'unknown-rule'
-    | 'type-aware'
-    | 'no-oxlint-realization'
-    | 'eslint-only-domain'
-    | 'incompatible-options'
-    | 'renamed-rule'
-    | 'blacklisted-plugin'
+type CoverageReason =
+  | 'unknown-rule'
+  | 'type-aware'
+  | 'no-oxlint-realization'
+  | 'eslint-only-domain'
+  | 'incompatible-options'
+  | 'renamed-rule'
+  | 'blacklisted-plugin'
 
 /** A rule key the Oxlint Emission had to leave out, with the reason it did. */
 export interface UnemittedRule {
@@ -122,8 +122,7 @@ export function mapRules(
       if (findOxlintRule('eslint', key)) {
         mapped[key] = entry
         emitted.push(key)
-      }
-      else {
+      } else {
         unemitted.push({ key, reason: 'unknown-rule' })
       }
       continue
@@ -136,11 +135,9 @@ export function mapRules(
       const known = findOxlintRule(definition.builtin, rule)
       if (!known) {
         unemitted.push({ key, reason: 'unknown-rule' })
-      }
-      else if (known.typeAware && !typeAware) {
+      } else if (known.typeAware && !typeAware) {
         unemitted.push({ key, reason: 'type-aware' })
-      }
-      else {
+      } else {
         mapped[`${definition.builtin}/${rule}`] = entry
         emitted.push(key)
       }
@@ -157,5 +154,10 @@ export function mapRules(
     unemitted.push({ key, reason: 'no-oxlint-realization' })
   }
 
-  return { rules: Object.keys(mapped).length > 0 ? mapped : undefined, emitted, unemitted, jsPlugins: [...jsPlugins] }
+  return {
+    rules: Object.keys(mapped).length > 0 ? mapped : undefined,
+    emitted,
+    unemitted,
+    jsPlugins: [...jsPlugins],
+  }
 }

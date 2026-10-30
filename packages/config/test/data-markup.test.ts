@@ -12,20 +12,27 @@ import { toPosixPath } from './helpers/paths'
 const FIXTURES = fileURLToPath(new URL('./fixtures/data-markup/', import.meta.url))
 
 /** The house config, linting the data and markup fixtures with the real ESLint. */
-async function lintFixtures(): Promise<Map<string, Linter.LintMessage[]>> {
+async function lintFixtures(
+  options: Parameters<typeof houseOptions>[0] = {},
+): Promise<Map<string, Linter.LintMessage[]>> {
   const eslintApi = new ESLint({
     overrideConfigFile: true,
-    overrideConfig: await eslint(houseOptions()),
+    overrideConfig: await eslint(houseOptions(options)),
     cwd: FIXTURES,
   })
 
   const results = await eslintApi.lintFiles(['.'])
-  return new Map(results.map(result => [toPosixPath(result.filePath.replace(FIXTURES, '')), result.messages]))
+  return new Map(
+    results.map(result => [toPosixPath(result.filePath.replace(FIXTURES, '')), result.messages]),
+  )
 }
 
 /** Only what the fixtures assert on: which rule, and where. */
-function diagnostics(messages: Linter.LintMessage[]): Array<{ ruleId: string, line: number }> {
-  return messages.map(message => ({ line: message.line ?? 0, ruleId: message.ruleId ?? '<parse error>' }))
+function diagnostics(messages: Linter.LintMessage[]): Array<{ ruleId: string; line: number }> {
+  return messages.map(message => ({
+    line: message.line ?? 0,
+    ruleId: message.ruleId ?? '<parse error>',
+  }))
 }
 
 describe('eslint() over the data and markup fixtures', () => {
@@ -48,8 +55,8 @@ describe('eslint() over the data and markup fixtures', () => {
     ])
   })
 
-  it('reports the house TOML bracket rule', async () => {
-    const messages = (await lintFixtures()).get('violations.toml')!
+  it('reports the house TOML bracket rule once stylistic is on', async () => {
+    const messages = (await lintFixtures({ stylistic: true })).get('violations.toml')!
 
     expect(diagnostics(messages)).toEqual([
       { line: 2, ruleId: 'toml/array-bracket-spacing' },
@@ -57,16 +64,26 @@ describe('eslint() over the data and markup fixtures', () => {
     ])
     // The house option is `never`: both complaints are the padding around the brackets.
     expect(messages.map(message => message.message)).toEqual([
-      'There should be no space after \'[\'.',
-      'There should be no space before \']\'.',
+      "There should be no space after '['.",
+      "There should be no space before ']'.",
     ])
+  })
+
+  it('leaves the stylistic TOML rules off by default', async () => {
+    // Without the `stylistic` Module the bracket rule is not enabled, so the padded array that the
+    // test above reports is not a diagnostic here.
+    expect(diagnostics((await lintFixtures()).get('violations.toml')!)).toEqual([])
   })
 
   it('sorts package.json and tsconfig.json keys', async () => {
     const fixtures = await lintFixtures()
 
-    expect(diagnostics(fixtures.get('package.json')!)).toEqual([{ line: 2, ruleId: 'jsonc/sort-keys' }])
-    expect(diagnostics(fixtures.get('tsconfig.json')!)).toEqual([{ line: 2, ruleId: 'jsonc/sort-keys' }])
+    expect(diagnostics(fixtures.get('package.json')!)).toEqual([
+      { line: 2, ruleId: 'jsonc/sort-keys' },
+    ])
+    expect(diagnostics(fixtures.get('tsconfig.json')!)).toEqual([
+      { line: 2, ruleId: 'jsonc/sort-keys' },
+    ])
   })
 })
 
@@ -74,7 +91,9 @@ describe('the data and markup Modules', () => {
   it('emit under stable names, in Upstream factory order', async () => {
     const names = (await eslint(houseOptions())).map(config => config.name)
 
-    expect(names.filter(name => /jsonc|sort|yaml|toml|markdown|pnpm|formatter/.test(name!))).toEqual([
+    expect(
+      names.filter(name => /jsonc|sort|yaml|toml|markdown|pnpm|formatter/.test(name!)),
+    ).toEqual([
       'lumirelle/jsonc/setup',
       'lumirelle/jsonc/rules',
       'lumirelle/sort/package-json',
@@ -96,39 +115,51 @@ describe('the data and markup Modules', () => {
     expect((await eslintObject('lumirelle/markdown/parser')).language).toBe('md/gfm')
 
     const parsers = await Promise.all(
-      ['lumirelle/yaml/rules', 'lumirelle/toml/rules'].map(async name =>
-        ((await eslintObject(name)).languageOptions?.parser as { meta?: { name?: string } })?.meta?.name,
+      ['lumirelle/yaml/rules', 'lumirelle/toml/rules'].map(
+        async name =>
+          ((await eslintObject(name)).languageOptions?.parser as { meta?: { name?: string } })?.meta
+            ?.name,
       ),
     )
     expect(parsers).toEqual(['yaml-eslint-parser', 'toml-eslint-parser'])
   })
 
   it('merge the Markdown processor with a pass-through', async () => {
-    const processor = (await eslintObject('lumirelle/markdown/processor')).processor as { meta?: { name?: string } }
+    const processor = (await eslintObject('lumirelle/markdown/processor')).processor as {
+      meta?: { name?: string }
+    }
 
     expect(processor).toBeDefined()
     expect(processor.meta?.name).toBeTypeOf('string')
   })
 
-  it('keep the two house TOML overrides', async () => {
-    const rules = (await eslintObject('lumirelle/toml/rules')).rules
+  it('carry the two house TOML overrides in the stylistic slice', async () => {
+    const styled = (await eslintObject('lumirelle/toml/rules', { stylistic: true })).rules
 
-    expect(rules?.['toml/array-bracket-spacing' as never]).toEqual(['error', 'never'])
-    expect(rules?.['toml/array-element-newline' as never]).toEqual(['error', 'consistent'])
+    expect(styled?.['toml/array-bracket-spacing' as never]).toEqual(['error', 'never'])
+    expect(styled?.['toml/array-element-newline' as never]).toEqual(['error', 'consistent'])
+
+    // The overrides belong to the stylistic slice, so a default Emission does not carry them.
+    const plain = (await eslintObject('lumirelle/toml/rules')).rules
+
+    expect(plain?.['toml/array-bracket-spacing' as never]).toBeUndefined()
+    expect(plain?.['toml/array-element-newline' as never]).toBeUndefined()
   })
 })
 
 describe('the Oxlint Emission', () => {
   it('is unchanged by every data and markup Module', async () => {
     const withModules = await oxlint(houseOptions())
-    const withoutModules = await oxlint(houseOptions({
-      formatters: false,
-      jsonc: false,
-      markdown: false,
-      pnpm: false,
-      toml: false,
-      yaml: false,
-    }))
+    const withoutModules = await oxlint(
+      houseOptions({
+        formatters: false,
+        jsonc: false,
+        markdown: false,
+        pnpm: false,
+        toml: false,
+        yaml: false,
+      }),
+    )
 
     expect(withModules).toEqual(withoutModules)
   })
@@ -138,10 +169,20 @@ describe('the Coverage report', () => {
   it('records every data and markup Module as eslint-only-domain', async () => {
     const report = coverageReport()
 
-    for (const module of ['jsonc', 'sort', 'yaml', 'toml', 'markdown', 'pnpm', 'formatters'] as const) {
+    for (const module of [
+      'jsonc',
+      'sort',
+      'yaml',
+      'toml',
+      'markdown',
+      'pnpm',
+      'formatters',
+    ] as const) {
       const rules = report.modules[module] ?? []
       expect(rules.length, `${module} has no recorded rule`).toBeGreaterThan(0)
-      expect(new Set(rules.map(rule => rule.reason)), module).toEqual(new Set(['eslint-only-domain']))
+      expect(new Set(rules.map(rule => rule.reason)), module).toEqual(
+        new Set(['eslint-only-domain']),
+      )
     }
   })
 })
@@ -163,7 +204,9 @@ describe('the formatters Module', () => {
     expect(source(houseOptions()).some(config => config.module === 'formatters')).toBe(false)
 
     const configs = await eslint(houseOptions({ formatters: true }))
-    expect(configs.map(config => config.name).filter(name => name?.startsWith('lumirelle/formatter'))).toEqual([
+    expect(
+      configs.map(config => config.name).filter(name => name?.startsWith('lumirelle/formatter')),
+    ).toEqual([
       'lumirelle/formatter/setup',
       'lumirelle/formatter/css',
       'lumirelle/formatter/scss',

@@ -99,8 +99,11 @@ export const eslintParsers: Record<string, Linter.LanguageOptions['parser']> = {
  * here keeps the composition in the package that already loads both, so the config package names
  * it as data and never imports either.
  */
-export const eslintProcessors: Record<string, (options?: Record<string, unknown>) => Linter.Config['processor']> = {
-  'vue/vue-blocks': (options) => {
+export const eslintProcessors: Record<
+  string,
+  (options?: Record<string, unknown>) => Linter.Config['processor']
+> = {
+  'vue/vue-blocks': options => {
     const { processors } = vuePlugin as unknown as { processors: Record<string, Processor> }
     return mergeProcessors([processors['.vue']!, processorVueBlocks(options ?? {})])
   },

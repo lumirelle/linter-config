@@ -16,7 +16,10 @@ function named(configs: Linter.Config[], name: string): Linter.Config {
 
 describe('eslint() overrides option', () => {
   it('changes one rule of a module without restating the module', async () => {
-    const rules = named(await emission({ overrides: { javascript: { rules: { 'no-console': 'off' } } } }), 'lumirelle/javascript/rules')
+    const rules = named(
+      await emission({ overrides: { javascript: { rules: { 'no-console': 'off' } } } }),
+      'lumirelle/javascript/rules',
+    )
 
     expect(rules.rules!['no-console']).toBe('off')
     // Every other rule of the module is still the house rule.
@@ -32,7 +35,9 @@ describe('eslint() overrides option', () => {
   })
 
   it('replaces files and ignores of a module when the override gives them', async () => {
-    const configs = await emission({ overrides: { javascript: { files: ['**/*.js'], ignores: ['**/*.test.js'] } } })
+    const configs = await emission({
+      overrides: { javascript: { files: ['**/*.js'], ignores: ['**/*.test.js'] } },
+    })
 
     expect(named(configs, 'lumirelle/javascript/rules').files).toEqual(['**/*.js'])
     expect(named(configs, 'lumirelle/javascript/rules').ignores).toEqual(['**/*.test.js'])

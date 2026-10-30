@@ -13,7 +13,7 @@ describe('the `eslint-oxlint/ts` example', () => {
     expect(names).toContain('lumirelle/test/rules')
   })
 
-  it('turns on Oxlint\'s type-aware mode through that same options module', async () => {
+  it("turns on Oxlint's type-aware mode through that same options module", async () => {
     const { oxlint } = await loadExample('eslint-oxlint/ts')
 
     expect(oxlint.options).toEqual({ typeAware: true })

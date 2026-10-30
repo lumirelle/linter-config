@@ -33,8 +33,7 @@ let bundle: Promise<Bundle> | undefined
 function requireBundle(): void {
   try {
     import.meta.resolve(BUNDLE_PACKAGE)
-  }
-  catch (cause) {
+  } catch (cause) {
     throw bundleError(cause)
   }
 }
@@ -48,7 +47,7 @@ function bundleError(cause: unknown): Error {
 function loadBundle(): Promise<Bundle> {
   bundle ??= import(BUNDLE_PACKAGE).then(
     loaded => loaded as Bundle,
-    (cause) => {
+    cause => {
       bundle = undefined
       throw bundleError(cause)
     },
@@ -70,7 +69,7 @@ export function composeOxlint(options: Options): Composer {
   const declared = new Set<PluginId>()
   const items: Array<FlatConfigItem | Promise<FlatConfigItem | undefined>> = source(options)
     .filter(config => isOxlintConfig(config))
-    .map((config) => {
+    .map(config => {
       const mapping = mapRules(config.rules, { typeAware })
       for (const id of mapping.jsPlugins) {
         declared.add(id)
@@ -115,12 +114,14 @@ function toOxlintConfig(config: ConfigObject, { rules }: RuleMapping): FlatConfi
  * through, declared once, in registry order.
  *
  * Oxlint reads `jsPlugins` from an override too, so declaring per Config object would carry the
- * same alias several times — once per object that happens to use it — and leave it to Oxlint which
+ * same alias several times, once per object that happens to use it, and leave it to Oxlint which
  * copy wins. One unscoped declaration covers every file. The object form is what a scoped package
  * requires, and the alias is the Plugin id, so a rule key reads the same in both Emissions.
  */
-async function jsPluginsDeclaration(ids: ReadonlySet<PluginId>): Promise<FlatConfigItem | undefined> {
-  const relevant = PLUGIN_IDS.filter((id) => {
+async function jsPluginsDeclaration(
+  ids: ReadonlySet<PluginId>,
+): Promise<FlatConfigItem | undefined> {
+  const relevant = PLUGIN_IDS.filter(id => {
     const oxlint = pluginDefinition(id).oxlint
     return ids.has(id) && oxlint?.alias && oxlint.jsPlugin
   })
@@ -129,8 +130,8 @@ async function jsPluginsDeclaration(ids: ReadonlySet<PluginId>): Promise<FlatCon
   }
 
   const { resolveJsPlugin } = await loadBundle()
-  const entries = relevant.map((id) => {
-    const oxlint = pluginDefinition(id).oxlint as { alias: string, jsPlugin: string }
+  const entries = relevant.map(id => {
+    const oxlint = pluginDefinition(id).oxlint as { alias: string; jsPlugin: string }
     // One rule: a package the Bundle ships is a resolved absolute path, anything else stays the
     // bare name for the consumer to install.
     return { name: oxlint.alias, specifier: resolveJsPlugin?.(id) ?? oxlint.jsPlugin }

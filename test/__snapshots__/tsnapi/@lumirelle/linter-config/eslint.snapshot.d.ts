@@ -70,7 +70,6 @@ export interface Options {
   pnpm?: boolean | PnpmOptions;
   e18e?: boolean;
   antislop?: boolean;
-  sonarjs?: boolean;
   regexp?: boolean;
   unocss?: boolean;
   formatters?: boolean | FormattersOptions;

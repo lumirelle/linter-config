@@ -120,7 +120,6 @@ interface Options {
   pnpm?: boolean | PnpmOptions
   e18e?: boolean
   antislop?: boolean
-  sonarjs?: boolean
   regexp?: boolean
   unocss?: boolean
   formatters?: boolean | FormattersOptions
@@ -158,7 +157,10 @@ type ModuleId
     | 'formatters' | 'sort' | 'pnpm' | 'disables'
 
 // The Module option shapes (`FormattersOptions`, `PnpmOptions`, `StylisticOptions`,
-// `StylisticIndent`, `OxlintOptions`) are defined in `src/types.ts` next to `Options`.
+// `StylisticIndent`, `OxlintOptions`) are defined in `src/types.ts` next to `Options`, and each
+// `Options` field's comment there says which Emission it reaches: a Module that needs a parser or a
+// processor is ESLint-only. Upstream's `sonarjs` flag has no counterpart here — its rules ride on
+// `antislop`.
 ```
 
 `pluginRef` is a branded string whose runtime value is the Plugin id; the authoritative registry, including whether each id comes from a Bundle or from the consumer, is [`packages/config/src/plugins.ts`](../../packages/config/src/plugins.ts):

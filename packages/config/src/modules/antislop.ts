@@ -12,6 +12,9 @@ import { pluginRef } from '../plugins'
  * through `jsPlugins`. `slop/no-em-dash` applies to every prose-bearing file type, so that object
  * is wider than the `js` domain it declares.
  *
+ * Upstream keeps the SonarJS half in a `sonarjs` Module of its own; here the subset rides on this
+ * one, so `Options` carries no `sonarjs` flag and `antislop` is the one way to get `sonar/` rules.
+ *
  * @see https://github.com/antfu/eslint-plugin-slop
  * @see https://github.com/SonarSource/SonarJS
  */

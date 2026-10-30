@@ -45,7 +45,15 @@ export interface PluginDefinition {
     parser?: string
     processor?: string
   }
-  /** Oxlint realization: a built-in scope and/or a `jsPlugins` specifier. */
+  /**
+   * Oxlint realization: a built-in scope and/or a `jsPlugins` specifier.
+   *
+   * Absent for the ids Oxlint cannot load: the plugins that need a parser or a processor of their
+   * own (`angular`, `astro`, `jsonc`, `md`, `pnpm`, `svelte`, `toml`, `yaml`), the
+   * `eslint-comments` blacklist, and the plugins with no `jsPlugins` equivalent. Every rule those
+   * ids carry is ESLint-only, and the Coverage report names the reason per rule rather than
+   * leaving the absence to be inferred.
+   */
   oxlint?: {
     builtin?: string
     jsPlugin?: string
@@ -219,49 +227,198 @@ export interface OxlintOptions {
 /**
  * The same options object configures both factories, so the two emissions cannot
  * drift by configuration. Fields mirror Upstream.
+ *
+ * Where a field reaches only one Emission, its own comment says which side and why: a Module that
+ * needs a parser or a processor is ESLint-only, because Oxlint has no hook to add either (see
+ * {@link Domain}), and the Oxlint Emission records what it leaves behind in the Coverage report
+ * rather than dropping it quietly.
  */
 export interface Options {
+  /**
+   * The `vue` Module. A `.vue` file is one more component extension of the TypeScript Module, so
+   * turning this on also types an SFC's script blocks.
+   *
+   * Both Emissions carry the rules — Oxlint reads single-file components natively — except the
+   * `sfcBlocks` object form, which needs a processor and is therefore ESLint-only.
+   *
+   * @default false: opt-in, and `eslint-plugin-vuejs-accessibility` is a peer once `a11y` is on
+   */
   vue?: boolean | {
     a11y?: boolean
     vueVersion?: 2 | 3
     /** SFC block linting: `false` keeps only the Vue processor, an object narrows what it extracts. */
     sfcBlocks?: boolean | Record<string, unknown>
   }
+  /**
+   * The `react` Module.
+   *
+   * Both Emissions carry it: the ESLint side loads the peer `@eslint-react/eslint-plugin`, Oxlint
+   * its built-in `react` scope.
+   *
+   * @default false: opt-in, and the plugin is a peer
+   */
   react?: boolean
+  /**
+   * The `svelte` Module.
+   *
+   * ESLint-only: Svelte needs a parser, and Oxlint has no parser hook, so the Oxlint Emission
+   * records the whole Module as `eslint-only-domain`.
+   *
+   * @default false: opt-in, and `eslint-plugin-svelte` and `svelte-eslint-parser` are peers
+   */
   svelte?: boolean
+  /**
+   * The `astro` Module. ESLint-only, for the same reason as {@link Options.svelte}.
+   *
+   * @default false: opt-in, and the plugin and its parser are peers
+   */
   astro?: boolean
+  /**
+   * The `solid` Module. Both Emissions carry it: Oxlint loads `eslint-plugin-solid` through
+   * `jsPlugins`.
+   *
+   * @default false: opt-in, and the plugin is a peer
+   */
   solid?: boolean
+  /**
+   * The `angular` Module. ESLint-only: TypeScript needs a parser here, and the template rules a
+   * second parser of their own.
+   *
+   * @default false: opt-in, and both `@angular-eslint` plugins and the template parser are peers
+   */
   angular?: boolean
+  /**
+   * The `nextjs` Module. Both Emissions carry it: Oxlint has a built-in `nextjs` scope.
+   *
+   * @default false: opt-in, and `@next/eslint-plugin-next` is a peer
+   */
   nextjs?: boolean
+  /**
+   * The `node` Module: `node:` protocol imports, Node globals and CLI entry points.
+   *
+   * Both Emissions carry it: Oxlint has a built-in `node` scope.
+   *
+   * @default true
+   */
   node?: boolean
   /**
    * The `test` Module. Upstream accepts the flag or an object carrying this Module's rule
    * overrides; `overrides.test` reaches the same rules through the shared override map.
    */
   test?: boolean | { overrides?: ConfigObject['rules'] }
+  /**
+   * The `jsonc` Module: `package.json`, `tsconfig.json` and every other `.json` or `.jsonc` file.
+   *
+   * ESLint-only: the objects carry `language: 'jsonc/x'`, and Oxlint has no parser hook, so the
+   * Oxlint Emission records the Module as `eslint-only-domain`.
+   *
+   * @default true
+   */
   jsonc?: boolean
+  /**
+   * The `yaml` Module. ESLint-only: YAML needs a parser.
+   *
+   * @default true
+   */
   yaml?: boolean
+  /**
+   * The `toml` Module. ESLint-only: TOML needs a parser.
+   *
+   * @default true
+   */
   toml?: boolean
+  /**
+   * The `markdown` Module, including the code blocks inside a document, which it lints as the
+   * language they are written in.
+   *
+   * ESLint-only: Markdown needs a processor.
+   *
+   * @default true
+   */
   markdown?: boolean
+  /**
+   * The `jsdoc` Module. Both Emissions carry it: Oxlint has a built-in `jsdoc` scope.
+   *
+   * @default true
+   */
   jsdoc?: boolean
+  /**
+   * The `imports` Module. Both Emissions carry it: Oxlint has a built-in `import` scope.
+   *
+   * @default true
+   */
   imports?: boolean
+  /**
+   * The `unicorn` Module. Both Emissions carry it: Oxlint has a built-in `unicorn` scope.
+   *
+   * @default true
+   */
   unicorn?: boolean
+  /**
+   * The `perfectionist` Module. Both Emissions carry it: Oxlint loads the plugin through
+   * `jsPlugins`.
+   *
+   * @default true
+   */
   perfectionist?: boolean
   /**
    * The `pnpm` Module, for `package.json` and `pnpm-workspace.yaml`.
+   *
+   * ESLint-only: both files need parsers, so the Oxlint Emission records the Module as
+   * `eslint-only-domain`.
    *
    * @default detected: on when the project has a `pnpm-workspace.yaml`, like Upstream; the object
    * form carries the Module's own options, and `catalogs` defaults to whether that file declares
    * a `catalog:` block
    */
   pnpm?: boolean | PnpmOptions
+  /**
+   * The `e18e` Module. Both Emissions carry it: Oxlint loads `@e18e/eslint-plugin` through
+   * `jsPlugins`, and the rules it emits for this Module are conformance-tested against it.
+   *
+   * @default true
+   */
   e18e?: boolean
+  /**
+   * The `antislop` Module: the `eslint-plugin-slop` set against filler prose and dead code, plus
+   * the SonarJS subset that needs no type information. This Module is where the `sonar/` rules
+   * live, so there is no separate `sonarjs` option. Both Emissions carry it, through `jsPlugins`
+   * for both plugins.
+   *
+   * @default false: opt-in, and `eslint-plugin-slop` and `eslint-plugin-sonarjs` are peers
+   */
   antislop?: boolean
-  sonarjs?: boolean
+  /**
+   * The `regexp` Module. Both Emissions carry it: Oxlint loads the plugin through `jsPlugins`, and
+   * its rules are conformance-tested against it.
+   *
+   * @default true
+   */
   regexp?: boolean
+  /**
+   * The `unocss` Module. Both Emissions carry it: Oxlint loads the plugin through `jsPlugins`.
+   *
+   * @default false: opt-in, and `unocss` is a peer
+   */
   unocss?: boolean
+  /**
+   * The `formatters` Module: Prettier, or dprint, over the languages ESLint does not lint for
+   * style.
+   *
+   * ESLint-only: it needs a plain-text parser and processors, and Oxlint has neither.
+   *
+   * @default false: opt-in, and `eslint-plugin-format` is a peer
+   */
   formatters?: boolean | FormattersOptions
-  /** Defaults to false: this project formats with oxfmt (`objectWrap: preserve`). */
+  /**
+   * The `stylistic` Module.
+   *
+   * Both Emissions carry it: Oxlint loads `@stylistic/eslint-plugin` through `jsPlugins` under the
+   * `style` alias, so a `style/` key names one implementation on both sides.
+   *
+   * @default false: this project formats with oxfmt (`objectWrap: 'preserve'`), which keeps object
+   * literals where the author put them while this Module would rewrap them
+   */
   stylistic?: boolean | StylisticOptions
   /**
    * Fold the project's `.gitignore` into the global ignores.
@@ -271,10 +428,51 @@ export interface Options {
    * `eslint-config-flat-gitignore` (`cwd`, `files`, `strict`, ...)
    */
   gitignore?: boolean | FlatGitignoreOptions
+  /**
+   * Whether the project ships an API. Two places read it: `ts/explicit-function-return-type` is a
+   * library rule, and `e18e` keeps `prefer-static-regex` on for one kind of project and turns it
+   * off for the other.
+   *
+   * @default 'app', like Upstream
+   */
   type?: 'lib' | 'app'
+  /**
+   * The `typescript` Module: the parser, the settings derived from it and the rules that need no
+   * type information.
+   *
+   * Both Emissions carry it, but a rule that needs a TypeScript program runs on ESLint only unless
+   * Oxlint's type-aware mode is on ({@link Options.oxlint}): Oxlint reads type information in its
+   * own mode, never through `tsconfigPath` the way the ESLint parser does. The object form turns
+   * type information on by naming that tsconfig, and `erasableOnly` additionally requires syntax
+   * that can be stripped without a transform.
+   *
+   * @default detected: on when `typescript` or `@typescript/native-preview` is installed, since
+   * the Module is useless without one
+   */
   typescript?: boolean | { tsconfigPath?: string, erasableOnly?: boolean }
+  /**
+   * The `jsx` Module: the JSX parser options and settings on their own, without the React rules
+   * ({@link Options.react}).
+   *
+   * Both Emissions carry it: Oxlint has built-in `react` and `jsx-a11y` scopes.
+   *
+   * @default false: opt-in
+   */
   jsx?: boolean
+  /**
+   * Extra component extensions. They widen the TypeScript Module's file patterns and the fenced
+   * blocks the `markdown` Module lints, which is how a single-file component's script is typed and
+   * how its examples are checked. {@link Options.vue} adds `vue` itself.
+   *
+   * @default `[]`
+   */
   componentExts?: string[]
+  /**
+   * Extra patterns for the global `ignores` object, added to the house excludes and to the
+   * project's `.gitignore` ({@link Options.gitignore}).
+   *
+   * @default `[]`
+   */
   ignores?: string[]
   /**
    * Whether the factory runs inside an editor integration, where autofixable rules report

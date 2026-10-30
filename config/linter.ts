@@ -1,5 +1,5 @@
 // @ts-check
-import type { Options } from '@lumirelle/linter-config/eslint'
+import type { Options } from '@lumirelle/linter-config'
 
 /**
  * The repository's own options, the one object both configs are built from.

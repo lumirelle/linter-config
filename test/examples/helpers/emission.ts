@@ -1,4 +1,4 @@
-import type { ModuleId, Options } from '@lumirelle/linter-config/eslint'
+import type { ModuleId, Options } from '@lumirelle/linter-config'
 import type { Linter } from 'eslint'
 import type { OxlintConfig } from 'oxlint'
 import type { Example } from '../../../playground/examples'

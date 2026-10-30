@@ -59,3 +59,7 @@ _Avoid_: variant, mode, preset
 **Stack**:
 The technology snapshot dimension of an example: the kind of project the Emission is shown against.
 _Avoid_: framework, template, scaffold
+
+**Root entry**:
+The package's `.` specifier, where the option types live. It has no runtime exports, so importing it cannot load an Adapter; the factories stay on the `./eslint` and `./oxlint` subpaths. See [ADR 0008](docs/adr/0008-option-types-at-the-root-entry.md).
+_Avoid_: index, main, barrel

@@ -1,4 +1,4 @@
-import type { Options } from '@lumirelle/linter-config/eslint'
+import type { Options } from '@lumirelle/linter-config'
 import type { Linter } from 'eslint'
 import type { OxlintConfig } from 'oxlint'
 import { existsSync } from 'node:fs'

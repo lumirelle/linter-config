@@ -1,4 +1,4 @@
-import type { ModuleId, Options } from '@lumirelle/linter-config/eslint'
+import type { ModuleId, Options } from '@lumirelle/linter-config'
 import type { Example } from '../../playground/examples'
 import { describe, expect, it } from 'vitest'
 import { listExamples, resolveStack } from '../../playground/examples'

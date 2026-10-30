@@ -1,4 +1,4 @@
-import type { Options } from '@lumirelle/linter-config/eslint'
+import type { Options } from '@lumirelle/linter-config'
 
 /**
  * The workspace's own options, the one object every package is linted from.

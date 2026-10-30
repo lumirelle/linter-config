@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { options } from '../lint-options'
+import { options } from '../config/linter'
 import { eslint } from '../packages/config/src/eslint'
 import { oxlint } from '../packages/config/src/oxlint'
 import { pluginDefinition, pluginIdOfRuleKey } from '../packages/config/src/plugins'

@@ -23,6 +23,6 @@
     "playground/*/*/vite.config.ts",
     "*.config.js",
     "*.config.ts",
-    "lint-options.ts"
+    "config/**/*"
   ]
 }

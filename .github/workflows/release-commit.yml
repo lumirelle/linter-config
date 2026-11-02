@@ -6,6 +6,6 @@ permissions: {}
 
 jobs:
   release-commit:
-    uses: lumirelle/workflows/.github/workflows/release-commit.yml@v10
+    uses: lumirelle/workflows/.github/workflows/release-commit.yml@v11
     with:
-      cache-preset: 'mise-task,nub'
+      cache-preset: nub

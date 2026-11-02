@@ -1,18 +1,11 @@
 [env]
 _.path = ['{{config_root}}/node_modules/.bin']
 
-[task_config.input_groups]
-deps = ["package.json", "../../nub.lock"]
-src = ["src/**/*", "tsconfig.json", "tsdown.config.ts"]
-
 [tasks.dev]
 run = "tsdown --watch"
 
 [tasks.build]
 run = "tsdown"
-sources = ["@group:deps", "@group:src"]
-outputs = ["dist"]
-cache = { enabled = true }
 
 [tasks.start]
 run = "nub ./src/eslint.ts"
@@ -20,17 +13,11 @@ run = "nub ./src/eslint.ts"
 [tasks.inventory]
 description = "Regenerate the Oxlint rule inventory from the installed Oxlint."
 run = "nub ./scripts/generate-inventory.ts"
-sources = ["@group:deps", "scripts"]
-outputs = ["src/oxlint/inventory.generated.ts"]
 
 [tasks.plugin-rules]
 description = "Regenerate the regexp and e18e rule tables from the installed plugins."
 run = "nub ./scripts/generate-plugin-rules.ts"
-sources = ["@group:deps", "scripts"]
-outputs = ["src/modules/plugin-rules.generated.ts"]
 
 [tasks.stylistic]
 description = "Regenerate the stylistic rule table and its option patches from the installed plugin."
 run = "nub ./scripts/generate-stylistic-rules.ts"
-sources = ["@group:deps", "scripts"]
-outputs = ["src/modules/stylistic-rules.generated.ts"]

@@ -27,43 +27,6 @@ _.path = ['{{config_root}}/node_modules/.bin']
 # See https://github.com/webpro-nl/knip/issues/1813 & https://github.com/oxc-project/oxc/issues/11834
 KNIP_DISABLE_RAW_TRANSFER = 1
 
-[task_config.input_groups]
-deps = ["**/package.json", "nub.lock"]
-src = ["packages/**/src/**/*"]
-check = [
-  "**/*.js",
-  "**/*.mjs",
-  "**/*.cjs",
-  "**/*.jsx",
-  "**/*.ts",
-  "**/*.mts",
-  "**/*.cts",
-  "**/*.tsx",
-  "**/*.vue",
-  "**/*.json",
-  "**/*.jsonc",
-  "**/*.yaml",
-  "**/*.yml",
-  "**/*.toml",
-  "**/*.md",
-  "**/*.mdc",
-  "**/*.mdx",
-  "**/*.lua",
-  "hk.pkl",
-]
-test = [
-  "packages/**/test/**/*",
-  "packages/**/dist/**/*",
-  "playground/*.ts",
-  "playground/*/*/*.{js,ts,json,md}",
-  "playground/*/*/src/**",
-  "playground/*/*/app/**",
-  "playground/*/*/packages/*/src/**",
-  "test/**/*",
-  "scripts/**/*",
-  "vitest.config.ts",
-]
-
 [tasks.dev]
 description = "Run the development build with hot reloading."
 run = { task = "//packages/...:dev" }
@@ -102,10 +65,7 @@ arg "[rest]" var=#true help="Additional arguments to pass to the test runner"
 run = '''
 hk check {{ "--staged" if usage.staged else "--all" }} {{ usage.rest | join(sep=' ') if usage.rest else '' }}
 '''
-sources = ["@group:deps", "@group:check"]
-outputs = []
 depends = "build"
-cache = { enabled = true, command_inputs = ["hk --version"] }
 
 [tasks.fix]
 description = 'Fix all check issues.'
@@ -116,10 +76,7 @@ arg "[rest]" var=#true help="Additional arguments to pass to the test runner"
 run = '''
 hk fix {{ "--staged" if usage.staged else "--all" }} {{ usage.rest | join(sep=' ') if usage.rest else '' }}
 '''
-sources = ["@group:deps", "@group:check"]
-outputs = []
 depends = "build"
-cache = { enabled = true, command_inputs = ["hk --version"] }
 
 [tasks.test]
 description = "Run tests."
@@ -131,9 +88,6 @@ arg "[rest]" var=#true help="Additional arguments to pass to the test runner"
 run = '''
 vitest {{ '' if usage.watch else 'run' }} {{ usage.rest | join(sep=' ') if usage.rest else '' }}
 '''
-sources = ["@group:deps", "@group:src", "@group:test"]
-outputs = []
-cache = { enabled = true, command_inputs = ["node --version"] }
 
 [tasks.prerelease]
 description = 'Prepare for release.'

@@ -5,27 +5,15 @@ import "package://github.com/jdx/hk/releases/download/v2.6.0/hk@2.6.0#/Builtins.
 local linters = new Mapping<String, Step> {
   // Code
   ["oxlint"] = (Builtins.ox_lint) {
-    // Oxlint's allocator keeps one pool per worker thread. On a small CI runner the whole tree
-    // plus the js-plugin bridge is enough to exhaust a pool, which panics inside Oxlint
-    // (`oxc_allocator::pool::fixed_size`).
     check = new CommandSpec {
       command = new Command {
-        argv =
-          List("oxlint", "--deny-warnings", "--threads=1", "--disable-nested-config", "{{files}}")
+        argv = List("oxlint", "--deny-warnings", "--disable-nested-config", "{{files}}")
       }
       effect = "read"
     }
     fix = new CommandSpec {
       command = new Command {
-        argv =
-          List(
-            "oxlint",
-            "--deny-warnings",
-            "--fix",
-            "--threads=1",
-            "--disable-nested-config",
-            "{{files}}",
-          )
+        argv = List("oxlint", "--deny-warnings", "--fix", "--disable-nested-config", "{{files}}")
       }
       effect = "write"
     }
@@ -57,12 +45,31 @@ local linters = new Mapping<String, Step> {
         "**/*.mdx",
       )
     check = new CommandSpec {
-      command = new Command { argv = List("eslint", "--no-warn-ignored", "{{files}}") }
+      command = new Command {
+        argv =
+          List(
+            "eslint",
+            "--no-warn-ignored",
+            "--cache",
+            "--cache-strategy",
+            "content",
+            "{{files}}",
+          )
+      }
       effect = "read"
     }
     fix = new CommandSpec {
       command = new Command {
-        argv = List("eslint", "--no-warn-ignored", "--fix", "{{files}}")
+        argv =
+          List(
+            "eslint",
+            "--no-warn-ignored",
+            "--fix",
+            "--cache",
+            "--cache-strategy",
+            "content",
+            "{{files}}",
+          )
       }
       effect = "write"
     }

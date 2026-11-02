@@ -8,7 +8,6 @@
   "include": [
     "scripts/**/*",
     "test/**/*",
-    "config/**/*",
     "*.config.js",
     "*.config.ts",
 
